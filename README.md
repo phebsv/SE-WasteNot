@@ -34,7 +34,7 @@ In Cebu City, organic waste makes up a large portion of solid waste, and local c
 
 ---
 
-## 🧾 Project Details
+## Project Details
 - **Project Title:** WasteNot  
 - **Team Members:** Villaflor, Phoebe Reese Carmel D.
                     Tejedor, Melody Marie 
@@ -46,7 +46,7 @@ In Cebu City, organic waste makes up a large portion of solid waste, and local c
 
 ---
 
-## 🧑‍💻 Contributors
+## Contributors
 | Name | Role |
 |------|------|
 | Villaflor | UI/UX Designer, Documentation Lead, Team Leader |
