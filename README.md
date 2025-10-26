@@ -26,3 +26,8 @@ In Cebu City, organic waste makes up a large portion of solid waste, and local c
 - **Encourage responsible consumption** through transparency and community collaboration.
 
 ---
+
+## UML Use Case Diagram
+
+<img width="586" height="765" alt="UML use case" src="https://github.com/user-attachments/assets/48a24470-b295-4c95-8bd8-27f99977c1f0" />
+
