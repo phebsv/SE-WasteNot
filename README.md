@@ -31,3 +31,25 @@ In Cebu City, organic waste makes up a large portion of solid waste, and local c
 
 <img width="586" height="765" alt="UML use case" src="https://github.com/user-attachments/assets/48a24470-b295-4c95-8bd8-27f99977c1f0" />
 
+
+---
+
+## 🧾 Project Details
+- **Project Title:** WasteNot  
+- **Team Members:** Villaflor, Phoebe Reese Carmel D.
+                    Tejedor, Melody Marie 
+                    Falcone, Julian Florenz
+- **Course:** Software Engineering  
+- **Date Started:** September 9, 2025  
+- **Expected Completion:** December 15, 2025  
+- **Institution:** University of San Jose-Recoletos 
+
+---
+
+## 🧑‍💻 Contributors
+| Name | Role |
+|------|------|
+| Villaflor | UI/UX Designer, Documentation Lead, Team Leader |
+| Tejedor   | FrontEnd Developer |
+| Falcone   | BackEnd Developer  |
+
