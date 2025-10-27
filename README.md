@@ -34,6 +34,12 @@ In Cebu City, organic waste makes up a large portion of solid waste, and local c
 
 ---
 
+## Class Diagram
+
+https://raw.githubusercontent.com/phebsv/SE-WasteNot/3342c426812c87c4f860a8d0daae6160bab39ac0/wastenot_classdiagram.jpg
+
+---
+
 ## Project Details
 - **Project Title:** WasteNot  
 - **Team Members:** Villaflor, Phoebe Reese Carmel D.
