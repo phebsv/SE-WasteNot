@@ -55,7 +55,7 @@ https://raw.githubusercontent.com/phebsv/SE-WasteNot/3342c426812c87c4f860a8d0daa
 ## Contributors
 | Name | Role |
 |------|------|
-| Villaflor | UI/UX Designer, Documentation Lead, Team Leader, Architectural Design |
-| Tejedor   | FrontEnd Developer, Interface Design|
-| Falcone   | BackEnd Developer, Data Design  |
+| Villaflor | UI/UX Designer, Documentation Lead, Team Leader, Architectural Design, Interface Design |
+| Tejedor   | FrontEnd Developer, Data Design |
+| Falcone   | BackEnd Developer, Procedural Design |
 
