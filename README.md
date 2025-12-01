@@ -42,9 +42,7 @@ https://raw.githubusercontent.com/phebsv/SE-WasteNot/3342c426812c87c4f860a8d0daa
 
 ## Project Details
 - **Project Title:** WasteNot  
-- **Team Members:** Villaflor, Phoebe Reese Carmel D.
-                    Tejedor, Melody Marie 
-                    Falcone, Julian Florenz
+- **Team Members:** Villaflor, Phoebe Reese Carmel D., Tejedor, Melody Marie, Falcone, Julian Florenz
 - **Course:** Software Engineering  
 - **Date Started:** September 9, 2025  
 - **Expected Completion:** December 15, 2025  
