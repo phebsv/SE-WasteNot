@@ -1,0 +1,433 @@
+Procedural Design
+1. ADMIN MODULE
+ADMIN module
+PROCEDURE Admin.Module;
+INTERFACE RETURNS admin.status;
+
+TYPE application IS STRUCTURE DEFINED
+    id IS INTEGER;
+    applicantName IS STRING LENGTH VAR;
+    email IS STRING LENGTH VAR;
+    orgType IS STRING LENGTH VAR; /* Provider or NGO */
+    formData IS STRING LENGTH VAR;
+    status IS STRING LENGTH VAR; /* Submitted, Incomplete, Approved, Rejected */
+    reviewerId IS INTEGER;
+    reviewedAt IS DATETIME;
+END application TYPE;
+
+PROCEDURE Admin.VerifyApplications;
+PRECONDITION AuthService.checkLoggedIn(current.user) 
+    AND current.user.role = ADMIN;
+BEGIN
+    responses = GoogleFormAPI.fetchResponses("partner_form_id");
+
+    FOR EACH R IN responses DO
+        IF DB.Application.exists(responseId = R.id) THEN CONTINUE; END IF;
+
+        app = Application.fromForm(R);
+
+        IF NOT Validation.hasRequiredFields(app.formData) THEN
+            app.status = "Incomplete";
+            DB.Application.save(app);
+            EmailService.send(app.email, 
+                "Application incomplete", 
+                "Please resubmit missing requirements.");
+            CONTINUE;
+        END IF;
+
+        IF NOT Validation.backgroundCheck(app) THEN
+            app.status = "Rejected";
+            DB.Application.save(app);
+            EmailService.send(app.email, 
+                "Application rejected", 
+                "Failed verification.");
+            CONTINUE;
+        END IF;
+
+        account = UserService.createAccount(app);
+        app.status = "Approved";
+        app.reviewerId = current.user.id;
+        app.reviewedAt = now;
+        DB.Application.update(app);
+
+        EmailService.send(account.email,
+            "Approved", 
+            "Your account number: " + account.id);
+
+    END FOR;
+
+RETURN admin.status = "DONE";
+END PROCEDURE;
+2. ADMIN USER MANAGEMENT MODULE
+USER MANAGEMENT module
+PROCEDURE AdminUserMgmt.Module;
+
+PROCEDURE AdminUserMgmt.SuspendUser(userId);
+BEGIN
+    user = DB.User.get(userId);
+    user.status = "SUSPENDED";
+    DB.User.update(user);
+RETURN "USER_SUSPENDED";
+END PROCEDURE;
+
+PROCEDURE AdminUserMgmt.ViewAllUsers;
+BEGIN
+    RETURN DB.User.getAll();
+END PROCEDURE;
+
+END PROCEDURE;
+3. PROVIDER MODULE
+PROVIDER module
+PROCEDURE Provider.Module;
+INTERFACE RETURNS provider.status;
+
+PROCEDURE Provider.PostListing(listingData);
+PRECONDITION AuthService.checkLoggedIn(current.user)
+    AND current.user.role = PROVIDER;
+BEGIN
+    VALIDATE = Validation.validateListing(listingData);
+    IF NOT VALIDATE.valid THEN
+        RETURN provider.status = "INVALID_INPUT";
+    END IF;
+
+    listing = listingData;
+    listing.providerId = current.user.id;
+    listing.postedAt = now;
+    listing.status = AVAILABLE;
+
+    DB.Listing.save(listing);
+    SearchIndex.update(listing);
+
+    NotifService.broadcastNearby(listing.location,
+        "new_listing",
+        "New surplus posted nearby");
+
+RETURN provider.status = "LISTING_POSTED";
+END PROCEDURE;
+
+
+PROCEDURE Provider.HandleReservation(reservationId, decision);
+BEGIN
+    reservation = DB.Reservation.get(reservationId);
+    listing = DB.Listing.get(reservation.listingId);
+
+    IF listing.providerId != current.user.id THEN
+        RETURN provider.status = "NOT_AUTHORIZED";
+    END IF;
+
+    IF reservation.status != PENDING THEN
+        RETURN provider.status = "INVALID_STATE";
+    END IF;
+
+    CASE decision OF
+
+        WHEN "APPROVE" SELECT
+            IF reservation.qty > listing.quantity THEN
+                reservation.status = DECLINED;
+                DB.Reservation.update(reservation);
+                NotifService.create(reservation.requesterId, 
+                    "request_declined", 
+                    "Out of stock");
+            ELSE
+                listing.quantity = listing.quantity - reservation.qty;
+                IF listing.quantity = 0 THEN 
+                    listing.status = OUT_OF_STOCK;
+                END IF;
+
+                reservation.status = APPROVED;
+                DB.Listing.update(listing);
+                DB.Reservation.update(reservation);
+
+                NotifService.create(reservation.requesterId,
+                    "request_approved",
+                    "Your request was approved");
+            END IF;
+
+        WHEN "DECLINE" SELECT
+            reservation.status = DECLINED;
+            DB.Reservation.update(reservation);
+            NotifService.create(reservation.requesterId,
+                "request_declined",
+                "Provider declined your request");
+
+    END CASE;
+
+RETURN provider.status = "DONE";
+END PROCEDURE;
+END PROCEDURE;
+4. CONSUMER MODULE
+CONSUMER module
+PROCEDURE Consumer.Module;
+INTERFACE RETURNS consumer.status;
+
+PROCEDURE Consumer.BrowseListings(filters);
+BEGIN
+    results = SearchService.queryListings(filters);
+    RETURN results;
+END PROCEDURE;
+
+PROCEDURE Consumer.CreateReservation(listingId, qty, pickupWindow, paymentMethod);
+PRECONDITION AuthService.checkLoggedIn(current.user)
+    AND current.user.role = CONSUMER;
+BEGIN
+    listing = DB.Listing.get(listingId);
+
+    IF listing.status != AVAILABLE OR qty > listing.quantity THEN
+        RETURN consumer.status = "INSUFFICIENT_STOCK";
+    END IF;
+
+    reservation.id = DB.generateId();
+    reservation.listingId = listingId;
+    reservation.requesterId = current.user.id;
+    reservation.qty = qty;
+    reservation.pickupWindow = pickupWindow;
+    reservation.paymentMethod = paymentMethod;
+    reservation.createdAt = now;
+    reservation.status = PENDING;
+
+    DB.Reservation.save(reservation);
+
+    NotifService.create(listing.providerId,
+        "new_reservation",
+        "You have a new reservation request");
+
+RETURN consumer.status = "RESERVATION_CREATED";
+END PROCEDURE;
+
+
+PROCEDURE Consumer.ConfirmPickup(reservationId);
+BEGIN
+    reservation = DB.Reservation.get(reservationId);
+
+    IF reservation.requesterId != current.user.id THEN
+        RETURN consumer.status = "NOT_AUTHORIZED";
+    END IF;
+
+    IF reservation.status != APPROVED THEN
+        RETURN consumer.status = "INVALID_STATE";
+    END IF;
+
+    reservation.status = COMPLETED;
+    reservation.completedAt = now;
+
+    DB.Reservation.update(reservation);
+    Analytics.recordTransaction(reservation);
+
+    NotifService.create(DB.Listing.get(reservation.listingId).providerId,
+        "pickup_confirmed",
+        "Pickup confirmed by consumer");
+
+RETURN consumer.status = "PICKUP_CONFIRMED";
+END PROCEDURE;
+
+END PROCEDURE;
+
+5. NGO MODULE
+NGO module
+PROCEDURE NGO.Module;
+INTERFACE RETURNS ngo.status;
+
+PROCEDURE NGO.RequestDonation(listingId, qty, reason);
+PRECONDITION AuthService.checkLoggedIn(current.user)
+    AND current.user.role = NGO;
+BEGIN
+    listing = DB.Listing.get(listingId);
+
+    IF NOT listing.isDonation THEN
+        RETURN ngo.status = "NOT_DONATION_ITEM";
+    END IF;
+
+    reservation = Consumer.CreateReservation(listingId, qty, "ASAP", "none");
+    reservation.type = "DONATION";
+
+    DB.Reservation.update(reservation);
+
+    NotifService.create(listing.providerId,
+        "donation_request",
+        "NGO requested a donation");
+
+RETURN ngo.status = "DONATION_REQUESTED";
+END PROCEDURE;
+
+END PROCEDURE;
+
+6. MARKETPLACE MODULE
+MARKETPLACE module
+PROCEDURE Marketplace.Module;
+
+PROCEDURE Marketplace.GetActiveListings(filters);
+BEGIN
+    RETURN DB.Listing.query(filters AND status = AVAILABLE);
+END PROCEDURE;
+
+PROCEDURE Marketplace.GetProviderListings(providerId);
+BEGIN
+    RETURN DB.Listing.findWhere(providerId = providerId);
+END PROCEDURE;
+
+PROCEDURE Marketplace.GetDonationListings;
+BEGIN
+    RETURN DB.Listing.findWhere(isDonation = TRUE 
+        AND status = AVAILABLE);
+END PROCEDURE;
+
+END PROCEDURE;
+7. NOTIFICATION MODULE
+NOTIFICATION module
+PROCEDURE NotifService.Module;
+
+PROCEDURE NotifService.create(userId, type, message);
+BEGIN
+    notif.id = DB.generateId();
+    notif.userId = userId;
+    notif.type = type;
+    notif.message = message;
+    notif.createdAt = now;
+    notif.isRead = FALSE;
+
+    DB.Notification.save(notif);
+RETURN;
+END PROCEDURE;
+
+PROCEDURE NotifService.broadcastNearby(location, type, message);
+BEGIN
+    users = GeoService.findNearbyUsers(location, 3km);
+
+    FOR EACH U IN users DO
+        NotifService.create(U.id, type, message);
+    END FOR;
+
+RETURN;
+END PROCEDURE;
+8. GEOLOCATION MODULE
+GEOLOCATION module
+PROCEDURE GeoService.Module;
+
+PROCEDURE GeoService.geocode(address);
+BEGIN
+    response = GoogleAPI.Geocode(address);
+    RETURN response.coordinates;
+END PROCEDURE;
+
+PROCEDURE GeoService.calculateDistance(origin, destination);
+BEGIN
+    result = GoogleAPI.DistanceMatrix(origin, destination);
+    RETURN result.distance;
+END PROCEDURE;
+
+PROCEDURE GeoService.findNearbyUsers(location, rangeKm);
+BEGIN
+    users = DB.User.getAll();
+    nearby = [];
+
+    FOR EACH U IN users DO
+        dist = GeoService.calculateDistance(location, U.location);
+        IF dist <= rangeKm THEN ADD U TO nearby; END IF;
+    END FOR;
+
+RETURN nearby;
+END PROCEDURE;
+
+9. AUTHENTICATION MODULE
+AUTHENTICATION module
+PROCEDURE AuthService.Module;
+
+PROCEDURE AuthService.login(email, password);
+BEGIN
+    user = DB.User.findByEmail(email);
+
+    IF user.password != Hash(password) THEN
+        RETURN "INVALID_CREDENTIALS";
+    END IF;
+
+    token = JWT.generate(user.id, user.role);
+    RETURN token;
+END PROCEDURE;
+
+PROCEDURE AuthService.checkLoggedIn(user);
+BEGIN
+    RETURN JWT.verify(user.sessionToken);
+END PROCEDURE;
+
+END PROCEDURE;
+
+10. REPORTS & ANALYTICS MODULE
+REPORTS module
+PROCEDURE Reports.Module;
+
+PROCEDURE Reports.GenerateReport(requesterId, params);
+PRECONDITION AuthService.checkLoggedIn(requesterId);
+BEGIN
+    data = Analytics.query(params);
+
+    rep.id = DB.generateId();
+    rep.requesterId = requesterId;
+    rep.type = params.type;
+    rep.params = params.asString();
+    rep.generatedAt = now;
+
+    rep.fileUrl = FileService.exportAs(params.format, data);
+
+    DB.Report.save(rep);
+
+    NotifService.create(requesterId,
+        "report_ready",
+        "Your report is ready");
+
+RETURN "REPORT_GENERATED";
+END PROCEDURE;
+
+END PROCEDURE;
+11. BACKGROUND WORKERS
+BACKGROUND WORKERS module
+
+PROCEDURE BackgroundWorkers.ExpiryChecker;
+BEGIN
+    EVERY 1 HOUR DO
+        listings = DB.Listing.findWhere(
+            expiryAt <= now 
+            AND status = AVAILABLE
+        );
+
+        FOR EACH L IN listings DO
+            L.status = EXPIRED;
+            DB.Listing.update(L);
+
+            NotifService.create(L.providerId,
+                "listing_expired",
+                "Your listing has expired");
+        END FOR;
+    END EVERY;
+END PROCEDURE;
+
+PROCEDURE BackgroundWorkers.DynamicPricingUpdater;
+BEGIN
+    EVERY 30 MINUTES DO
+        listings = DB.Listing.findWhere(status = AVAILABLE);
+
+        FOR EACH L IN listings DO
+            hoursLeft = hoursBetween(now, L.expiryAt);
+
+            IF hoursLeft <= 24 THEN
+                L.price = Pricing.applyDiscount(L.price, 0.20);
+                DB.Listing.update(L);
+            END IF;
+        END FOR;
+    END EVERY;
+END PROCEDURE;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
