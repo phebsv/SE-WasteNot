@@ -1,0 +1,192 @@
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #e8f5e4, #f8fff1);
+}
+
+/* Layout identical to marketplace */
+.layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: 100vh;
+}
+
+/* SIDEBAR (same styles) */
+.sidebar {
+    background: #f4f4f4;
+    padding: 1.8rem 1.4rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #e5e7eb;
+}
+
+.logo-mark {
+    font-weight: 800;
+    font-size: 1.4rem;
+    margin-bottom: 2rem;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: auto;
+}
+
+.nav-item {
+    padding: 0.7rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    color: #111827;
+    text-decoration: none;
+}
+
+.nav-item:hover {
+    background-color: #e5f5df;
+}
+
+.logout-btn {
+    margin-top: 1.5rem;
+    padding: 0.6rem 0.8rem;
+    border: none;
+    background: transparent;
+    color: #dc2626;
+    cursor: pointer;
+}
+
+.main {
+    padding: 2rem 2.5rem;
+}
+
+.topbar-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.topbar-subtitle {
+    font-size: 0.9rem;
+    color: #6b7280;
+}
+
+/* Claim card styling */
+.claim-card {
+    margin-top: 2rem;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 2rem;
+    display: flex;
+    gap: 2rem;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+    border: 1px solid #edf0e6;
+}
+
+.product-image {
+    width: 240px;
+    height: 240px;
+    border-radius: 16px;
+    object-fit: cover;
+}
+
+.product-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.partner-name {
+    font-size: 1.1rem;
+    margin-top: 0.3rem;
+    color: #374151;
+}
+
+.pickup-window,
+.expiry {
+    font-size: 0.9rem;
+    margin-top: 0.2rem;
+    color: #6b7280;
+}
+
+.quantity-row,
+.date-row,
+.time-row {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-size: 0.9rem;
+    color: #374151;
+    margin-bottom: 0.3rem;
+}
+
+input[type="number"],
+input[type="date"],
+input[type="time"] {
+    padding: 0.5rem;
+    font-size: 0.95rem;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+}
+
+.btn {
+    margin-top: 1.2rem;
+    padding: 0.8rem 1.4rem;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.confirm-btn {
+    background: #15803d;
+    color: #ffffff;
+}
+
+.confirm-btn:hover {
+    background: #166534;
+}
+
+/* ===== TOAST NOTIFICATION ===== */
+.toast {
+    position: fixed;
+    top: -200px; /* Start hidden above screen */
+    right: 20px;
+    width: 320px;
+    background: #dcfce7;
+    color: #166534;
+    font-weight: 600;
+    padding: 1rem 1.2rem;
+    border-radius: 14px;
+    border: 1px solid #bbf7d0;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    z-index: 999;
+    opacity: 1;
+    transition: top 0.45s cubic-bezier(.25,.8,.25,1);
+}
+
+.toast.hidden {
+    top: -200px;
+}
+
+.toast.show {
+    top: 20px; /* Slide down */
+}
+
+.toast-ok-btn {
+    align-self: flex-end;
+    padding: 0.4rem 1rem;
+    background: #15803d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.2s ease;
+}
+
+.toast-ok-btn:hover {
+    background: #166534;
+}

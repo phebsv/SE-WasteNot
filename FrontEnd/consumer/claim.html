@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WasteNot – Confirm Claim</title>
+    <link rel="stylesheet" href="claim.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+<div class="layout">
+
+    <!-- SIDEBAR (consistent with marketplace) -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-mark">WasteNot</div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="consumer-dashboard.html" class="nav-item">Dashboard</a>
+            <a href="consumer-marketplace.html" class="nav-item">Marketplace</a>
+            <a href="consumer-map.html" class="nav-item">Map View</a>
+            <a href="consumer-claims.html" class="nav-item">My Order / Claims</a>
+            <a href="consumer-profile.html" class="nav-item">Profile / Settings</a>
+        </nav>
+
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+        <div class="topbar">
+            <div>
+                <h1 class="topbar-title">Confirm Pickup</h1>
+                <p class="topbar-subtitle">Review your item and choose a pickup time.</p>
+            </div>
+        </div>
+
+        <section class="claim-card">
+            <img id="productImage" class="product-image" src="" alt="">
+            
+            <div class="claim-info">
+                <h2 id="productName" class="product-title"></h2>
+                <p id="partnerName" class="partner-name"></p>
+                <p id="pickupWindow" class="pickup-window"></p>
+                <p id="expiry" class="expiry"></p>
+
+                <div class="quantity-row">
+                    <label>Quantity</label>
+                    <input type="number" id="quantityInput" min="1" value="1">
+                </div>
+
+                <div class="date-row">
+                    <label>Pickup Date</label>
+                    <input type="date" id="pickupDate">
+                </div>
+
+                <div class="time-row">
+                    <label>Pickup Time</label>
+                    <input type="time" id="pickupTime">
+                </div>
+
+                <button id="confirmBtn" class="btn confirm-btn">Confirm Claim</button>
+            </div>
+                
+                 <div id="toast" class="toast hidden">
+                <p>We will send a notification when the partner accepts the order.</p>
+                <button id="toastOkBtn" class="toast-ok-btn">OK</button>
+            </div>
+
+        </section>
+
+    </main>
+</div>
+
+<script src="claim.js"></script>
+
+</body>
+</html>
