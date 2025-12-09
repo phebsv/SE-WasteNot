@@ -1,123 +1,234 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WasteNot | Homepage</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WasteNot</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="homepage.css" />
 </head>
 <body>
-  <!-- Navbar -->
-  <header class="navbar">
-    <div class="logo">WasteNot</div>
-    <nav>
-      <ul class="nav-links">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">About Us</a></li>
-        <li><a href="#">FAQs</a></li>
-        <li><a href="#">Contact Us</a></li>
-      </ul>
-    </nav>
-    <button class="login-btn">Log In</button>
-  </header>
+    <!-- NAVBAR -->
+    <header class="navbar">
+        <div class="container nav-inner">
+            <div class="logo">WasteNot</div>
+            <nav class="nav-links">
+                <a href="#hero">Home</a>
+                <a href="#about">About Us</a>
+                <a href="#faqs">FAQs</a>
+                <a href="#contact">Contact Us</a>
+            </nav>
+            <a href="#" class="btn btn-outline-green nav-login">Log In</a>
+        </div>
+    </header>
 
-  <!-- Hero Section -->
-  <section class="hero">
-    <h1 class="tagline">TAGLINE HERE</h1>
-    <p class="desc">short product desc</p>
+    <main>
+        <!-- HERO -->
+        <section id="hero" class="hero-section">
+            <div class="container hero-inner fade-in">
+                <div class="hero-text">
+                    <h1>
+                        Rescue Good Food<br />
+                        Feed Our Community<br />
+                        Reduce Waste
+                    </h1>
+                    <p class="hero-subtitle">
+                        We are platform that connects food providers with surplus edible food to people and organizations who need it — offering discounted meals or free donations. We turn surplus into sustenance, helping communities fight hunger while cutting down food waste and environmental impact.
+                    </p>
 
-    <div class="hero-buttons">
-      <button class="btn-outline">Register as customer</button>
-      <button class="btn-fill">Register as NGO</button>
-      <button class="btn-partner">Be our partner</button>
-    </div>
-  </section>
+                    <div class="hero-actions">
+                        <a href="../consumer/register-consumer.html" class="btn btn-light-outline">Register as customer</a>
+                        <a href="../ngo/register-ngo.html" class="btn btn-green">Register as NGO</a>
+                        <a href="../partners/register-partner.html" class="btn btn-green">Register as Partner</a>
+                    </div>
 
-  <!-- About Section -->
-  <section class="about">
-    <small>About Us</small>
-    <h2>Objectives and why did we do this...</h2>
-    <p class="about-desc">
-      Next part is kind of statistics and a little knowledge about food waste.
-    </p>
+                    <div class="hero-partner-pill">
+                        <span>Be our partner!</span>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <div class="cards">
-      <div class="card">
-        <span class="icon">📈</span>
-        <h3>Amplify Insights</h3>
-        <p>Unlock data-driven decisions with comprehensive analytics, revealing key opportunities for strategic regional growth.</p>
-      </div>
+        <!-- ABOUT US MAIN TEXT -->
+        <section id="about" class="about-section">
+            <div class="container fade-in">
+                <p class="section-label">About Us</p>
+                <h2>
+                    WasteNot aims to reduce food waste by helping food providers redistribute safe,
+                    edible surplus to NGOs and communities that need it.
+                </h2>
 
-      <div class="card">
-        <span class="icon">🌐</span>
-        <h3>Control Your Global Presence</h3>
-        <p>Manage and track satellite offices, ensuring consistent performance and streamlined operations everywhere.</p>
-      </div>
+                <ul class="about-list">
+                    <li>NGOs can quickly request donations so surplus food reaches communities in need.</li>
+                    <li>The system reduces landfill waste and lowers environmental impact.</li>
+                    <li>Dashboards track waste reduction, donations, and overall impact.</li>
+                    <li>We do this because many Filipinos face hunger while tons of food are wasted daily.</li>
+                    <li>WasteNot connects providers, NGOs, and consumers to promote a sustainable, responsible food ecosystem.</li>
+                </ul>
+            </div>
+        </section>
 
-      <div class="card">
-        <span class="icon">👥</span>
-        <h3>Remove Language Barriers</h3>
-        <p>Adapt to diverse markets with built-in localization for clear communication and enhanced user experience.</p>
-      </div>
+        <!-- ABOUT CARDS -->
+        <section class="info-cards-section">
+            <div class="container info-cards-grid fade-in">
+                <article class="info-card">
+                    <h3>Household food waste still exists</h3>
+                    <p>
+                        ~2.95 million tonnes of food are thrown away by Filipino households each year — that's about 26 kg per person annually.
+                    </p>
+                </article>
+                <article class="info-card">
+                    <h3>Commonly wasted food products</h3>
+                    <p>
+                        The three most-wasted foods in Filipino homes: Rice (58%), Vegetables (18%), and Meat (9%).
+                    </p>
+                </article>
+                <article class="info-card">
+                    <h3>Scale of waste in urban centers</h3>
+                    <p>
+                        In Metro Manila alone, an estimated 2,175 tons of food scraps are thrown away daily.
+                    </p>
+                </article>
+                <article class="info-card">
+                    <h3>Environmental importance</h3>
+                    <p>
+                        Reducing food waste globally can cut greenhouse-gas emissions significantly; food loss and waste are estimated to contribute up to 10% of all anthropogenic emissions.
+                    </p>
+                </article>
+            </div>
+        </section>
 
-      <div class="card">
-        <span class="icon">📊</span>
-        <h3>Visualize Growth</h3>
-        <p>Generate precise, visually compelling reports that illustrate your growth trajectories across all regions.</p>
-      </div>
-    </div>
-  </section>
+        <!-- QUOTE -->
+        <section class="quote-section fade-in">
+            <div class="container">
+                <p class="quote-text">
+                    “Every meal we throw away is a missed opportunity to feed someone and a burden on our planet. Let’s rescue food before it becomes waste.”
+                </p>
+            </div>
+        </section>
 
-  <!-- Impact Quote Section -->
-  <section class="quote">
-    <p>
-      impactful quote or something<br />
-      about food waste
-    </p>
-  </section>
+        <!-- HOW IT WORKS -->
+        <section class="how-section">
+            <div class="container fade-in">
+                <h2>How does our app works?</h2>
 
-  <!-- How It Works Section -->
-  <section class="how-it-works">
-    <h2>How does our app works?</h2>
-    <div class="how-cards">
-      <div class="how-card">
-        <p>Local restaurants, bakeries, and cafeterias post surplus items that are still perfectly good to eat but would otherwise go to waste.</p>
-      </div>
-      <div class="how-card">
-        <p>Shoppers browse affordable surplus food nearby, with filters for location, and expiry date.</p>
-      </div>
-      <div class="how-card">
-        <p>Charities and community organizations request available surplus food to distribute to their beneficiaries.</p>
-      </div>
-      <div class="how-card">
-        <p>An easy dashboard highlights items nearing expiry, letting providers quickly post them for sale or donation.</p>
-      </div>
-      <div class="how-card">
-        <p>Both providers and admins can see how much food was saved, donated, and redistributed—turning waste into measurable change.</p>
-      </div>
-    </div>
-  </section>
+                <div class="how-grid">
+                    <div class="how-card">
+                        <div class="how-icon">🍽️</div>
+                        <p>
+                            Local restaurants, bakeries, and cafeterias post surplus items that are still perfectly good to eat but would otherwise go to waste.
+                        </p>
+                    </div>
+                    <div class="how-card">
+                        <div class="how-icon">🛍️</div>
+                        <p>
+                            Shoppers browse affordable surplus food nearby, with filters for location, and expiry date.
+                        </p>
+                    </div>
+                    <div class="how-card">
+                        <div class="how-icon">💚</div>
+                        <p>
+                            Charities and community organizations request available surplus food to distribute to their beneficiaries.
+                        </p>
+                    </div>
+                    <div class="how-card">
+                        <div class="how-icon">📊</div>
+                        <p>
+                            An easy dashboard highlights items nearing expiry, letting providers quickly post them for sale or donation.
+                        </p>
+                    </div>
+                    <div class="how-card">
+                        <div class="how-icon">📈</div>
+                        <p>
+                            Both providers and admins can see how much food was saved, donated, and redistributed—turning waste into measurable change.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-  <!-- Join Us Section -->
-  <section class="join-us">
-    <p>You can save, help, save... by joining us!</p>
-    <button class="join-btn">Join here</button>
-  </section>
+        <!-- JOIN BANNER -->
+        <section class="join-section fade-in">
+            <div class="container join-inner">
+                <h2>Want to help reduce food waste? Join us!</h2>
+                <a href="#" class="btn btn-banner">Join here</a>
+            </div>
+        </section>
 
-  <!-- FAQ Section -->
-  <section class="faqs">
-    <div class="faq-grid">
-      <div class="faq-item">Frequently Asked Questions</div>
-      <div class="faq-item">FAQs for Customers</div>
-      <div class="faq-item">FAQs for Partners/Providers</div>
-      <div class="faq-item">FAQs for NGOs</div>
-    </div>
-  </section>
+        <!-- FAQS -->
+        <section id="faqs" class="faq-section">
+            <div class="container fade-in">
+                <h2 class="faq-title">Frequently Asked Questions</h2>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <h1>WASTENOT</h1>
-    <p>Contact Us</p>
-  </footer>
+                <div class="faq-grid">
+                    <!-- CONSUMERS -->
+                    <div class="faq-column">
+                        <h3>FAQs for Consumers</h3>
+                        <div class="faq-item">
+                            <p class="question">Q: Can I use WasteNot to get discounted meals or rescue food?</p>
+                            <p class="answer">A: Yes! WasteNot is open for all, you can claim products on the marketplace.</p>
+                        </div>
+                        <div class="faq-item">
+                            <p class="question">Q: Do I need to pay or sign up as a consumer to browse the site?</p>
+                            <p class="answer">A: You can use the site for free. Sign up as a consumer and you can buy discounted meals or surplus products with a lower price.</p>
+                        </div>
+                        <div class="faq-item">
+                            <p class="question">Q: Is the food safe / hygienic?</p>
+                            <p class="answer">A: Yes — providers must indicate food type, expiry, pickup/delivery info.</p>
+                        </div>
+                    </div>
+
+                    <!-- PARTNERS / PROVIDERS -->
+                    <div class="faq-column">
+                        <h3>FAQs for Partners/ Providers</h3>
+                        <div class="faq-item">
+                            <p class="question">Q: Who can request donations?</p>
+                            <p class="answer">A: Registered NGOs, community pantries, shelters, and charitable organizations can request surplus food listed by providers.</p>
+                        </div>
+                        <div class="faq-item">
+                            <p class="question">Q: How does requesting work?</p>
+                            <p class="answer">A: Browse available donation listings → submit request → wait for provider approval → coordinate pickup/delivery → mark as completed → update impact log.</p>
+                        </div>
+                        <div class="faq-item">
+                            <p class="question">Q: Is there any cost or fee for NGOs to use WasteNot?</p>
+                            <p class="answer">A: No — requesting donations is free. You may need to arrange your own transportation or pickup depending on provider agreement.</p>
+                        </div>
+                        <div class="faq-item">
+                            <p class="question">Q: What qualifies as “surplus food” that I can post?</p>
+                            <p class="answer">A: Surplus food includes still-edible meals, baked goods, near-expiry ingredients, or prepared food that otherwise would be discarded — as long as it's safe, properly stored, and within regulatory standards.</p>
+                        </div>
+                        <div class="faq-item">
+                            <p class="question">Q: How does dynamic pricing work?</p>
+                            <p class="answer">A: On each listing, you enter expiry date/time. As the expiry approaches, our system automatically reduces the price (or marks items free) to encourage quicker claims or donations.</p>
+                        </div>
+                        <div class="faq-item">
+                            <p class="question">Q: Do I have to pay for disposal if I donate instead?</p>
+                            <p class="answer">A: No — by posting surplus via WasteNot, you're avoiding disposal costs, possibly recovering part of the cost through discounted sales, and contributing to your sustainability/CSR image.</p>
+                        </div>
+                        <div class="faq-item">
+                            <p class="question">Q: Can I get reports or analytics on how much I’ve saved or donated?</p>
+                            <p class="answer">A: Yes — the Impact Report page provides full data (food saved, donated items, estimated waste diverted, etc.) and export options (CSV or PDF).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer id="contact" class="footer-section">
+        <div class="container footer-inner">
+            <h2 class="footer-logo">WASTENOT</h2>
+            <p class="footer-contact-label">Contact Us</p>
+            <div class="footer-icons">
+                <a href="#" aria-label="Facebook">📘</a>
+                <a href="#" aria-label="X">✖️</a>
+                <a href="#" aria-label="Phone">📞</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="homepage.js"></script>
 </body>
 </html>
