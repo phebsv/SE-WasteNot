@@ -119,7 +119,6 @@ document.addEventListener("DOMContentLoaded", () => {
         // Partner Register is in frontend/partner/ (Assuming). Needs: ../../login/login-partner.html
         else if (role === "partner-register") {
             window.location.href = "../../login/login-partner.html"; 
-        }
--
+        }   
     });
 });

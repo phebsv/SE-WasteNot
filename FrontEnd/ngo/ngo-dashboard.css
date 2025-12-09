@@ -96,6 +96,7 @@ body {
 }
 .main {
   padding: 1.8rem 2.2rem 2.2rem;
+  padding-top: 2.1rem;
 }
 
 /* top bar */
@@ -111,6 +112,7 @@ body {
   font-size: 1.8rem;
   font-weight: 600;
   color: #2c4628;
+  margin-bottom: 0.1rem;
 }
 
 .topbar-title .accent {
@@ -238,7 +240,7 @@ body {
 
 /* Ensure the accent color/background of the summary card is visible */
 .summary-card-ngo.accent-pending {
-    background-color: #fffbf0; /* Very light amber */
+    background-color: #ffffff; /* Very light amber */
 }
 
 .summary-card-ngo .summary-label {
