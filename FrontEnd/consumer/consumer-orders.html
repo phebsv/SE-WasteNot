@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>WasteNot – My Orders / Claims</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="consumer-orders.css">
+</head>
+
+<body>
+
+<div class="layout">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">WasteNot</div>
+
+    <nav class="sidebar-nav">
+      <a href="consumer-dashboard.html" class="nav-item">Dashboard</a>
+      <a href="consumer-marketplace.html" class="nav-item">Marketplace</a>
+      <a href="consumer-mapview.html" class="nav-item">Map View</a>
+      <a href="consumer-orders.html" class="nav-item active">My Order / Claims</a>
+      <a href="consumer-profile.html" class="nav-item">Profile / Settings</a>
+    </nav>
+
+    <button id="logoutBtn" class="logout">Logout</button>
+  </aside>
+
+  <!-- ================= MAIN CONTENT ================= -->
+  <main class="main">
+
+    <!-- Top Search Bar -->
+    <div class="topbar">
+      <div class="search-box">
+        <input id="searchInput" type="text" placeholder="Got something you’re looking for?">
+        <span class="search-icon">🔍</span>
+      </div>
+
+      <div class="profile-box">
+        <button class="icon-btn">🔔</button>
+        <div class="avatar">C</div>
+      </div>
+    </div>
+
+    <button class="back-btn" onclick="history.back()">← Back</button>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-filter="all">All</button>
+      <button class="tab" data-filter="pending">Pending</button>
+      <button class="tab" data-filter="ready">Ready for Pickup</button>
+      <button class="tab" data-filter="completed">Completed</button>
+      <button class="tab" data-filter="cancelled">Cancelled</button>
+    </div>
+
+    <div id="ordersContainer" class="orders-list"></div>
+
+  </main>
+</div>
+
+<script src="consumer-orders.js"></script>
+</body>
+</html>
