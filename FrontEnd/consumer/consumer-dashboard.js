@@ -1,6 +1,6 @@
 // === AUTH CHECK ===
 if (!localStorage.getItem("consumerName")) {
-    window.location.href = "login-consumer.html";
+    window.location.href = "../login/login-consumer.html";
 }
 
 let claims = [
@@ -187,5 +187,5 @@ window.addEventListener("DOMContentLoaded", () => {
 
 document.querySelector(".logout-btn").addEventListener("click", () => {
     localStorage.clear(); // removes login data
-    window.location.href = "login-consumer.html"; // or partner/ngo
+    window.location.href = "../login/login-consumer.html"; // or partner/ngo
 });

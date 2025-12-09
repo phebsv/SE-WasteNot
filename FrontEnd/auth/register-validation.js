@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
 
         if (form.closest("body").innerHTML.includes("consumer")) {
-            window.location.href = "../consumer/login-consumer.html";
+            window.location.href = "../login/login-consumer.html";
         } 
         else if (form.closest("body").innerHTML.includes("partner")) {
             window.location.href = "../partners/login-partner.html";
