@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>WasteNot – NGO Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    />
+    <link rel="stylesheet" href="ngo-dashboard.css" />
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <span class="logo-mark">WasteNot</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="ngo-dashboard.html" class="nav-item active">Dashboard</a>
+                <a href="ngo-marketplace.html" class="nav-item">Available Donations</a>
+                <a href="#" class="nav-item">My Request / Claims</a>
+                <a href="#" class="nav-item">Settings</a>
+            </nav>
+
+            <button class="logout-btn">Logout</button>
+        </aside>
+
+        <main class="main">
+            <header class="topbar">
+                <div>
+                    <h1 class="topbar-title">Welcome, <span class="accent" id="ngo-name-display">Hope Foundation!</span></h1>
+                    <p class="topbar-subtitle">
+                        Here's a quick overview of your claims and pickup schedule.</p>
+                </div>
+
+                <div class="topbar-actions">
+                    <button class="icon-btn" aria-label="Notifications">
+                        🔔
+                    </button>
+                    <div class="avatar" title="NGO User">
+                        H
+                    </div>
+                </div>
+            </header>
+
+            <section class="grid-two">
+                
+                <div class="summary-column">
+                    <article class="summary-card-ngo">
+                        <p class="summary-label">Active Requests:</p>
+                        <p class="summary-value">3</p>
+                    </article>
+
+                    <article class="summary-card-ngo">
+                        <p class="summary-label">Received Donations:</p>
+                        <p class="summary-value">5</p>
+                    </article>
+
+                    <article class="summary-card-ngo accent-pending">
+                        <p class="summary-label">Pending Requests:</p>
+                        <p class="summary-value">3</p>
+                    </article>
+                </div>
+
+                <article class="panel panel-pickups">
+                    <h2 class="panel-title">Today's Pickups:</h2>
+                    <div class="pickup-list-wrapper">
+                        <div class="pickup-list">
+                            <div class="pickup-item">
+                                <span class="pickup-detail">Jollibee</span>
+                                <span class="pickup-store">SM Seaside Cebu</span>
+                                <span class="pickup-time">20 Meals</span>
+                                <span class="pickup-time-slot">8:00 AM</span>
+                            </div>
+                            <div class="pickup-item">
+                                <span class="pickup-detail">Marketplace</span>
+                                <span class="pickup-store">Robinsons Galleria</span>
+                                <span class="pickup-time">15 Canned Goods</span>
+                                <span class="pickup-time-slot">3:00 PM</span>
+                            </div>
+                            <div class="pickup-item">
+                                <span class="pickup-detail">McDonald's</span>
+                                <span class="pickup-store">Main Branch</span>
+                                <span class="pickup-time">50 Chicken Pieces</span>
+                                <span class="pickup-time-slot">4:30 PM</span>
+                            </div>
+                             <div class="pickup-item">
+                                <span class="pickup-detail">KFC</span>
+                                <span class="pickup-store">City Center</span>
+                                <span class="pickup-time">10 Buckets</span>
+                                <span class="pickup-time-slot">6:00 PM</span>
+                            </div>
+                            <div class="pickup-item">
+                                <span class="pickup-detail">Noodle Haus</span>
+                                <span class="pickup-store">IT Park</span>
+                                <span class="pickup-time">5 Trays</span>
+                                <span class="pickup-time-slot">7:00 PM</span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+            </section>
+
+            <section class="panel panel-claims-full">
+                <div class="panel-header">
+                    <h2 class="panel-title claims-title">Recent Claims</h2>
+                </div>
+                
+                <div class="claims-table-wrapper">
+    <table class="claims-table">
+        <thead>
+            <tr>
+                <th>Provider</th>
+                <th>Item</th>
+                <th>Pickup time</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Jollibee</td>
+                <td>Green Salad Bowl</td>
+                <td>Today • 5:30 PM</td>
+                <td><span class="status-pill status-confirm">Pickup</span></td>
+            </tr>
+            <tr>
+                <td>Marketplace</td>
+                <td>Canned Goods</td>
+                <td>Today • 3:00 PM</td>
+                <td><span class="status-pill status-confirm">Pickup</span></td>
+            </tr>
+            <tr>
+                <td>Noodle Haus</td>
+                <td>Pancit Canton Tray</td>
+                <td>Today • 7:00 PM</td>
+                <td><span class="status-pill status-pending">Pending</span></td>
+            </tr>
+            <tr>
+                <td>McDonald's</td>
+                <td>Vegetable Fried Rice</td>
+                <td>Yesterday • 4:30 PM</td>
+                <td><span class="status-pill status-complete">Completed</span></td>
+            </tr>
+             <tr>
+                <td>Starbucks</td>
+                <td>Pastry Box</td>
+                <td>Mon • 6:20 PM</td>
+                <td><span class="status-pill status-pending">Pending</span></td>
+            </tr>
+             <tr>
+                <td>KFC</td>
+                <td>Chicken Bucket</td>
+                <td>Sun • 8:00 AM</td>
+                <td><span class="status-pill status-complete">Completed</span></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+            </section>
+
+        </main>
+    </div>
+
+    </body>
+</html>

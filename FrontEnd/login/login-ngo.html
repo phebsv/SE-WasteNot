@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>WasteNot – NGO Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../auth/auth.css">
+    <link rel="stylesheet" href="login-ngo.css">
+</head>
+
+<body data-role="ngo-login">
+    <div class="auth-page">
+
+        <div class="auth-left">
+            <div class="brand-pill">Welcome back!</div>
+            <h1 class="brand-title">Log in to your NGO account</h1>
+            <p class="brand-subtitle">
+                Access available donations, manage active requests, and track your food rescue efforts.
+            </p>
+            <ul class="brand-bullet-list">
+                <li>✓ View food surplus listings from Providers</li>
+                <li>✓ Submit and manage food requests</li>
+                <li>✓ Track your organization's environmental impact</li>
+            </ul>
+        </div>
+
+        <div class="auth-right">
+            <div class="auth-card fade-in">
+                
+                <div class="auth-logo">WasteNot</div>
+                <h2 class="auth-heading">NGO Login</h2>
+                <p class="auth-subheading">Enter your email and password to continue.</p>
+
+                <form class="auth-form" action="#" method="post">
+
+                    <div>
+                        <label class="form-label">Organization Name</label>
+                        <div class="input-wrapper">
+                            <input id="organizationName" class="input-field" type="text" required>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Email Address</label>
+                        <div class="input-wrapper">
+                            <input id="email" type="email" required>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Password</label>
+                        <div class="input-wrapper">
+                            <input id="password" class="input-field" type="password" required>
+                            <span class="toggle-password">Show</span>
+                        </div>
+                    </div>
+
+                    <button class="btn-primary">Log In</button>
+
+                </form>
+
+                <p class="auth-bottom-text">
+                    Don't have an account? <a href="../ngo/register-ngo.html">Register here</a>
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="login-ngo.js"></script>
+    <script src="../auth/register-validation.js"></script>
+</body>
+</html>
