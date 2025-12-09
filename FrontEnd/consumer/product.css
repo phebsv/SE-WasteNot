@@ -1,0 +1,164 @@
+/* GLOBAL */
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: #f4f8ef;
+}
+
+/* GRID LAYOUT */
+.layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    min-height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+    background: #f0f5ea;
+    padding: 2rem 1.5rem;
+    border-right: 1px solid #d9e6d5;
+}
+
+.logo {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin-bottom: 2rem;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.sidebar-nav a {
+    text-decoration: none;
+    font-size: 1rem;
+    padding: 0.6rem 0.8rem;
+    color: #2a3b2a;
+    border-radius: 8px;
+}
+
+.sidebar-nav a.active,
+.sidebar-nav a:hover {
+    background: #3ba15c;
+    color: white;
+}
+
+.logout {
+    margin-top: 2rem;
+    padding: 0.6rem 1rem;
+    background: transparent;
+    border: none;
+    color: #c0392b;
+    cursor: pointer;
+}
+
+/* MAIN AREA */
+.main {
+    padding: 2.5rem 3rem;
+}
+
+/* PRODUCT CARD WRAPPER */
+.product-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    background: #ffffff;
+    padding: 2rem 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* PRODUCT LAYOUT */
+.product-top {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.discount-box {
+    background: #d6ecc4;
+    padding: 1.5rem;
+    width: 230px;
+    border-radius: 20px;
+    text-align: center;
+}
+
+.discount-box .percent {
+    font-size: 2.6rem;
+    font-weight: 800;
+    color: #b71c1c;
+}
+
+.discount-box img {
+    width: 140px;
+    margin-top: 1rem;
+}
+
+.countdown {
+    margin-top: 0.6rem;
+    font-size: 1rem;
+    color: #b71c1c;
+    font-weight: 600;
+}
+
+/* RIGHT SIDE DETAILS */
+.product-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.product-sub {
+    margin-top: 0.3rem;
+    font-size: 0.95rem;
+    color: #6b7280;
+}
+
+.product-price {
+    margin-top: 0.8rem;
+    font-size: 1.6rem;
+    color: #16723c;
+    font-weight: 700;
+}
+
+.old-price {
+    text-decoration: line-through;
+    margin-left: 10px;
+    color: #8d8d8d;
+}
+
+.detail-list {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+}
+
+.detail-list p {
+    margin: 0.25rem 0;
+}
+
+.action-row {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.btn {
+    padding: 0.7rem 1.4rem;
+    border-radius: 10px;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.directions-btn {
+    background: #e1e3e6;
+}
+
+.claim-btn {
+    background: #16723c;
+    color: white;
+}
+
+.claim-btn:hover {
+    background: #0f552c;
+}
