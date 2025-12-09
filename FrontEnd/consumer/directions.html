@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WasteNot – Directions</title>
+    <link rel="stylesheet" href="directions.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+<div class="layout">
+
+    <!-- ========= SIDEBAR (EXACT SAME AS MARKETPLACE) ========= -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-mark">WasteNot</div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="consumer-dashboard.html" class="nav-item">Dashboard</a>
+            <a href="consumer-marketplace.html" class="nav-item">Marketplace</a>
+            <a href="consumer-map.html" class="nav-item">Map View</a>
+            <a href="consumer-claims.html" class="nav-item">My Order / Claims</a>
+            <a href="consumer-profile.html" class="nav-item">Profile / Settings</a>
+        </nav>
+
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+    </aside>
+
+    <!-- ========= MAIN CONTENT ========= -->
+    <main class="main">
+
+        <div class="topbar">
+            <div>
+                <h1 class="topbar-title">Directions</h1>
+                <p class="topbar-subtitle">Find the fastest route to your pickup location.</p>
+            </div>
+        </div>
+
+        <!-- Product + Store Info -->
+        <section class="directions-info">
+            <img id="productImage" class="product-image" src="" alt="">
+
+            <div class="info-text">
+                <h2 id="productName" class="product-title"></h2>
+                <p id="storeName" class="store-name"></p>
+                <p id="storeAddress" class="store-address"></p>
+                <p id="storeDistance" class="store-distance"></p>
+
+                <div class="actions-row">
+                    <a id="openMapsBtn" class="btn maps-btn" target="_blank">Open in Google Maps</a>
+                    <button id="claimBtn" class="btn claim-btn">Claim</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Map Preview -->
+        <section class="map-section">
+            <h3 class="section-title">Route Preview</h3>
+            <img id="mapPreview" class="map-preview" src="map-static.jpg" alt="">
+        </section>
+
+        <!-- Other Products -->
+        <section class="others-section">
+            <h3 class="section-title">Other items from this store</h3>
+            <div id="otherProductsGrid" class="others-grid"></div>
+        </section>
+
+    </main>
+</div>
+
+<script src="directions.js"></script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+/* ====== GLOBAL ====== */
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #e8f5e4, #f8fff1);
+    min-height: 100vh;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: 100vh;
+}
+
+/* ====== SIDEBAR (EXACT SAME AS MARKETPLACE) ====== */
+.sidebar {
+    background-color: #f4f4f4;
+    padding: 1.8rem 1.4rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #e5e7eb;
+}
+
+.logo-mark {
+    font-weight: 800;
+    font-size: 1.4rem;
+    margin-bottom: 2rem;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: auto;
+}
+
+.nav-item {
+    padding: 0.7rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    color: #111827;
+    text-decoration: none;
+    transition: 0.16s;
+}
+
+.nav-item:hover {
+    background-color: #e5f5df;
+}
+
+.nav-item.active {
+    background-color: #15803d;
+    color: #fff;
+}
+
+.logout-btn {
+    margin-top: 1.5rem;
+    padding: 0.6rem 0.8rem;
+    background: transparent;
+    border: none;
+    color: #dc2626;
+    cursor: pointer;
+}
+
+/* ====== MAIN ====== */
+.main {
+    padding: 2rem 2.5rem;
+}
+
+.topbar-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.topbar-subtitle {
+    font-size: 0.9rem;
+    color: #6b7280;
+}
+
+/* ====== PRODUCT INFO SECTION ====== */
+.directions-info {
+    display: flex;
+    gap: 2rem;
+    margin-top: 1.5rem;
+    background: #ffffff;
+    padding: 1.8rem;
+    border-radius: 18px;
+    border: 1px solid #edf0e6;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+}
+
+.product-image {
+    width: 220px;
+    height: 220px;
+    border-radius: 18px;
+    object-fit: cover;
+}
+
+.product-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.store-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+}
+
+.store-address {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin-top: 0.2rem;
+}
+
+.store-distance {
+    font-size: 0.9rem;
+    color: #166534;
+    margin-top: 0.4rem;
+    font-weight: 600;
+}
+
+.actions-row {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.btn {
+    padding: 0.6rem 1.2rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+}
+
+.maps-btn {
+    background: #1d4ed8;
+    color: #fff;
+}
+
+.claim-btn {
+    background: #15803d;
+    color: white;
+}
+
+/* ====== MAP SECTION ====== */
+.map-section {
+    margin-top: 2rem;
+}
+
+.map-preview {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    border-radius: 18px;
+    border: 1px solid #edf0e6;
+}
+
+/* ====== OTHER PRODUCTS ====== */
+.others-section {
+    margin-top: 2rem;
+}
+
+.others-grid {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+}
+
+.other-item {
+    background: white;
+    padding: 1rem;
+    border-radius: 16px;
+    border: 1px solid #edf0e6;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.15s;
+}
+
+.other-item:hover {
+    transform: translateY(-4px);
+}
+
+.other-item img {
+    width: 120px;
+    height: 120px;
+    border-radius: 12px;
+    object-fit: cover;
+}
