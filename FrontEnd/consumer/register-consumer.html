@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>WasteNot – Register as Consumer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../auth/auth.css">
+
+</head>
+<body>
+  <div class="auth-page">
+    <!-- LEFT SIDE -->
+    <div class="auth-left">
+      <div class="brand-pill">Join the WasteNot community</div>
+      <p class="brand-kicker">For Consumers</p>
+      <h1 class="brand-title">Rescue good food, save more.</h1>
+      <p class="brand-subtitle">
+        Create your WasteNot account to claim discounted surplus meals, support local providers,
+        and help reduce food waste in your community.
+      </p>
+      <ul class="brand-bullet-list">
+        <li>✓ Browse surplus food at lower prices</li>
+        <li>✓ Get alerts for items near you</li>
+        <li>✓ Help keep good food out of landfills</li>
+      </ul>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="auth-right">
+      <div class="auth-card fade-in">
+        <div class="auth-logo">WasteNot</div>
+
+        <h2 class="auth-heading">Create your account</h2>
+        <p class="auth-subheading">Sign up as a consumer to start rescuing food.</p>
+
+        <form class="auth-form" action="#" method="post">
+          <!-- Email -->
+          <div>
+            <label class="form-label" for="email">Email Address</label>
+            <div class="input-wrapper">
+              <input class="input-field" type="email" id="email" name="email" placeholder="you@example.com" required />
+            </div>
+          </div>
+
+          <!-- Password + Confirm -->
+          <div class="form-row">
+            <div>
+              <label class="form-label" for="password">Password</label>
+              <div class="input-wrapper">
+                <input class="input-field" type="password" id="password" name="password" required />
+                 <span class="toggle-password">Show</span>
+              </div>
+            </div>
+            <div>
+              <label class="form-label" for="confirmPassword">Confirm Password</label>
+              <div class="input-wrapper">
+                <input class="input-field" type="password" id="confirmPassword" name="confirmPassword" required />
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary">Register</button>
+
+          <!-- Terms -->
+          <div class="terms">
+            <input type="checkbox" id="termsConsumer" required />
+            <label for="termsConsumer">
+              By registering your details, you agree with our
+              <a href="#">Terms and Conditions</a>, and
+              <a href="#">Privacy and Cookie Policy</a>.
+            </label>
+          </div>
+        </form>
+
+        <p class="auth-bottom-text">
+          Already have an account?
+          <a href="login-consumer.html">Log in</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../auth/register-validation.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Set Up Your Account – WasteNot</title>
+  <link rel="stylesheet" href="consumer-setup.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="setup-container">
+  
+  <div class="setup-card">
+    <h2 class="title">Set up your<br>account</h2>
+
+    <label class="avatar-upload">
+      <input type="file" id="avatarInput" accept="image/*">
+      <div class="avatar-preview" id="avatarPreview">📷</div>
+    </label>
+
+    <form id="setupForm">
+      <input type="text" id="fullName" placeholder="Full Name" required>
+      <input type="text" id="contactNumber" placeholder="Contact Number" required>
+      <input type="text" id="address" placeholder="Address" required>
+
+      <label class="checkbox-row">
+        <input type="checkbox" id="notifyMe" checked>
+        <span>I would like to be notified</span>
+      </label>
+
+      <button type="submit" class="next-btn">Next →</button>
+    </form>
+
+  </div>
+</div>
+
+<script src="consumer-setup.js"></script>
+</body>
+</html>

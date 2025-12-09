@@ -1,0 +1,307 @@
+/* ==== GLOBAL RESET ==== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-color: #f8fbe8;
+  color: #111827;
+}
+
+/* ==== LAYOUT ==== */
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+}
+
+/* left & right panels */
+.auth-left,
+.auth-right {
+  flex: 1;
+  position: relative;
+}
+
+/* LEFT SIDE (branding) */
+.auth-left {
+  padding: 3rem 4rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* big soft circles */
+.auth-left::before,
+.auth-left::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  background: #b7dfac;
+  opacity: 0.7;
+  z-index: -1;
+}
+
+.auth-left::before {
+  width: 380px;
+  height: 380px;
+  top: -60px;
+  left: -120px;
+}
+
+.auth-left::after {
+  width: 270px;
+  height: 270px;
+  bottom: -90px;
+  right: 10%;
+}
+
+/* left content */
+.brand-kicker {
+  font-size: 0.85rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #3f5f36;
+  margin-bottom: 0.75rem;
+}
+
+.brand-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #21401a;
+  margin-bottom: 0.75rem;
+}
+
+.brand-subtitle {
+  font-size: 1rem;
+  max-width: 360px;
+  color: #334155;
+  margin-bottom: 1.5rem;
+}
+
+.brand-bullet-list {
+  list-style: none;
+  margin-top: 0.75rem;
+}
+
+.brand-bullet-list li {
+  font-size: 0.9rem;
+  color: #4b5563;
+  margin-bottom: 0.4rem;
+}
+
+/* small pill for “Join the community” etc. */
+.brand-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  background: #ecf7e0;
+  color: #166534;
+  font-size: 0.8rem;
+  margin-bottom: 1.25rem;
+}
+
+/* ==== RIGHT SIDE (form) ==== */
+.auth-right {
+  padding: 3rem 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* glassmorphism card */
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(255, 255, 255, 0.78);
+  border-radius: 24px;
+  padding: 2.2rem 2.5rem 2.5rem;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(18px);
+}
+
+/* logo placeholder */
+.auth-logo {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #14532d;
+  margin-bottom: 1.4rem;
+}
+
+/* heading & subtitle */
+.auth-heading {
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+
+.auth-subheading {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-bottom: 1.8rem;
+}
+
+/* ==== FORM ==== */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* label text */
+.form-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.2rem;
+}
+
+/* input wrapper so we can add icons later if you want */
+.input-wrapper {
+  position: relative;
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border-radius: 10px;         /* slightly rounded (not full pill) */
+  border: 1px solid #d1d5db;
+  font-size: 0.9rem;
+  outline: none;
+  background-color: #fefefe;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+}
+
+.input-field:focus {
+  border-color: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.18);
+  background-color: #ffffff;
+}
+
+/* pair row: password + confirm */
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+/* button */
+.btn-primary {
+  width: 100%;
+  border: none;
+  background-color: #15803d;
+  color: #ffffff;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;          /* rectangular but soft */
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 0.4rem;
+  transition: background-color 0.18s ease, box-shadow 0.18s ease, transform 0.12s ease;
+}
+
+.btn-primary:hover {
+  background-color: #166534;
+  box-shadow: 0 10px 22px rgba(21, 128, 61, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* terms checkbox area */
+.terms {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-top: 0.7rem;
+  font-size: 0.78rem;
+  color: #4b5563;
+}
+
+.terms input[type="checkbox"] {
+  margin-top: 0.15rem;
+}
+
+.terms a {
+  color: #166534;
+}
+
+/* bottom text */
+.auth-bottom-text {
+  margin-top: 1.4rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.auth-bottom-text a {
+  color: #166534;
+  font-weight: 500;
+}
+
+/* simple fade-in animation */
+.fade-in {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==== RESPONSIVE ==== */
+@media (max-width: 960px) {
+  .auth-page {
+    flex-direction: column;
+  }
+
+  .auth-left {
+    padding: 2.5rem 2rem 1.5rem;
+  }
+
+  .auth-right {
+    padding: 1rem 1.5rem 2.5rem;
+  }
+
+  .auth-left::before {
+    width: 260px;
+    height: 260px;
+    top: -80px;
+    left: -120px;
+  }
+
+  .auth-left::after {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .brand-title {
+    font-size: 1.7rem;
+  }
+
+  .brand-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .auth-card {
+    padding: 1.8rem 1.6rem 2rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr; /* stack password + confirm on small screens */
+  }
+}
