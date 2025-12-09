@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>WasteNot – Consumer Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="consumer-dashboard.css" />
+</head>
+
+<body>
+  <div class="layout">
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <span class="logo-mark">WasteNot</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active">Dashboard</a>
+        <a href="#" class="nav-item">Marketplace</a>
+        <a href="#" class="nav-item">Map View</a>
+        <a href="#" class="nav-item">My Orders / Claims</a>
+        <a href="#" class="nav-item">Profile / Settings</a>
+      </nav>
+
+      <button class="logout-btn">Logout</button>
+    </aside>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main">
+      <!-- Top bar -->
+      <header class="topbar">
+        <div>
+          <h1 class="topbar-title">Welcome, <span class="accent">User!</span></h1>
+          <p class="topbar-subtitle">
+            Here’s a quick overview of your savings and recent claims.
+          </p>
+        </div>
+
+        <div class="topbar-actions">
+          <button class="icon-btn" aria-label="Notifications">
+            🔔
+          </button>
+          <div class="avatar" title="User">
+            M
+          </div>
+        </div>
+      </header>
+
+      <!-- Summary cards -->
+      <section class="summary-row">
+        <article class="summary-card">
+          <p class="summary-label">Total Savings</p>
+          <p class="summary-value">₱ 1,820</p>
+          <p class="summary-caption">from surplus purchases</p>
+        </article>
+
+        <article class="summary-card">
+          <p class="summary-label">Meals Rescued</p>
+          <p class="summary-value">32</p>
+          <p class="summary-caption">total items claimed</p>
+        </article>
+
+        <article class="summary-card">
+          <p class="summary-label">Active Claims</p>
+          <p class="summary-value">3</p>
+          <p class="summary-caption">awaiting pickup</p>
+        </article>
+      </section>
+
+      <!-- Main grid: savings & pickups + recent claims -->
+      <section class="grid-two">
+        <!-- Left main card: could later show chart or summary -->
+        <article class="panel panel-large">
+          <h2 class="panel-title">Total savings from surplus purchases</h2>
+          <p class="panel-body-text">
+            You’ve saved <strong>₱1,820</strong> and helped prevent food waste by choosing surplus items
+            instead of new meals. Keep it up! 🌱
+          </p>
+        </article>
+
+        <!-- Today's pickups -->
+        <article class="panel panel-side">
+          <h2 class="panel-title">Today’s pickups</h2>
+          <div class="pickup-list">
+            <div class="pickup-item">
+              <div>
+                <p class="pickup-store">EatSmart</p>
+                <p class="pickup-detail">2 boxes • Bonifacio Street</p>
+              </div>
+              <p class="pickup-time">3:00 PM</p>
+            </div>
+
+            <div class="pickup-item">
+              <div>
+                <p class="pickup-store">FreshLeaf Cafe</p>
+                <p class="pickup-detail">1 salad bowl • Greenlane</p>
+              </div>
+              <p class="pickup-time">5:30 PM</p>
+            </div>
+
+            <div class="pickup-item">
+              <div>
+                <p class="pickup-store">BreadTalk</p>
+                <p class="pickup-detail">3 breads • High Street</p>
+              </div>
+              <p class="pickup-time">6:15 PM</p>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <!-- Recent claims -->
+      <section class="panel panel-full">
+        <div class="panel-header">
+          <h2 class="panel-title">Recent claims</h2>
+          <button class="link-btn">View all</button>
+        </div>
+
+        <div class="claims-table-wrapper">
+          <table class="claims-table">
+            <thead>
+              <tr>
+                <th>Provider</th>
+                <th>Item</th>
+                <th>Pickup time</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>FreshLeaf Cafe</td>
+                <td>Green Salad Bowl</td>
+                <td>Today • 5:30 PM</td>
+                <td><span class="status-pill status-pending">Pending</span></td>
+              </tr>
+              <tr>
+                <td>EatSmart</td>
+                <td>Vegetable Fried Rice</td>
+                <td>Today • 3:00 PM</td>
+                <td><span class="status-pill status-pending">Pending</span></td>
+              </tr>
+              <tr>
+                <td>BreadTalk</td>
+                <td>Croissant</td>
+                <td>Yesterday • 1:00 PM</td>
+                <td><span class="status-pill status-confirm">Confirm pickup</span></td>
+              </tr>
+              <tr>
+                <td>Stop N Snack</td>
+                <td>Tuna Wrap</td>
+                <td>Mon • 4:45 PM</td>
+                <td><span class="status-pill status-complete">Completed</span></td>
+              </tr>
+              <tr>
+                <td>EatSmart</td>
+                <td>Spaghetti Meal Box</td>
+                <td>Sun • 6:20 PM</td>
+                <td><span class="status-pill status-complete">Completed</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="consumer-dashboard.js"></script>
+
+</body>
+</html>
