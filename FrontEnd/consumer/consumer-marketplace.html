@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>WasteNot – Consumer Marketplace</title>
+    <link rel="stylesheet" href="consumer-marketplace.css" />
+    <!-- Google Font (optional) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="layout">
+
+        <!-- ========= SIDEBAR ========= -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-mark">WasteNot</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="consumer-dashboard.html" class="nav-item">Dashboard</a>
+                <a href="consumer-marketplace.html" class="nav-item active">Marketplace</a>
+                <a href="consumer-map.html" class="nav-item">Map View</a>
+                <a href="consumer-claims.html" class="nav-item">My Order / Claims</a>
+                <a href="consumer-profile.html" class="nav-item">Profile / Settings</a>
+            </nav>
+
+            <button class="logout-btn" id="logoutBtn">Logout</button>
+        </aside>
+
+        <!-- ========= MAIN CONTENT ========= -->
+        <main class="main">
+            <!-- Top bar -->
+            <header class="topbar">
+                <div>
+                    <h1 class="topbar-title">Consumer Marketplace</h1>
+                    <p class="topbar-subtitle">
+                        Rescue near-expiry items at discounted prices while reducing food waste.
+                    </p>
+                </div>
+
+                <div class="topbar-actions">
+                    <button class="icon-btn" aria-label="Notifications">
+                        🔔
+                    </button>
+                    <div class="avatar" id="avatarInitial">C</div>
+                </div>
+            </header>
+
+            <!-- Search and filter row -->
+            <section class="search-row">
+                <div class="search-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input
+                        type="text"
+                        id="searchInput"
+                        class="market-search"
+                        placeholder="Got something you're looking for?"
+                    />
+                </div>
+
+                <div class="filter-row">
+                    <button class="filter-chip active" data-filter="all">All</button>
+                    <button class="filter-chip" data-filter="high-discount">High Discount</button>
+                    <button class="filter-chip" data-filter="under-50">Under ₱50</button>
+                    <button class="filter-chip" data-filter="breads">Breads & Pastries</button>
+                    <button class="filter-chip" data-filter="drinks">Drinks & Refreshments</button>
+                </div>
+            </section>
+
+            <!-- Partners -->
+            <section class="partners-section">
+                <div class="section-header">
+                    <h2 class="section-title">Our Partners</h2>
+                    <span class="section-caption">Tap a partner to filter products</span>
+                </div>
+
+                <div class="partner-logos" id="partnerList">
+                    <!-- NOTE: Update src paths to match your images folder -->
+                    <button class="partner-chip" data-partner="Goldilocks">
+                        <img src="goldilocks-logo.png" alt="Goldilocks" />
+                        <span>Goldilocks</span>
+                    </button>
+                    <button class="partner-chip" data-partner="BreadTalk">
+                        <img src="breadtalk-logo.jpg" alt="BreadTalk" />
+                        <span>BreadTalk</span>
+                    </button>
+                    <button class="partner-chip" data-partner="Stop N Shop">
+                        <img src="Stop-and-Shop-logo.png" alt="Stop N Shop" />
+                        <span>Stop N Shop</span>
+                    </button>
+                    <button class="partner-chip" data-partner="Jollibee">
+                        <img src="jollibee-logo.jpg" alt="Jollibee" />
+                        <span>Jollibee</span>
+                    </button>
+                    <button class="partner-chip" data-partner="SM Supermarket">
+                        <img src="sm-logo.jpg" alt="SM" />
+                        <span>SM</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Products -->
+            <section class="products-section">
+                <div class="section-header products-header">
+                    <div>
+                        <h2 class="section-title">Products</h2>
+                        <span class="section-caption" id="resultsText">
+                            Showing all deals
+                        </span>
+                    </div>
+                </div>
+
+                <div class="product-grid" id="productGrid">
+                    <!-- JS will render product cards here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Simple modal for product details -->
+    <div class="modal-backdrop" id="productModal">
+        <div class="modal">
+            <button class="modal-close" id="modalCloseBtn">✕</button>
+            <div class="modal-body">
+                <img id="modalImage" src="" alt="" class="modal-image" />
+                <div class="modal-info">
+                    <h3 id="modalName"></h3>
+                    <p id="modalPartner" class="modal-partner"></p>
+                    <p id="modalDiscount" class="modal-discount"></p>
+                    <p id="modalPrice" class="modal-price"></p>
+                    <p id="modalDescription" class="modal-description"></p>
+                    <p class="modal-note">
+                        Pick-up window: <span id="modalPickup"></span>
+                    </p>
+                    <button class="modal-cta">Claim / Reserve</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="consumer-marketplace.js"></script>
+</body>
+</html>
