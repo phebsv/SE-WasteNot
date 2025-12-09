@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>WasteNot – Consumer Map View</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="consumer-mapview.css">
+</head>
+
+<body>
+
+  <div class="layout">
+
+    <!-- ========== SIDEBAR ========== -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">WasteNot</div>
+
+      <nav class="sidebar-nav">
+        <a href="consumer-dashboard.html" class="nav-item">Dashboard</a>
+        <a href="#" class="nav-item">Marketplace</a>
+        <a href="consumer-mapview.html" class="nav-item active">Map View</a>
+        <a href="#" class="nav-item">My Order / Claims</a>
+        <a href="#" class="nav-item">Profile / Settings</a>
+      </nav>
+
+      <button id="logoutBtn" class="logout">Logout</button>
+    </aside>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <main class="main">
+
+      <!-- TOP BAR -->
+      <header class="topbar">
+        <div class="search-box">
+          <input type="text" id="searchInput" placeholder="Got something you're looking for?" />
+          <span class="search-icon">🔍</span>
+        </div>
+
+        <div class="topbar-right">
+          <button class="icon-btn">🔔</button>
+          <div class="avatar">C</div>
+        </div>
+      </header>
+
+      <div class="back-row">
+        <button class="back-btn" onclick="history.back()">← Back</button>
+      </div>
+
+      <h2 class="section-title">Our partners near you</h2>
+
+      <!-- MAP CARD -->
+      <div class="map-card">
+        <img src="map-static.jpg" class="map-image" alt="Map showing providers">
+
+        <!-- Provider pins (fake interactive) -->
+        <div class="pin" data-id="1" style="top: 38%; left: 52%;"></div>
+        <div class="pin" data-id="2" style="top: 45%; left: 60%;"></div>
+        <div class="pin" data-id="3" style="top: 58%; left: 40%;"></div>
+        <div class="pin" data-id="4" style="top: 62%; left: 70%;"></div>
+
+        <!-- Pop-up box -->
+        <div id="popup" class="popup hidden">
+          <h3 id="popupName"></h3>
+          <p id="popupDistance"></p>
+          <button id="viewDetailsBtn" class="popup-btn">View Details</button>
+        </div>
+      </div>
+
+      <div class="bottom-row">
+        <p class="hint">Click pinned for details</p>
+        <button id="filterBtn" class="filter-btn">Filter the distance ⚙️</button>
+      </div>
+
+    </main>
+
+  </div>
+
+  <script src="consumer-mapview.js"></script>
+</body>
+</html>
