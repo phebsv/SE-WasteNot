@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>WasteNot – Consumer Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../auth/auth.css">
+</head>
+
+<body data-role="consumer-login">
+  <div class="auth-page">
+
+    <!-- LEFT PANEL -->
+    <div class="auth-left">
+      <div class="brand-pill">Welcome back!</div>
+      <h1 class="brand-title">Log in to your consumer account</h1>
+      <p class="brand-subtitle">
+        Access surplus food listings, claim discounted items, and help reduce food waste.
+      </p>
+      <ul class="brand-bullet-list">
+        <li>✓ Browse surplus food near you</li>
+        <li>✓ Claim discounted meals instantly</li>
+        <li>✓ Help reduce waste in your community</li>
+      </ul>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="auth-right">
+      <div class="auth-card fade-in">
+        
+        <div class="auth-logo">WasteNot</div>
+        <h2 class="auth-heading">Consumer Login</h2>
+        <p class="auth-subheading">Enter your email and password to continue.</p>
+
+        <form class="auth-form" action="#" method="post">
+
+            <div>
+  <label class="form-label">Full Name</label>
+  <div class="input-wrapper">
+    <input id="fullname" class="input-field" type="text" required>
+  </div>
+</div>
+
+          <div>
+            <label class="form-label">Email Address</label>
+            <div class="input-wrapper">
+              <input id="email" type="email" required>
+            </div>
+          </div>
+
+          <div>
+            <label class="form-label">Password</label>
+            <div class="input-wrapper">
+              <input id="password" class="input-field" type="password" required>
+              <span class="toggle-password">Show</span>
+            </div>
+          </div>
+
+          <button class="btn-primary">Log In</button>
+
+        </form>
+
+        <p class="auth-bottom-text">
+          Don't have an account? <a href="register-consumer.html">Register here</a>
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="login-consumer.js"></script>
+</body>
+</html>
