@@ -1,0 +1,30 @@
+/* Admin specific styles - uses shared variables from ngo-base.css */
+*{box-sizing:border-box}
+.admin-table{width:100%;border-collapse:collapse;margin-top:0.8rem}
+.admin-table th,.admin-table td{padding:0.8rem 0.9rem;border-bottom:1px solid var(--border-soft);text-align:left}
+.admin-table thead th{background:#f8faf8;font-weight:700}
+.panel{background:#fff;border-radius:12px;padding:1.2rem;border:1px solid var(--border-soft);box-shadow:0 8px 20px rgba(15,23,42,0.06);margin-top:1rem}
+.panel-header{display:flex;align-items:center;gap:0.8rem;margin-bottom:0.8rem}
+.market-search{padding:0.6rem 0.9rem;border:1px solid var(--border-soft);border-radius:10px}
+.summary-card{background:#fff;border-radius:12px;padding:1rem 1.2rem;box-shadow:0 8px 20px rgba(15,23,42,0.06);border:1px solid #edf0e6}
+#chartArea{height:360px;display:flex;align-items:center;justify-content:center;color:var(--text-muted)}
+.input{width:100%;padding:0.6rem;border-radius:8px;border:1px solid var(--border-soft);margin-top:0.4rem}
+.actions{display:flex;gap:0.6rem;margin-top:1rem}
+
+/* Responsive summary grid used on admin dashboard */
+.grid-two{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:1rem}
+.summary-card{transition:transform 0.12s ease,box-shadow 0.12s ease}
+.summary-card:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(15,23,42,0.08)}
+
+/* Button styles aligned with site theme (matching consumer/ngo buttons) */
+.btn{padding:0.6rem 0.9rem;border-radius:8px;border:none;cursor:pointer;font-weight:600;font-size:0.95rem}
+.btn.small{padding:0.4rem 0.6rem;font-size:0.85rem;border-radius:6px}
+.btn.tiny{padding:0.28rem 0.5rem;font-size:0.78rem;border-radius:6px}
+.btn.primary{background:var(--green-main);color:#fff}
+.btn.primary:hover{background:var(--green-dark)}
+.btn.ghost{background:transparent;border:1px solid var(--border-soft);color:var(--text-main)}
+.btn.danger{background:var(--danger);color:#fff}
+.btn.danger.ghost{background:transparent;border:1px solid rgba(220,38,38,0.12);color:var(--danger)}
+.btn.ghost:hover{background:#f6f9f6}
+
+.status-badge.small{padding:0.25rem 0.6rem;font-size:0.8rem}

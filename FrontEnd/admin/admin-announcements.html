@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Announcements</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../ngo/ngo-base.css" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-logo"><div class="logo-mark">WasteNot</div></div>
+      <nav class="sidebar-nav">
+        <a href="admin-dashboard.html" class="nav-item">Dashboard</a>
+        <a href="admin-announcements.html" class="nav-item active">Announcements</a>
+      </nav>
+      <button class="logout-btn">Logout</button>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1 class="topbar-title">Announcements</h1>
+          <p class="topbar-subtitle">Create public announcements for all users</p>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-btn" aria-label="Notifications">🔔</button>
+          <div class="avatar">A</div>
+        </div>
+      </div>
+
+      <section class="panel">
+        <label class="label">Title</label>
+        <input id="announceTitle" class="input" />
+        <label class="label">Message</label>
+        <textarea id="announceBody" class="input" rows="4"></textarea>
+        <div class="actions">
+          <button id="announceSave" class="btn primary">Publish</button>
+        </div>
+
+        <h3 style="margin-top:1rem">Recent Announcements</h3>
+        <div id="annList"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../notifications.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

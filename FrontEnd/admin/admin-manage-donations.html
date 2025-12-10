@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Manage Donations</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../ngo/ngo-base.css" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-logo"><div class="logo-mark">WasteNot</div></div>
+      <nav class="sidebar-nav">
+        <a href="admin-dashboard.html" class="nav-item">Dashboard</a>
+        <a href="admin-manage-donations.html" class="nav-item active">Manage Donations</a>
+        <a href="admin-manage-users.html" class="nav-item">Manage Users</a>
+      </nav>
+      <button class="logout-btn">Logout</button>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1 class="topbar-title">Manage Donations</h1>
+          <p class="topbar-subtitle">Edit or remove donation listings</p>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-btn" aria-label="Notifications">🔔</button>
+          <div class="avatar">A</div>
+        </div>
+      </div>
+
+      <section class="panel">
+        <table id="donationsTable" class="admin-table">
+          <thead><tr><th>Item</th><th>Provider</th><th>Qty</th><th>Expiry</th><th>Actions</th></tr></thead>
+          <tbody></tbody>
+        </table>
+
+        <h3 style="margin-top:1.2rem">Marketplace Products</h3>
+        <table id="productsTable" class="admin-table">
+          <thead><tr><th>Product</th><th>Partner</th><th>Price</th><th>Expiry</th><th>Pickup</th><th>Actions</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+
+  <script src="../notifications.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
