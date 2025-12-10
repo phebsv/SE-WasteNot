@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NGO Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="ngo-base.css" />
+  <link rel="stylesheet" href="ngo-productDetails.css" />
+  <link rel="stylesheet" href="ngo-profile.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-logo"><div class="logo-mark">WasteNot</div></div>
+      <nav class="sidebar-nav">
+        <a href="ngo-dashboard.html" class="nav-item">Dashboard</a>
+        <a href="ngo-marketplace.html" class="nav-item">Available Donations</a>
+        <a href="ngo-claims.html" class="nav-item">Requests</a>
+        <a href="ngo-profile.html" class="nav-item active">Profile</a>
+      </nav>
+      <button class="logout-btn" id="logoutBtn">Logout</button>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1 class="topbar-title">Organization Profile</h1>
+          <p class="topbar-subtitle">Manage your NGO information</p>
+        </div>
+        <div class="topbar-actions">
+          <!-- notifications injected by notifications.js -->
+          <div class="avatar">N</div>
+        </div>
+      </div>
+
+      <section class="profile-card">
+        <div class="profile-grid">
+          <div class="profile-left">
+            <div class="profile-avatar">NGO</div>
+            <div class="meta">
+              <label class="label">Organization Name</label>
+              <input id="orgName" class="input" />
+
+              <label class="label">Contact Person</label>
+              <input id="contactName" class="input" />
+
+              <label class="label">Phone</label>
+              <input id="phone" class="input" />
+
+              <label class="label">Email</label>
+              <input id="email" class="input" />
+            </div>
+          </div>
+
+          <div class="profile-right">
+            <label class="label">Address / Pickup Area</label>
+            <input id="address" class="input" />
+
+            <label class="label">About (short)</label>
+            <textarea id="about" class="input" rows="6"></textarea>
+
+            <div class="actions">
+              <button id="saveBtn" class="btn primary">Save</button>
+              <button id="resetBtn" class="btn ghost">Reset</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../notifications.js"></script>
+  <script src="ngo-profile.js"></script>
+</body>
+</html>

@@ -158,75 +158,156 @@ body {
   align-items: center;
 }
 
-/* ========= FILTERS ========= */
-.filters {
-  display: flex;
-  gap: 0.8rem;
-  margin-bottom: 1.6rem;
+/* ========= SEARCH & FILTERS ========= */
+.search-row {
+  margin-bottom: 1.5rem;
 }
 
-.filter-select,
-.search-box {
-  padding: 0.6rem 0.9rem;
-  border: 1px solid var(--border-soft);
-  border-radius: 10px;
-  font-size: 0.9rem;
+.search-wrapper {
+  position: relative;
+  margin-bottom: 0.7rem;
+}
+
+.search-icon {
+  position: absolute;
+  top: 50%;
+  left: 18px;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+  opacity: 0.7;
+}
+
+.market-search {
+  width: 100%;
   background: #ffffff;
-  outline: none;
+  border-radius: 14px;
+  padding: 16px 22px 16px 44px;
+  border: 1px solid #e0e6db;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  font-size: 1rem;
 }
 
-.search-box {
-  flex: 1;
+.market-search:focus {
+  outline: none;
+  border-color: var(--green-main);
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+}
+
+/* Filter chips */
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.filter-chip {
+  border-radius: 999px;
+  padding: 8px 18px;
+  border: 1px solid #d8e6d4;
+  border-radius: 20px;
+  background: #f3faf1;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: #375338;
+  transition: background-color 0.15s ease, color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.filter-chip:hover {
+  background: #e6f5e1;
+}
+
+.filter-chip.active {
+  background: var(--green-main);
+  color: #ffffff;
+  border-color: var(--green-main);
 }
 
 /* ========= CARD GRID ========= */
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 1.2rem;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 18px;
 }
 
 .card {
-  background: white;
-  border-radius: 14px;
-  padding: 1rem;
-  border: 1px solid #edf0e6;
-  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.06);
-  transition: 0.2s;
+  background: #e8f4e2;
+  border-radius: 24px;
+  padding: 20px;
+  box-shadow: 0 8px 18px rgba(50, 80, 50, 0.12);
+  transition: 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  width: 240px;
+  min-height: 310px;
 }
 
 .card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 12px 26px rgba(40, 70, 40, 0.16);
 }
 
 .card img {
-  width: 100%;
-  height: 140px;
+  width: 120px;
+  height: 120px;
+  margin-top: 10px;
+  margin-bottom: 10px;
   border-radius: 12px;
-  object-fit: cover;
+  object-fit: contain;
+  background: #ffffff;
+  padding: 10px;
 }
 
 .card-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin-top: 0.6rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  color: #2f3c2f;
+  min-height: 38px;
+  margin: 0;
+}
+
+.card-item {
+  font-size: 0.85rem;
+  color: #6b7280;
+  text-align: center;
+  margin: 4px 0;
 }
 
 .card-meta {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  margin-top: 0.2rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-align: center;
+  margin: 2px 0;
+}
+
+.card-location {
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-align: center;
+  margin: 4px 0;
+}
+
+.card-pickup {
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-align: center;
+  margin: 2px 0;
+  margin-bottom: 12px;
 }
 
 .request-btn {
-  margin-top: 0.8rem;
+  margin-top: auto;
   width: 100%;
   padding: 0.6rem 0.9rem;
   border: none;
   background: var(--green-main);
   color: white;
   font-size: 0.9rem;
+  font-weight: 600;
   border-radius: 10px;
   cursor: pointer;
   transition: 0.2s;

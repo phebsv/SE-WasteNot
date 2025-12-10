@@ -1,0 +1,37 @@
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--green-main:#15803d;--green-dark:#166534;--muted:#6b7280}
+body{font-family:Inter,system-ui,Arial,sans-serif;background:linear-gradient(135deg,#e8f5e4,#f8fff1);color:#222}
+.layout{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+.sidebar{background:#f4faef;padding:1.8rem 1.4rem;display:flex;flex-direction:column;border-right:1px solid #e5e7eb}
+.logo-mark{font-weight:800;font-size:1.4rem;color:var(--green-dark)}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;margin-bottom:1.5rem}
+.topbar-title{font-size:1.6rem;font-weight:700;color:#2c4628}
+.topbar-subtitle{color:var(--muted)}
+.main{padding:1.8rem 2.2rem}
+
+.request-card{max-width:760px;margin:0 auto;background:#fff;border-radius:14px;padding:1.6rem;box-shadow:0 8px 18px rgba(15,23,42,0.06)}
+.request-hero{display:flex;align-items:center;gap:1rem;background:linear-gradient(135deg,#a8e6a1,#b8f0b8);padding:1rem;border-radius:10px}
+.request-logo{width:150px;height:120px;background:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center}
+.request-logo img{width:100%;height:100%;object-fit:contain;padding:8px}
+.request-status{margin-left:auto;text-align:right}
+.request-status span{display:block;color:#dc2626;font-weight:700}
+#reqItem{font-size:1.4rem;margin-top:1rem}
+.muted{color:var(--muted)}
+.request-details{margin-top:1rem;background:#f9fafb;padding:1rem;border-radius:10px}
+.row{display:flex;justify-content:space-between;padding:6px 0}
+.label{font-weight:600}
+.value{color:var(--muted);text-align:right}
+.hint{font-style:italic;color:var(--muted);margin-top:0.8rem}
+.actions{display:flex;gap:0.8rem;margin-top:1rem}
+.btn{padding:0.8rem 1.2rem;border-radius:20px;border:none;cursor:pointer}
+.btn.ghost{background:#e5e7eb}
+.btn.primary{background:var(--green-main);color:white}
+.btn.primary:hover{background:var(--green-dark)}
+
+/* TOAST NOTIFICATION */
+.toast{position:fixed;top:20px;right:20px;background:#d1fae5;border:1px solid #a7f3d0;border-radius:12px;padding:1.5rem 2rem;box-shadow:0 10px 25px rgba(0,0,0,0.1);display:flex;align-items:center;justify-content:space-between;gap:1.5rem;min-width:350px;opacity:0;transform:translateX(400px);transition:all 0.3s ease;z-index:1000}
+.toast.show{opacity:1;transform:translateX(0)}
+.toast.hidden{display:none}
+.toast p{color:#065f46;margin:0;font-size:0.95rem;line-height:1.4}
+.toast-ok-btn{background:var(--green-main);color:white;border:none;border-radius:8px;padding:0.6rem 1.5rem;cursor:pointer;font-weight:600;font-size:0.9rem;white-space:nowrap;transition:background 0.2s}
+.toast-ok-btn:hover{background:var(--green-dark)}

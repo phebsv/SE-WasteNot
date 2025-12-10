@@ -1,0 +1,34 @@
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--green-main:#15803d;--green-dark:#166534;--muted:#6b7280;--border-soft:#e5e7eb}
+body{font-family:Inter,system-ui,Arial,sans-serif;background:linear-gradient(135deg,#e8f5e4,#f8fff1);color:#222}
+.layout{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+.sidebar{background:#f4faef;padding:1.8rem 1.4rem;display:flex;flex-direction:column;border-right:1px solid var(--border-soft)}
+.logo-mark{font-weight:800;font-size:1.4rem;color:var(--green-dark)}
+.main{padding:1.8rem 2.2rem}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;margin-bottom:1.5rem}
+.topbar-title{font-size:1.6rem;font-weight:700;color:#2c4628}
+.topbar-subtitle{color:var(--muted)}
+.topbar-actions{display:flex;align-items:center;gap:0.6rem}
+.icon-btn{border-radius:999px;border:1px solid var(--border-soft);background:#fff;padding:0.4rem 0.7rem;cursor:pointer;font-size:1.1rem;transition:background 0.15s,box-shadow 0.15s}
+.icon-btn:hover{background:#f1f7ed;box-shadow:0 4px 10px rgba(15,23,42,0.08)}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--green-main);color:#fff;display:flex;justify-content:center;align-items:center;font-weight:600}
+.filter-section{margin-bottom:1.5rem}
+.filter-chips{display:flex;gap:0.5rem;flex-wrap:wrap}
+.filter-chip{border-radius:999px;padding:8px 18px;border:1px solid #d8e6d4;background:#f3faf1;font-size:0.9rem;cursor:pointer;color:#375338;transition:background 0.15s,color 0.15s,border-color 0.15s}
+.filter-chip:hover{background:#e6f5e1}
+.filter-chip.active{background:var(--green-main);color:#fff;border-color:var(--green-main)}
+.claims-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(500px,1fr));gap:1.2rem}
+.claim-item{background:#fff;border-radius:12px;padding:1.2rem;border:1px solid var(--border-soft);box-shadow:0 2px 8px rgba(15,23,42,0.06);display:flex;gap:1rem}
+.claim-logo{width:100px;height:100px;background:#f3faf1;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.claim-logo img{width:80px;height:80px;object-fit:contain}
+.claim-content{flex:1}
+.claim-title{font-size:1.1rem;font-weight:700;color:#111827;margin-bottom:0.3rem}
+.claim-provider{font-size:0.9rem;color:var(--muted);margin-bottom:0.4rem}
+.claim-meta{font-size:0.85rem;color:var(--muted);margin:0.2rem 0}
+.claim-status{font-size:0.85rem;font-weight:600;color:#065f46;margin-top:0.4rem}
+.claim-actions{display:flex;gap:0.6rem;margin-top:0.8rem}
+.btn-action{padding:0.5rem 1rem;border:none;border-radius:6px;cursor:pointer;font-size:0.85rem;font-weight:600;transition:background 0.2s}
+.btn-cancel{background:#e5e7eb;color:#111827}
+.btn-cancel:hover{background:#d1d5db}
+.btn-details{background:var(--green-main);color:#fff}
+.btn-details:hover{background:var(--green-dark)}

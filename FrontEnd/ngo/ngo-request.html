@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Request Donation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="ngo-base.css" />
+  <link rel="stylesheet" href="ngo-marketplace.css" />
+  <link rel="stylesheet" href="ngo-request.css" />
+</head>
+<body>
+  <div class="layout">
+
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-mark">WasteNot</div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="donor-dashboard.html" class="nav-item">Dashboard</a>
+        <a href="donor-donations.html" class="nav-item">Available Donations</a>
+        <a href="donor-requests.html" class="nav-item active">Requests</a>
+        <a href="donor-profile.html" class="nav-item">Profile</a>
+      </nav>
+
+      <button class="logout-btn" id="logoutBtn">Logout</button>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1 class="topbar-title">Request Donation</h1>
+          <p class="topbar-subtitle">Confirm pickup details and submit your request</p>
+        </div>
+
+        <div class="topbar-actions">
+          <button class="icon-btn" aria-label="Notifications">🔔</button>
+          <div class="avatar">P</div>
+        </div>
+      </div>
+
+      <section class="request-card">
+        <div class="request-hero">
+          <div class="request-logo">
+            <img id="reqLogo" src="" alt="Vendor logo" />
+          </div>
+          <div class="request-status">
+            <span id="reqStatus">Expiring Soon</span>
+            <span id="reqTimer">--:--:--</span>
+          </div>
+        </div>
+
+        <h2 id="reqItem">Item</h2>
+        <p id="reqCategory" class="muted">Category</p>
+
+        <div class="request-details">
+          <div class="row">
+            <div class="label">Tagged as</div>
+            <div class="value" id="reqTagged">Urgent Donation</div>
+          </div>
+          <div class="row">
+            <div class="label">Expiry date</div>
+            <div class="value" id="reqExpiry">-</div>
+          </div>
+          <div class="row">
+            <div class="label">Pickup Window</div>
+            <div class="value" id="reqPickup">-</div>
+          </div>
+          <div class="row">
+            <div class="label">Store</div>
+            <div class="value" id="reqStore">-</div>
+          </div>
+          <div class="row">
+            <div class="label">Quantity</div>
+            <div class="value" id="reqQty">-</div>
+          </div>
+        </div>
+
+        <p class="hint" id="reqDistance">You are -- km away from the shop. Claim Now!</p>
+
+        <div class="actions">
+          <button id="viewDirections" class="btn ghost">View Directions</button>
+          <button id="confirmRequest" class="btn primary">Confirm Request</button>
+        </div>
+      </section>
+
+        <div id="toast" class="toast hidden">
+          <p>We will send a notification when the partner accepts the request.</p>
+          <button id="toastOkBtn" class="toast-ok-btn">OK</button>
+        </div>
+
+    </main>
+  </div>
+
+  <script src="ngo-request.js"></script>
+  <script src="ngo-marketplace.js"></script>
+  <script src="../notifications.js"></script>
+</body>
+</html>

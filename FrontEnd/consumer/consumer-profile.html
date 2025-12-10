@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../ngo/ngo-base.css" />
+  <link rel="stylesheet" href="consumer-profile.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-logo"><div class="logo-mark">WasteNot</div></div>
+      <nav class="sidebar-nav">
+        <a href="../ngo/ngo-dashboard.html" class="nav-item">Dashboard</a>
+        <a href="consumer-marketplace.html" class="nav-item">Available Donations</a>
+        <a href="consumer-orders.html" class="nav-item">My Orders</a>
+        <a href="consumer-profile.html" class="nav-item active">Profile</a>
+      </nav>
+      <button class="logout-btn" id="logoutBtn">Logout</button>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1 class="topbar-title">Your Profile</h1>
+          <p class="topbar-subtitle">Manage your account details</p>
+        </div>
+        <div class="topbar-actions">
+          <!-- notifications injected -->
+          <div class="avatar">P</div>
+        </div>
+      </div>
+
+      <section class="profile-card">
+        <div class="profile-grid">
+          <div class="profile-left">
+            <div class="profile-avatar">P</div>
+            <div class="meta">
+              <label class="label">Full Name</label>
+              <input id="fullName" class="input" />
+
+              <label class="label">Phone</label>
+              <input id="phone" class="input" />
+
+              <label class="label">Email</label>
+              <input id="email" class="input" />
+            </div>
+          </div>
+
+          <div class="profile-right">
+            <label class="label">Address</label>
+            <input id="address" class="input" />
+
+            <label class="label">Preferences</label>
+            <textarea id="prefs" class="input" rows="4"></textarea>
+
+            <div class="actions">
+              <button id="saveBtn" class="btn primary">Save</button>
+              <button id="resetBtn" class="btn ghost">Reset</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../notifications.js"></script>
+  <script src="consumer-profile.js"></script>
+</body>
+</html>

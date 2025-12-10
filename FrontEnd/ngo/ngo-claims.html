@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Requests</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="ngo-base.css" />
+  <link rel="stylesheet" href="ngo-claims.css" />
+  <link rel="stylesheet" href="ngo-marketplace.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-logo"><div class="logo-mark">WasteNot</div></div>
+      <nav class="sidebar-nav">
+        <a href="ngo-dashboard.html" class="nav-item">Dashboard</a>
+        <a href="ngo-marketplace.html" class="nav-item">Available Donations</a>
+        <a href="ngo-claims.html" class="nav-item active">Requests</a>
+        <a href="ngo-profile.html" class="nav-item">Profile</a>
+      </nav>
+      <button class="logout-btn" id="logoutBtn">Logout</button>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1 class="topbar-title">My Request / Claims</h1>
+          <p class="topbar-subtitle">Track your donation requests</p>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-btn" aria-label="Notifications">🔔</button>
+          <div class="avatar">P</div>
+        </div>
+      </div>
+
+      <!-- STATUS FILTER CHIPS -->
+      <section class="filter-section">
+        <div class="filter-chips">
+          <button class="filter-chip active" data-status="all">All</button>
+          <button class="filter-chip" data-status="Pending Provider Confirmation">Pending</button>
+          <button class="filter-chip" data-status="Ready for Pickup">Ready for Pickup</button>
+          <button class="filter-chip" data-status="Completed">Completed</button>
+          <button class="filter-chip" data-status="Cancelled">Cancelled</button>
+        </div>
+      </section>
+
+      <!-- REQUESTS LIST -->
+      <section class="requests-section">
+        <div id="claimsContainer" class="claims-grid"></div>
+      </section>
+    </main>
+  </div>
+      <script src="ngo-claims.js"></script>
+      <script src="ngo-marketplace.js"></script>
+      <script src="../notifications.js"></script>
+</body>
+</html>
