@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Listings</title>
+  <link rel="stylesheet" href="ngo-marketplace.css" />
+</head>
+
+<body>
+  <div class="layout">
+
+   <aside class="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-mark">WasteNot</div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <a href="donor-dashboard.html" class="nav-item">Dashboard</a>
+        <a href="donor-donations.html" class="nav-item active">Available Donations</a>
+        <a href="donor-requests.html" class="nav-item">Requests</a>
+    </nav>
+
+    <button class="logout-btn" id="logoutBtn">Logout</button>
+</aside>
+
+
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main">
+
+      <!-- TOP BAR -->
+      <div class="topbar">
+        <div>
+          <h1 class="topbar-title">Available <span class="accent">Donations</span></h1>
+          <p class="topbar-subtitle">Browse items and request what you need</p>
+        </div>
+
+        <div class="topbar-actions">
+          <button class="icon-btn">🔔</button>
+          <div class="avatar">P</div>
+        </div>
+      </div>
+
+      <!-- FILTER SECTION -->
+      <div class="filters">
+        <select class="filter-select" id="filter-category">
+          <option value="all">All Categories</option>
+          <option value="vegetables">Vegetables</option>
+          <option value="canned">Canned Goods</option>
+          <option value="bread">Bread</option>
+        </select>
+
+        <select class="filter-select" id="filter-location">
+          <option value="all">All Locations</option>
+          <option value="cebu">Cebu</option>
+          <option value="mandaue">Mandaue</option>
+          <option value="lapu">Lapu-Lapu</option>
+        </select>
+
+        <input type="text" id="search" class="search-box" placeholder="Search item...">
+      </div>
+
+      <!-- CARD GRID -->
+      <div class="card-grid" id="card-grid">
+        <!-- Cards will be rendered here by script.js -->
+      </div>
+
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
