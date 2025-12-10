@@ -14,13 +14,15 @@
 
     <!-- ========== SIDEBAR ========== -->
     <aside class="sidebar">
-      <div class="sidebar-logo">WasteNot</div>
+      <div class="sidebar-logo">
+        <span class="logo-mark">WasteNot</span>
+      </div>
 
       <nav class="sidebar-nav">
         <a href="consumer-dashboard.html" class="nav-item">Dashboard</a>
         <a href="consumer-marketplace.html" class="nav-item">Marketplace</a>
         <a href="consumer-mapview.html" class="nav-item active">Map View</a>
-        <a href="#" class="nav-item">Claims</a>
+        <a href="claim.html" class="nav-item">Claims</a>
         <a href="consumer-profile.html" class="nav-item">Account</a>
       </nav>
 
@@ -31,23 +33,17 @@
     <main class="main">
 
       <!-- TOP BAR -->
-      <header class="topbar">
-        <div class="search-box">
-          <input type="text" id="searchInput" placeholder="Got something you're looking for?" />
-          <span class="search-icon">🔍</span>
+          <div class="topbar">
+            <div>
+                <h1 class="topbar-title">Map View</h1>
+                <p class="topbar-subtitle">See our partners near you</p>
+            </div>
+            <div class="topbar-actions">
+              <button class="icon-btn" aria-label="Notifications">🔔</button>
+              <div class="avatar" title="You">P</div>
+            </div>
         </div>
 
-        <div class="topbar-right">
-          <button class="icon-btn">🔔</button>
-          <div class="avatar">C</div>
-        </div>
-      </header>
-
-      <div class="back-row">
-        <button class="back-btn" onclick="history.back()">← Back</button>
-      </div>
-
-      <h2 class="section-title">Our partners near you</h2>
 
       <!-- MAP CARD -->
       <div class="map-card">
@@ -77,5 +73,6 @@
   </div>
 
   <script src="consumer-mapview.js"></script>
+   <script src="../notifications.js"></script>
 </body>
 </html>

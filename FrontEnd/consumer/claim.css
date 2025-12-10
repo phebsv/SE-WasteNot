@@ -10,53 +10,82 @@ body {
     grid-template-columns: 260px 1fr;
     min-height: 100vh;
 }
-
-/* SIDEBAR (same styles) */
+/*sidebar*/
 .sidebar {
-    background: #f4f4f4;
-    padding: 1.8rem 1.4rem 1.5rem;
-    display: flex;
-    flex-direction: column;
-    border-right: 1px solid #e5e7eb;
+  background-color: var(--bg-sidebar);
+  padding: 1.8rem 1.4rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border-soft);
+  box-shadow: 3px 0 12px rgba(15, 23, 42, 0.06);
+}
+
+.sidebar-logo {
+  margin-bottom: 2.2rem;
 }
 
 .logo-mark {
-    font-weight: 800;
-    font-size: 1.4rem;
-    margin-bottom: 2rem;
+  font-weight: 800;
+  font-size: 1.4rem;
+  letter-spacing: 0.06em;
+  color: var(--green-dark);
 }
 
 .sidebar-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-    margin-bottom: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: auto;
 }
 
 .nav-item {
-    padding: 0.7rem 0.8rem;
-    border-radius: 999px;
-    font-size: 0.95rem;
-    color: #111827;
-    text-decoration: none;
+  padding: 0.7rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  text-decoration: none;
+  color: var(--text-main);
+  font-weight: 500;
+  transition: background-color 0.16s ease, color 0.16s ease,
+    transform 0.16s ease, box-shadow 0.16s ease;
 }
 
 .nav-item:hover {
-    background-color: #e5f5df;
+  background-color: #e1f5e0;
+  transform: translateX(2px);
+}
+
+.nav-item.active {
+  background-color: var(--green-main);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(21, 128, 61, 0.4);
 }
 
 .logout-btn {
-    margin-top: 1.5rem;
-    padding: 0.6rem 0.8rem;
-    border: none;
-    background: transparent;
-    color: #dc2626;
-    cursor: pointer;
+  margin-top: 1.5rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 999px;
+  border: none;
+  background-color: transparent;
+  color: #dc2626;
+  font-size: 0.9rem;
+  text-align: left;
+  cursor: pointer;
 }
 
 .main {
     padding: 2rem 2.5rem;
 }
+
+/* Ensure topbar layout matches other pages */
+.topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:1.2rem;
+    margin-bottom:1rem;
+}
+
+.topbar-actions{ display:flex; align-items:center; gap:0.6rem; margin-left:auto }
 
 .topbar-title {
     font-size: 1.8rem;

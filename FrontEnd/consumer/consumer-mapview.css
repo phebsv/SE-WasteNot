@@ -9,12 +9,14 @@
 
 :root {
   --bg-main: #f8fbe8;
-  --bg-sidebar: #f4f4f4;
+  --bg-sidebar: #f4faef;
   --green-main: #15803d;
   --green-dark: #166534;
+  --green-soft: #7fd16b;
   --text-main: #111827;
   --text-muted: #6b7280;
   --border-soft: #e5e7eb;
+  --danger: #dc2626
 }
 
 body {
@@ -44,10 +46,14 @@ body {
 }
 
 .sidebar-logo {
-  font-weight: 800;
-  font-size: 1.6rem;
-  letter-spacing: 0.06em;
   margin-bottom: 2.2rem;
+}
+
+.logo-mark {
+  font-weight: 800;
+  font-size: 1.4rem;
+  letter-spacing: 0.06em;
+  color: var(--green-dark);
 }
 
 .sidebar-nav {
@@ -67,12 +73,14 @@ body {
 }
 
 .nav-item:hover {
-  background-color: #e5f5df;
+  background-color: #e1f5e0;
+  transform: translateX(2px);
 }
 
 .nav-item.active {
   background-color: var(--green-main);
   color: #ffffff;
+  box-shadow: 0 4px 12px rgba(21, 128, 61, 0.4);
 }
 
 .logout {
@@ -90,13 +98,25 @@ body {
   padding: 1.8rem 2.2rem 2rem;
 }
 
-/* TOPBAR */
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.4rem;
-  margin-bottom: 1.1rem;
+/* topbar rules to match dashboard layout */
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1.2rem;
+  margin-bottom:1rem;
+}
+
+.topbar-actions{ display:flex; align-items:center; gap:0.6rem; margin-left:auto }
+
+.topbar-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.topbar-subtitle {
+    font-size: 0.9rem;
+    color: #6b7280;
 }
 
 .search-box {
@@ -122,11 +142,6 @@ body {
   opacity: 0.7;
 }
 
-.topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
 
 .icon-btn {
   border: 1px solid var(--border-soft);
@@ -257,8 +272,8 @@ body {
 
 /* BOTTOM ROW */
 .bottom-row {
-  max-width: 900px;
-  margin-top: 0.55rem;
+  max-width: 1200px;
+  margin: 0.55rem auto 0;
   display: flex;
   align-items: center;
   justify-content: space-between;

@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>WasteNot – Confirm Claim</title>
-    <link rel="stylesheet" href="claim.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <title>WasteNot – Confirm Claim</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="consumer-dashboard.css" />
+        <link rel="stylesheet" href="claim.css">
 </head>
 
 <body>
@@ -19,9 +20,9 @@
         <nav class="sidebar-nav">
             <a href="consumer-dashboard.html" class="nav-item">Dashboard</a>
             <a href="consumer-marketplace.html" class="nav-item">Marketplace</a>
-            <a href="consumer-map.html" class="nav-item">Map View</a>
-            <a href="consumer-claims.html" class="nav-item">My Order / Claims</a>
-            <a href="consumer-profile.html" class="nav-item">Profile / Settings</a>
+            <a href="consumer-mapview.html" class="nav-item">Map View</a>
+            <a href="consumer-claims.html" class="nav-item active">Claims</a>
+            <a href="consumer-profile.html" class="nav-item">Account </a>
         </nav>
 
         <button id="logoutBtn" class="logout-btn">Logout</button>
@@ -34,9 +35,13 @@
                 <h1 class="topbar-title">Confirm Pickup</h1>
                 <p class="topbar-subtitle">Review your item and choose a pickup time.</p>
             </div>
+            <div class="topbar-actions">
+                <button class="icon-btn" aria-label="Notifications">🔔</button>
+                <div class="avatar" title="You">P</div>
+            </div>
         </div>
 
-        <section class="claim-card">
+        <div class="claim-card">
             <img id="productImage" class="product-image" src="" alt="">
             
             <div class="claim-info">
@@ -74,6 +79,7 @@
 </div>
 
 <script src="claim.js"></script>
+<script src="../notifications.js"></script>
 
 </body>
 </html>
