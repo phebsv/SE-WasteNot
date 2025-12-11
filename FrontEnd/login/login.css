@@ -62,3 +62,63 @@ h2 {
 .login-btn:active {
   background-color: #2d3a16;
 }
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 1.4rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    border: none;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease, color 0.18s ease;
+}
+
+.btn-outline-green {
+    border: 1px solid #0c8c2b;
+    color: #0c8c2b;
+    background-color: transparent;
+}
+
+.btn-outline-green:hover {
+    background-color: #0c8c2b;
+    color: #fff;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
+}
+
+.btn-green {
+    background-color: #0c8c2b;
+    color: #fff;
+}
+
+.btn-green:hover {
+    background-color: #0a731f;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.18);
+    transform: translateY(-1px);
+}
+
+.btn-light-outline {
+    border: 1px solid #b3b79a;
+    background-color: #f8f9e9;
+    color: #606454;
+}
+
+.btn-light-outline:hover {
+    background-color: #e9ebd3;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.14);
+    transform: translateY(-1px);
+}
+
+.btn-banner {
+    background-color: #ffffff;
+    color: #0c8c2b;
+    border-radius: 4px;
+    padding-inline: 2.2rem;
+}
+
+.btn-banner:hover {
+    background-color: #f5f5f5;
+}
