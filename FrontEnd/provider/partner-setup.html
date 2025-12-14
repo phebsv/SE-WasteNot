@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Set Up Your Partner Account – WasteNot</title>
+  <link rel="stylesheet" href="partner-setup.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="setup-container">
+
+  <div class="setup-card">
+
+    <h2 class="title">Set up your<br>account</h2>
+
+    <label class="avatar-upload">
+      <input type="file" id="avatarInput" accept="image/*">
+      <div class="avatar-preview" id="avatarPreview">📷</div>
+    </label>
+
+    <form id="setupForm">
+      
+      <input type="text" id="businessName" placeholder="Business Name" required>
+
+      <select id="businessType" required>
+        <option value="" disabled selected>Business Type</option>
+        <option value="Bakery">Bakery</option>
+        <option value="Restaurant">Restaurant</option>
+        <option value="Café">Café</option>
+        <option value="Supermarket">Supermarket</option>
+        <option value="Convenience Store">Convenience Store</option>
+        <option value="Food Stall">Food Stall</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <input type="email" id="email" placeholder="Email Address" required>
+
+      <input type="text" id="location" placeholder="Location" required>
+
+      <input type="text" id="hours" placeholder="Operating Hours" required>
+
+      <label class="checkbox-row">
+        <input type="checkbox" id="notifyMe" checked>
+        <span>I would like to be notified</span>
+      </label>
+
+      <button type="submit" class="next-btn">Next →</button>
+    </form>
+  </div>
+</div>
+
+<script src="partner-setup.js"></script>
+</body>
+</html>

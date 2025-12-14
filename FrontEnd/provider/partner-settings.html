@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>WasteNot – NGO Settings</title>
+    <title>WasteNot – Settings</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="ngo-base.css"> 
-    <link rel="stylesheet" href="ngo-profile.css">
+    <link rel="stylesheet" href="partner-dashboard.css">
+    <link rel="stylesheet" href="partner-settings.css"> 
 </head>
 <body>
     <div class="layout">
@@ -17,10 +17,12 @@
             </div>
 
             <nav class="sidebar-nav">
-                <a href="ngo-dashboard.html" class="nav-item">Dashboard</a>
-                <a href="ngo-marketplace.html" class="nav-item">Available Donations</a>
-                <a href="ngo-claims.html" class="nav-item">Requests</a>
-                <a href="ngo-profile.html" class="nav-item active">Profile</a>
+                <a href="partner-dashboard.html" class="nav-item">Dashboard</a>
+                <a href="partner-listings.html" class="nav-item">My Listings</a>
+                <a href="partner-pickups.html" class="nav-item">Request / Claims</a>
+                <a href="partner-inventory.html" class="nav-item">Inventory</a>
+                <a href="partner-impact.html" class="nav-item">Impact Report</a>
+                <a href="partner-settings.html" class="nav-item active">Settings</a>
             </nav>
 
             <button id="logoutBtn" class="logout-btn">Logout</button>
@@ -34,7 +36,7 @@
                 </div>
                 <div class="topbar-actions">
                     <button class="icon-btn" aria-label="Notifications">🔔</button>
-                    <div class="avatar" id="avatarInitial">N</div>
+                    <div class="avatar" id="avatarInitial">P</div>
                 </div>
             </header>
 
@@ -46,17 +48,17 @@
                         
                         <div class="profile-left">
                             <div class="profile-avatar-wrapper">
-                                <div class="profile-avatar-large">N</div> 
+                                <div class="profile-avatar-large">P</div> 
                             </div>
                             
                             <div class="form-group">
-                                <label for="organizationName">Organization Name</label>
-                                <input type="text" id="organizationName" name="organizationName" required>
+                                <label for="storeName">Store Name</label>
+                                <input type="text" id="storeName" name="storeName" required>
                             </div>
                             
                             <div class="form-group">
-                                <label for="contactPerson">Contact Person</label>
-                                <input type="text" id="contactPerson" name="contactPerson" required>
+                                <label for="contactName">Contact Person</label>
+                                <input type="text" id="contactName" name="contactName" required>
                             </div>
                             
                             <div class="form-group">
@@ -121,6 +123,7 @@
         </main>
     </div>
     
-    <script src="ngo-profile.js"></script>
+    <script src="partner-data.js"></script>
+    <script src="partner-settings.js"></script>
 </body>
 </html>

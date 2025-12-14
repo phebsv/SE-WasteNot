@@ -1,0 +1,89 @@
+<head>
+  <meta charset="UTF-8" />
+  <title>WasteNot – Create Listing</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- IMPORTANT: shared layout FIRST -->
+  <link rel="stylesheet" href="partner-dashboard.css">
+
+  <!-- Create page overrides SECOND -->
+  <link rel="stylesheet" href="partner-create.css">
+</head>
+
+
+<body>
+  <div class="layout">
+
+    <!-- ========== SIDEBAR ========== -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-mark">WasteNot</div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="partner-dashboard.html" class="nav-item">Dashboard</a>
+        <a href="partner-listings.html" class="nav-item active">My Listings</a>
+        <a href="partner-pickups.html" class="nav-item">Request / Claims</a>
+        <a href="partner-inventory.html" class="nav-item">Inventory</a>
+        <a href="partner-impact.html" class="nav-item">Impact Report</a>
+        <a href="partner-settings.html" class="nav-item">Settings</a>
+      </nav>
+
+      <button class="logout-btn">Logout</button>
+    </aside>
+
+
+
+    <!-- ========== MAIN CONTENT ========== -->
+  <main class="main">
+  <header class="topbar hero-header"> 
+    <div>
+      <h1 class="topbar-title">Create New Listing</h1>
+      <p class="topbar-subtitle">
+        Choose the type of listing you want to create (Sale or Donation).
+      </p>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" aria-label="Notifications">
+        <span class="notification-count">2</span> 🔔
+      </button>
+      <div class="avatar" title="Partner User">
+        P
+      </div>
+    </div>
+  </header>
+
+  <section class="page-content">
+    
+
+    <div class="create-container">
+      <h2 class="choose-title">Choose Listing Type</h2>
+
+      <div class="listing-type-grid">
+
+        <a href="partner-create-sale.html" class="listing-type-card">
+          <div class="type-icon">🏪</div>
+          <h3>Items for Sale</h3>
+          <p>Create a new listing for one or more items to sell</p>
+        </a>
+
+        <a href="partner-create-donation.html" class="listing-type-card">
+          <div class="type-icon">💚</div>
+          <h3>Items for Donation</h3>
+          <p>Create a new listing for one or more items to donate</p>
+        </a>
+
+      </div>
+    </div>
+  </section>
+</main>
+  </div>
+
+  <!-- TOAST (reusable across pages) -->
+  <div id="toast" class="toast">Sample message</div>
+
+  <script src="toast.js"></script>
+</body>
+</html>

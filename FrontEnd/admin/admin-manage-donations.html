@@ -1,60 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Manage Donations</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../ngo/ngo-base.css" />
-  <link rel="stylesheet" href="admin.css" />
-</head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Manage Listings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../ngo/ngo-base.css" />
+    <link rel="stylesheet" href="admin.css" />
+    <link rel="stylesheet" href="admin-manage-users.css" /> <link rel="stylesheet" href="admin-manage-donations.css" /> </head>
 <body>
-  <div class="layout">
-    <aside class="sidebar">
-      <div class="sidebar-logo"><div class="logo-mark">WasteNot</div></div>
-      <nav class="sidebar-nav">
-        <a href="admin-dashboard.html" class="nav-item active">Dashboard</a>
-        <a href="admin-manage-providers.html" class="nav-item">Manage Providers</a>
-        <a href="admin-manage-ngos.html" class="nav-item">Manage NGOs</a>
-        <a href="admin-manage-donations.html" class="nav-item">Manage Donations</a>
-        <a href="admin-manage-users.html" class="nav-item">Manage Users</a>
-        <a href="admin-approvals.html" class="nav-item">Approvals</a>
-        <a href="admin-logs.html" class="nav-item">Activity Logs</a>
-        <a href="admin-announcements.html" class="nav-item">Announcements</a>
-        <a href="admin-analytics.html" class="nav-item">Analytics</a>
-        <a href="admin-settings.html" class="nav-item">Settings</a>
-      </nav>
-      <button class="logout-btn">Logout</button>
-    </aside>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-logo"><div class="logo-mark">WasteNot</div></div>
+            <nav class="sidebar-nav">
+                <a href="admin-dashboard.html" class="nav-item">Dashboard</a>
+                <a href="admin-manage-donations.html" class="nav-item active">Manage Items</a>
+                <a href="admin-manage-users.html" class="nav-item">Manage Users</a>
+                <a href="admin-approvals.html" class="nav-item">Approvals</a>
+                <a href="admin-logs.html" class="nav-item">Activity Logs</a>
+                <a href="admin-announcements.html" class="nav-item">Announcements</a>
+                <a href="admin-analytics.html" class="nav-item">Analytics</a>
+                <a href="admin-settings.html" class="nav-item">Settings</a>
+            </nav>
+            <button id="logoutBtn" class="logout-btn">Logout</button>
+        </aside>
 
-    <main class="main">
-      <div class="topbar">
-        <div>
-          <h1 class="topbar-title">Manage Donations</h1>
-          <p class="topbar-subtitle">Edit or remove donation listings</p>
-        </div>
-        <div class="topbar-actions">
-          <button class="icon-btn" aria-label="Notifications">🔔</button>
-          <div class="avatar">A</div>
-        </div>
-      </div>
+        <main class="main">
+            <div class="topbar">
+                <div>
+                    <h1 class="topbar-title">Manage Listings</h1>
+                    <p class="topbar-subtitle">Oversight of all active and historical Donation and Marketplace listings.</p>
+                </div>
+                <div class="topbar-actions">
+                    <button class="icon-btn" aria-label="Notifications">🔔</button>
+                    <div class="avatar" id="avatarInitial">A</div>
+                </div>
+            </div>
 
-      <section class="panel">
-        <table id="donationsTable" class="admin-table">
-          <thead><tr><th>Item</th><th>Provider</th><th>Qty</th><th>Expiry</th><th>Actions</th></tr></thead>
-          <tbody></tbody>
-        </table>
+            <section class="panel">
+                
+                <nav class="user-tabs">
+                    <button class="tab-btn active" data-tab="donations">Donation Listings</button>
+                    <button class="tab-btn" data-tab="marketplace">Marketplace Products</button>
+                </nav>
 
-        <h3 style="margin-top:1.2rem">Marketplace Products</h3>
-        <table id="productsTable" class="admin-table">
-          <thead><tr><th>Product</th><th>Partner</th><th>Price</th><th>Expiry</th><th>Pickup</th><th>Actions</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </section>
-    </main>
-  </div>
+                <div class="panel-header user-search-header">
+                    <input id="listingSearch" placeholder="Search by item name or provider..." class="filter-input" />
+                    <select id="listingStatusFilter" class="filter-select">
+                        <option value="">All Statuses</option>
+                        <option value="Active">Active</option>
+                        <option value="Claimed">Claimed / Sold</option>
+                        <option value="Expired">Expired</option>
+                    </select>
+                </div>
 
-  <script src="../notifications.js"></script>
-  <script src="admin.js"></script>
+                <div class="tab-content-wrapper">
+                    
+                    <div id="donations" class="tab-content active">
+                        <table class="admin-table">
+                            <thead><tr><th>ID</th><th>Item</th><th>Provider</th><th>Quantity</th><th>Expiry Date</th><th>Status</th><th>Actions</th></tr></thead>
+                            <tbody id="donationsTbody"></tbody>
+                        </table>
+                    </div>
+
+                    <div id="marketplace" class="tab-content">
+                        <table class="admin-table">
+                            <thead><tr><th>ID</th><th>Product</th><th>Partner</th><th>Price</th><th>Expiry Date</th><th>Status</th><th>Actions</th></tr></thead>
+                            <tbody id="marketplaceTbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                
+            </section>
+        </main>
+    </div>
+
+    <script src="admin-manage-donations.js"></script>
 </body>
 </html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>WasteNot – Inventory</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="partner-dashboard.css">
+  <link rel="stylesheet" href="partner-inventory.css">
+</head>
+
+<body>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">WasteNot</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="partner-dashboard.html" class="nav-item">Dashboard</a>
+      <a href="partner-listings.html" class="nav-item">My Listings</a>
+      <a href="partner-pickups.html" class="nav-item">Request and Claims</a>
+      <a href="partner-inventory.html" class="nav-item active">Inventory</a>
+      <a href="partner-impact.html" class="nav-item">Impact Report</a>
+      <a href="partner-settings.html" class="nav-item">Settings</a>
+    </nav>
+
+    <button class="logout-btn">Logout</button>
+  </aside>
+
+  <main class="main">
+    
+    <header class="topbar">
+      <div>
+        <h1 class="topbar-title">Inventory</h1>
+        <p class="topbar-subtitle">
+          Manage items currently stored that can be listed for donation or sale.
+        </p>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" aria-label="Notifications">
+          <span class="notification-count">2</span> 🔔
+        </button>
+        <div class="avatar" title="Partner User">
+          P
+        </div>
+      </div>
+    </header>
+
+    <div class="inventory-controls">
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input 
+          class="search-input" 
+          placeholder="Search items by name or type..." 
+        />
+      </div>
+      <a href="partner-add-item.html" class="btn-primary">
+        ＋ Add to Inventory
+      </a>
+    </div>
+
+    <div class="inventory-card">
+      <table class="inventory-table">
+        <thead>
+          <tr>
+            <th>Item Name</th>
+            <th>Quantity</th>
+            <th>Production Date</th>
+            <th>Expiry</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="inventoryBody">
+          <tr>
+            <td>Organic Apples</td>
+            <td>10 kg</td>
+            <td>2023-10-20</td>
+            <td>2023-11-05</td>
+            <td class="table-actions">
+              <a href="partner-add-item.html?id=123" class="edit-btn">Edit</a>
+              <button class="delete-btn">Delete</button>
+            </td>
+          </tr>
+          <tr class="expiry-warning">
+            <td>Canned Soup</td>
+            <td>20 cans</td>
+            <td>2023-08-15</td>
+            <td>2023-11-15</td>
+            <td class="table-actions">
+              <a href="partner-add-item.html?id=124" class="edit-btn">Edit</a>
+              <button class="delete-btn">Delete</button>
+            </td>
+          </tr>
+          <tr class="expiry-danger">
+            <td>Fresh Bread</td>
+            <td>5 loaves</td>
+            <td>2023-11-01</td>
+            <td>2023-11-03</td>
+            <td class="table-actions">
+              <a href="partner-add-item.html?id=125" class="edit-btn">Edit</a>
+              <button class="delete-btn">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      <button class="page-btn">‹</button>
+      <span>Shows 1 of 1</span>
+      <button class="page-btn">›</button>
+    </div>
+
+    </main>
+</div>
+
+<div id="toast" class="toast">Item deleted!</div>
+
+<script src="toast.js"></script>
+<script src="partner-inventory.js"></script>
+</body>
+</html>

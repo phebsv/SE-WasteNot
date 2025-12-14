@@ -1,0 +1,67 @@
+/* ================================================= */
+/* ADMIN APPROVALS SPECIFIC STYLES (admin-approvals.css) */
+/* Relies heavily on admin-manage-users.css for tab/table styles */
+/* ================================================= */
+
+.panel {
+    padding: 25px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Badge for pending count next to tab title */
+.badge {
+    display: inline-block;
+    min-width: 20px;
+    padding: 2px 7px;
+    margin-left: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    background-color: #ff9800; /* Orange for urgency/pending tasks */
+    border-radius: 10px;
+}
+
+/* Action button grouping for Approve/Reject */
+.action-group {
+    display: flex;
+    gap: 8px;
+}
+
+.action-group .btn-sm {
+    padding: 5px 10px;
+    font-size: 0.85rem;
+    border-radius: 4px;
+}
+
+.btn-success {
+    background-color: var(--green-main);
+    color: #fff;
+    border: 1px solid var(--green-main);
+}
+.btn-success:hover {
+    background-color: var(--green-dark);
+}
+.btn-danger {
+    background-color: #d9534f;
+    color: #fff;
+    border: 1px solid #d9534f;
+}
+.btn-danger:hover {
+    background-color: #c9302c;
+}
+
+/* Style for documents link */
+.document-link {
+    color: var(--green-main);
+    text-decoration: none;
+    font-weight: 500;
+}
+.document-link:hover {
+    text-decoration: underline;
+}

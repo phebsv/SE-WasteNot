@@ -1,0 +1,53 @@
+/* ================================================= */
+/* ADMIN ANALYTICS SPECIFIC STYLES (admin-analytics.css) */
+/* ================================================= */
+
+/* Reusing .kpi-grid, .kpi-card from admin-dashboard.css */
+
+.chart-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-top: 30px;
+}
+
+/* Panel for Charts */
+.chart-panel {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    /* Charts span two columns by default */
+    grid-column: span 2; 
+}
+
+/* Charts that only take half a column (e.g., Pie chart and Top List) */
+.chart-half {
+    grid-column: span 1;
+}
+
+.chart-panel .panel-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--text-main);
+}
+
+/* Placeholder styles (in a real app, this would be a canvas element) */
+.chart-placeholder {
+    height: 300px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f7f9fb;
+    border: 1px dashed #ccc;
+    color: #999;
+    font-size: 1rem;
+    padding: 20px;
+    border-radius: 6px;
+}
+
+/* Top Providers/Partners Table Specifics */
+#topProvidersTbody tr:last-child td {
+    border-bottom: none;
+}

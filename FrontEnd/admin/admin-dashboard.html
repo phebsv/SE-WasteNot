@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../ngo/ngo-base.css" />
   <link rel="stylesheet" href="admin.css" />
+  <link rel="stylesheet" href="admin-dashboard.css" /> 
 </head>
 <body>
   <div class="layout">
@@ -14,9 +15,7 @@
       <div class="sidebar-logo"><div class="logo-mark">WasteNot</div></div>
       <nav class="sidebar-nav">
         <a href="admin-dashboard.html" class="nav-item active">Dashboard</a>
-        <a href="admin-manage-providers.html" class="nav-item">Manage Providers</a>
-        <a href="admin-manage-ngos.html" class="nav-item">Manage NGOs</a>
-        <a href="admin-manage-donations.html" class="nav-item">Manage Donations</a>
+        <a href="admin-manage-donations.html" class="nav-item">Manage Items</a>
         <a href="admin-manage-users.html" class="nav-item">Manage Users</a>
         <a href="admin-approvals.html" class="nav-item">Approvals</a>
         <a href="admin-logs.html" class="nav-item">Activity Logs</a>
@@ -24,48 +23,53 @@
         <a href="admin-analytics.html" class="nav-item">Analytics</a>
         <a href="admin-settings.html" class="nav-item">Settings</a>
       </nav>
-      <button class="logout-btn">Logout</button>
+      <button id="logoutBtn" class="logout-btn">Logout</button>
     </aside>
 
     <main class="main">
       <div class="topbar">
         <div>
           <h1 class="topbar-title">Admin Dashboard</h1>
-          <p class="topbar-subtitle">Overview and system status</p>
+          <p class="topbar-subtitle">System overview and key performance indicators</p>
         </div>
         <div class="topbar-actions">
           <button class="icon-btn" aria-label="Notifications">🔔</button>
-          <div class="avatar">A</div>
+          <div class="avatar" id="avatarInitial">A</div>
         </div>
       </div>
 
-      <section class="grid-two">
-        <div class="summary-card">
-          <p class="summary-label">Providers</p>
-          <p class="summary-value" id="statProviders">—</p>
+      <section class="kpi-grid">
+        <div class="kpi-card">
+          <p class="kpi-label">Total Providers</p>
+          <p class="kpi-value" id="statProviders">0</p>
         </div>
-        <div class="summary-card">
-          <p class="summary-label">NGOs</p>
-          <p class="summary-value" id="statNgos">—</p>
+        <div class="kpi-card">
+          <p class="kpi-label">Total NGOs</p>
+          <p class="kpi-value" id="statNgos">0</p>
         </div>
-        <div class="summary-card">
-          <p class="summary-label">Active Donations</p>
-          <p class="summary-value" id="statDonations">—</p>
+        <div class="kpi-card kpi-highlight">
+          <p class="kpi-label">Pending Approvals</p>
+          <p class="kpi-value" id="statPendingApprovals">0</p>
         </div>
-        <div class="summary-card">
-          <p class="summary-label">Marketplace Products</p>
-          <p class="summary-value" id="statProducts">—</p>
+        <div class="kpi-card">
+          <p class="kpi-label">Active Listings</p>
+          <p class="kpi-value" id="statActiveDonations">0</p>
         </div>
       </section>
 
-      <section class="panel">
-        <h2 class="panel-title">Recent Activity</h2>
-        <div id="recentActivity">Loading...</div>
+      <section class="content-panel">
+        <div class="panel-header">
+            <h2 class="panel-title">Recent System Activity</h2>
+            <a href="admin-logs.html" class="btn-text">View All Logs &rarr;</a>
+        </div>
+        
+        <div class="activity-list" id="recentActivity">
+            <p class="text-muted">Loading recent activity...</p>
+        </div>
       </section>
     </main>
   </div>
 
-  <script src="../notifications.js"></script>
-  <script src="admin.js"></script>
+  <script src="admin-dashboard.js"></script>
 </body>
 </html>

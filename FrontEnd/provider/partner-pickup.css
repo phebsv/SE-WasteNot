@@ -1,0 +1,429 @@
+/* ================================================= */
+/* BASE & SHARED STYLES (partner-dashboard.css)      */
+/* ================================================= */
+
+:root {
+  --bg-sidebar: #f4faef;
+  --green-main: #15803d;
+  --green-dark: #166534;
+  --green-soft: #7fd16b;
+  --text-main: #111827;
+  --text-muted: #6b7280;
+  --border-soft: #e5e7eb;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background: linear-gradient(135deg, #e8f5e4, #f8fff1);
+  min-height: 100vh;
+  color: #2f3c2f;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: 100vh;
+}
+
+/* ========= SIDEBAR ========= */
+.sidebar {
+  background-color: var(--bg-sidebar);
+  padding: 1.8rem 1.4rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border-soft);
+  box-shadow: 3px 0 12px rgba(15, 23, 42, 0.06);
+}
+
+.sidebar-logo {
+  margin-bottom: 2.2rem;
+}
+
+.logo-mark {
+  font-weight: 800;
+  font-size: 1.4rem;
+  letter-spacing: 0.06em;
+  color: var(--green-dark);
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: auto;
+}
+
+.nav-item {
+  padding: 0.7rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  text-decoration: none;
+  color: var(--text-main);
+  font-weight: 500;
+  transition: background-color 0.16s ease, color 0.16s ease,
+    transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.nav-item:hover {
+  background-color: #e1f5e0;
+  transform: translateX(2px);
+}
+
+.nav-item.active {
+  background-color: var(--green-main);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(21, 128, 61, 0.4);
+}
+
+.logout-btn {
+  margin-top: 1.5rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 999px;
+  border: none;
+  background-color: transparent;
+  color: #dc3545; /* Placeholder for danger color */
+  font-size: 0.9rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* ========== MAIN AREA ========== */
+.main {
+  padding: 40px;
+  width: 100%;
+}
+
+/* ========== TOP BAR / HEADER STYLES ========== */
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px; 
+    margin-bottom: 25px; 
+    background-color: #f0fff0;
+    border-radius: 12px;
+}
+
+.topbar-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--green-dark);
+    margin: 0;
+}
+
+.topbar-subtitle {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin: 4px 0 0 0;
+}
+
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* --- Icon Button (Bell) --- */
+.icon-btn {
+    position: relative;
+    background: #ffffff;
+    border: 1px solid var(--border-soft);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1.4rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.notification-count {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: var(--green-main);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 999px;
+    line-height: 1;
+    transform: translate(30%, -30%);
+    border: 2px solid white; 
+}
+
+/* --- Avatar --- */
+.avatar {
+    width: 44px;
+    height: 44px;
+    background-color: var(--green-main);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+/* ========== SHARED BUTTONS ========== */
+
+.btn-primary {
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1;
+  background-color: var(--green-main);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+  text-decoration: none; 
+  display: inline-flex; 
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary:hover {
+  background-color: var(--green-dark);
+  box-shadow: 0 4px 10px rgba(21, 128, 61, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(1px);
+}
+
+.btn-secondary {
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1;
+  background-color: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--border-soft); 
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-secondary:hover {
+  background-color: #f0f0f0;
+  border-color: #ccc;
+}
+
+/* ================================================= */
+/* PICKUPS/CLAIMS SPECIFIC STYLES                    */
+/* ================================================= */
+
+/* --- Filter Tab Navigation --- */
+.claims-tabs {
+  display: flex;
+  gap: 12px; 
+  padding-bottom: 5px; 
+  margin-bottom: 30px;
+  border-bottom: 1px solid var(--border-soft); 
+}
+
+.claim-tab {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px 15px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.claim-tab:hover {
+  color: var(--text-main);
+}
+
+/* Active Tab Styling */
+.claim-tab.active {
+  color: var(--green-main);
+}
+
+.claim-tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: -6px; 
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: var(--green-main);
+  border-radius: 999px;
+}
+
+
+/* --- Claims List Container --- */
+.claims-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 25px;
+}
+
+/* --- Claim Card --- */
+.claim-card {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid var(--border-soft);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s;
+}
+
+.claim-card:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+}
+
+/* New: Image styles */
+.claim-image-wrapper {
+    width: 100%;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 150px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f7f7f7;
+}
+
+.claim-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    display: block;
+}
+
+.claim-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.claim-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin: 0;
+}
+
+.claim-id {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    background: #f0f0f0;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.claim-details {
+    margin-bottom: 15px;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.claim-details p {
+    margin: 5px 0;
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.05);
+}
+
+.detail-label {
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.detail-value {
+    color: var(--text-muted);
+}
+
+.claim-actions {
+    margin-top: auto; 
+    padding-top: 15px;
+    border-top: 1px solid var(--border-soft);
+    display: flex;
+    gap: 10px;
+}
+
+/* --- Status Badges --- */
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.status-confirmed, .status-ready {
+    background-color: var(--green-soft);
+    color: var(--green-dark);
+}
+
+.status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-picked-up {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.status-cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* --- TOAST Message Styles --- */
+.toast {
+    visibility: hidden;
+    min-width: 250px;
+    background-color: var(--text-main);
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 16px;
+    position: fixed;
+    z-index: 10000;
+    left: 50%;
+    bottom: 30px;
+    transform: translateX(-50%);
+    font-size: 1rem;
+    opacity: 0;
+    transition: opacity 0.3s, bottom 0.3s;
+}
+
+.toast.show {
+    visibility: visible;
+    opacity: 1;
+    bottom: 50px;
+}
+
+/* Toast color overrides for status */
+.toast.success {
+    background-color: var(--green-dark);
+}
+
+.toast.error {
+    background-color: #dc3545;
+}

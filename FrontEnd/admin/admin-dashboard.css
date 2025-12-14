@@ -1,0 +1,98 @@
+/* ================================================= */
+/* ADMIN DASHBOARD SPECIFIC STYLES (admin-dashboard.css) */
+/* ================================================= */
+
+/* --- KPI Grid Layout --- */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.kpi-card {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border-left: 5px solid var(--green-soft); /* Subtle color stripe */
+}
+
+/* Highlighted Card for Urgent Action (e.g., Approvals) */
+.kpi-highlight {
+    border-left: 5px solid #ff9800; /* Orange highlight for urgency */
+    background-color: #fffaf0; /* Light background for visibility */
+}
+
+.kpi-label {
+    font-size: 0.95rem;
+    color: var(--text-muted); /* Assuming var(--text-muted) is defined */
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.kpi-value {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--green-dark);
+}
+
+.kpi-highlight .kpi-value {
+    color: #e65100; /* Darker orange for urgent value */
+}
+
+
+/* --- Content Panel (Activity Log) --- */
+.content-panel {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-soft);
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+.panel-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin: 0;
+}
+
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.activity-item {
+    padding: 10px 0;
+    border-bottom: 1px dashed #eee;
+    font-size: 0.9rem;
+    color: var(--text-main);
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+/* Status coloring for logs (based on success/error/info) */
+.status-success { color: var(--green-dark); font-weight: 600; }
+.status-warning { color: #ff9800; font-weight: 600; }
+.status-info { color: #007bff; }
+.status-danger { color: #d9534f; font-weight: 600; }
+
+.btn-text {
+    /* Style for 'View All Logs' link to look like a subtle button/link */
+    color: var(--green-dark);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+}

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>WasteNot – My Listings</title>
+  <link rel="stylesheet" href="partner-dashboard.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+</head>
+<body>
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-mark">WasteNot</div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="partner-dashboard.html" class="nav-item">Dashboard</a>
+        <a href="partner-listings.html" class="nav-item active">My Listings</a>
+        <a href="partner-pickups.html" class="nav-item">Request / Claims</a>
+        <a href="partner-inventory.html" class="nav-item">Inventory</a>
+        <a href="partner-impact.html" class="nav-item">Impact Report</a>
+        <a href="partner-settings.html" class="nav-item">Settings</a>
+      </nav>
+
+      <button id="logoutBtn" class="logout-btn">Logout</button>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h1 class="topbar-title">My Listings</h1>
+          <p class="topbar-subtitle">
+            Manage your active and past food rescue listings.
+          </p>
+        
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-btn">🔔</button>
+          <div class="avatar" id="avatarInitial">P</div>
+        </div>
+      </header>
+
+      <!-- search + create -->
+      <section class="search-row">
+        <div class="search-wrapper">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            id="search"
+            class="market-search"
+            placeholder="Search for listings..."
+          />
+        </div>
+        <style> 
+          .search-row {
+  margin-bottom: 1.5rem;
+}
+
+.search-wrapper {
+  position: relative;
+  margin-bottom: 0.7rem;
+}
+
+.search-icon {
+  position: absolute;
+  top: 50%;
+  left: 18px;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+  opacity: 0.7;
+}
+
+.market-search {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 16px 22px 16px 44px;
+  border: 1px solid #e0e6db;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  font-size: 1rem;
+}
+
+.market-search:focus {
+  outline: none;
+  border-color: var(--green-main);
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+}
+
+        </style>
+       <button class="qa-btn qa-primary" onclick="window.location.href='partner-create-type.html'">
+       ＋ Create New Listing
+       </button>
+
+      </section>
+
+      <!-- LISTINGS LIST -->
+      <section id="listingsContainer" class="listings-container">
+        <!-- cards injected by JS -->
+      </section>
+    </main>
+  </div>
+
+  <!-- Listing Modal (for Add + Edit) -->
+  <div id="listingModalBackdrop" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="listingModalTitle">New Listing</h2>
+        <button id="listingModalClose" class="modal-close">✕</button>
+      </div>
+
+      <form id="listingForm" class="modal-form">
+        <div class="form-row">
+          <label>Title</label>
+          <input type="text" id="listingTitle" required />
+        </div>
+
+        <div class="form-row two-col">
+          <div>
+            <label>Type</label>
+            <select id="listingType" required>
+              <option value="Marketplace">Marketplace</option>
+              <option value="Donation">Donation</option>
+            </select>
+          </div>
+          <div>
+            <label>Price (₱)</label>
+            <input type="number" id="listingPrice" min="0" step="1" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label>Category</label>
+          <input type="text" id="listingCategory" placeholder="Bread & Pastry, Drinks, Meals..." />
+        </div>
+
+        <div class="form-row two-col">
+          <div>
+            <label>Quantity Left</label>
+            <input type="number" id="listingQtyLeft" min="0" step="1" />
+          </div>
+          <div>
+            <label>Expiry Date</label>
+            <input type="date" id="listingExpiry" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label>Image Filename</label>
+          <input type="text" id="listingImage" placeholder="e.g. croissant.jpg" />
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" id="listingCancelBtn" class="modal-btn secondary">
+            Cancel
+          </button>
+          <button type="submit" class="modal-btn primary">
+            Save Listing
+          </button>
+        </div>
+        <!-- EDIT LISTING MODAL -->
+<div id="editModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Edit Listing</h2>
+
+    <div class="form-grid">
+
+      <div class="form-field">
+        <input id="editName" placeholder="Product Name">
+      </div>
+
+      <div class="form-field">
+        <input id="editQty" type="number" placeholder="Quantity Left">
+      </div>
+
+      <div class="form-field">
+        <input id="editPrice" type="number" placeholder="Price (₱)">
+      </div>
+
+      <div class="form-field">
+        <input id="editPickup" placeholder="Pickup Window">
+      </div>
+
+      <div class="form-field">
+        <input id="editExpiry" type="date">
+      </div>
+
+    </div>
+
+    <div class="modal-actions">
+      <button onclick="saveEditListing()" class="btn-primary">Save</button>
+      <button onclick="closeEditModal()" class="btn-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+<div id="toast" class="toast">Sample message</div>
+
+      </form>
+    </div>
+  </div>
+
+
+  <script src="partner-data.js"></script>
+  <script src="partner-listings.js"></script>
+</body>
+</html>

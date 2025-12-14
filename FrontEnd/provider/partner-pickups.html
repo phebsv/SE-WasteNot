@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>WasteNot – Requests / Claims</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <link rel="stylesheet" href="partner-dashboard.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-mark">WasteNot</div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="partner-dashboard.html" class="nav-item">Dashboard</a>
+        <a href="partner-listings.html" class="nav-item">My Listings</a>
+        <a href="partner-pickups.html" class="nav-item active">Request and Claims</a>
+        <a href="partner-inventory.html" class="nav-item">Inventory</a>
+        <a href="partner-impact.html" class="nav-item">Impact Report</a>
+        <a href="partner-settings.html" class="nav-item">Settings</a>
+      </nav>
+
+      <button id="logoutBtn" class="logout-btn">Logout</button>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h1 class="topbar-title">Requests and Claims</h1>
+          <p class="topbar-subtitle">Manage customer reservations and pickups.</p>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-btn" aria-label="Notifications">
+             <span class="notification-count">2</span> 🔔
+          </button>
+          <div class="avatar" id="avatarInitial">P</div>
+        </div>
+      </header>
+
+      <nav class="claims-tabs">
+        <button class="claim-tab active" data-status="all">All</button>
+        <button class="claim-tab" data-status="pending">Pending</button>
+        <button class="claim-tab" data-status="confirmed">Confirmed</button>
+        <button class="claim-tab" data-status="ready">Ready for Pickup</button>
+        <button class="claim-tab" data-status="picked-up">Completed</button>
+        <button class="claim-tab" data-status="cancelled">Cancelled</button>
+      </nav>
+
+      <section id="claimsContainer" class="claims-container">
+        </section>
+      
+      <div id="toast" class="toast"></div>
+
+    </main>
+  </div>
+
+  <script src="partner-data.js"></script>
+  <script src="partner-pickups.js"></script>
+</body>
+</html>

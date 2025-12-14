@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>WasteNot – Provider Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../auth/auth.css">
+</head>
+
+<body data-role="partner-login">
+  <div class="auth-page">
+
+    <!-- LEFT PANEL -->
+    <div class="auth-left">
+      <div class="brand-pill">Welcome back!</div>
+      <h1 class="brand-title">Log in to your provider account</h1>
+      <p class="brand-subtitle">
+        Manage surplus food postings, track donations, and view your impact.
+      </p>
+      <ul class="brand-bullet-list">
+        <li>✓ Post surplus items quickly</li>
+        <li>✓ Connect with NGOs instantly</li>
+        <li>✓ Track environmental impact</li>
+      </ul>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="auth-right">
+      <div class="auth-card fade-in">
+
+        <div class="auth-logo">WasteNot</div>
+        <h2 class="auth-heading">Provider Login</h2>
+        <p class="auth-subheading">Enter your credentials to continue.</p>
+
+        <form class="auth-form" action="#" method="post">
+
+          <!-- FULL NAME (Option C) -->
+          <div>
+            <label class="form-label">Full Name</label>
+            <div class="input-wrapper">
+              <input id="fullname" class="input-field" type="text" required>
+            </div>
+          </div>
+
+          <!-- ACCOUNT NUMBER -->
+          <div>
+            <label class="form-label">Account Number / ID</label>
+            <div class="input-wrapper">
+              <input id="email" class="input-field" type="text" required>
+            </div>
+          </div>
+
+          <!-- PASSWORD -->
+          <div>
+            <label class="form-label">Password</label>
+            <div class="input-wrapper">
+              <input id="password" class="input-field" type="password" required>
+              <span class="toggle-password">Show</span>
+            </div>
+          </div>
+
+          <!-- SUBMIT BUTTON -->
+          <button type="submit" class="btn-primary">Log In</button>
+
+        </form>
+
+        <p class="auth-bottom-text">
+          Need an account? <a href="register-partner.html">Register here</a>
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="login-partner.js"></script>
+
+</body>
+</html>

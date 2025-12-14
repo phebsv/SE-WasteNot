@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Donation Listing – Partner</title>
+
+  <!-- Existing CSS -->
+  <link rel="stylesheet" href="partner-dashboard.css">
+  <link rel="stylesheet" href="toast.css">
+
+  <!-- Page-specific CSS -->
+  <style>
+    .create-wrapper {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 40px;
+      background: #f9faf4;
+      border-radius: 20px;
+    }
+
+    .create-title {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 30px;
+    }
+
+    .photo-box {
+      width: 100%;
+      height: 220px;
+      background: #e8e8e8;
+      border-radius: 15px;
+      border: 2px dashed #bbb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      cursor: pointer;
+      margin-bottom: 25px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .photo-box img {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .photo-box.has-image img {
+      display: block;
+    }
+
+    .photo-box.has-image .upload-text {
+      display: none;
+    }
+
+    .upload-text {
+      text-align: center;
+      color: #555;
+      font-size: 16px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .form-input {
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      width: 100%;
+      font-size: 15px;
+    }
+
+    .create-btn {
+      margin-top: 25px;
+      width: 180px;
+      padding: 14px;
+      background: #1f7a1f;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 17px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .create-btn:hover {
+      background: #166016;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-mark">WasteNot</div>
+        <p class="logo-sub">Partner</p>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="partner-dashboard.html" class="nav-item">Dashboard</a>
+        <a href="partner-listings.html" class="nav-item active">My Listings</a>
+        <a href="partner-pickups.html" class="nav-item">Request / Claims</a>
+        <a href="partner-inventory.html" class="nav-item">Inventory</a>
+        <a href="partner-impact.html" class="nav-item">Impact Report</a>
+        <a href="partner-settings.html" class="nav-item">Settings</a>
+      </nav>
+
+      <button id="logoutBtn" class="logout-btn">Logout</button>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+      <!-- FORM WRAPPER -->
+      <div class="create-wrapper">
+
+        <h1 class="create-title">Create Donation Listing</h1>
+
+        <!-- PHOTO UPLOAD -->
+        <label class="photo-box" id="photoBox">
+          <img id="previewImg">
+          <div class="upload-text">
+            <div style="font-size:45px;">📷</div>
+            <p>Add Photos</p>
+          </div>
+          <input type="file" id="photoInput" accept="image/*" style="display:none;">
+        </label>
+
+        <!-- FORM -->
+        <div class="form-grid">
+
+          <input type="text" id="itemName" class="form-input" placeholder="Item Name">
+          <input type="number" id="itemQty" class="form-input" placeholder="Quantity">
+
+          <select id="itemCategory" class="form-input">
+            <option disabled selected>Type of Product</option>
+            <option>Breads</option>
+            <option>Drinks</option>
+            <option>Meals</option>
+            <option>Canned Goods</option>
+            <option>Vegetables</option>
+          </select>
+
+          <input type="date" id="prodDate" class="form-input">
+          <input type="date" id="expDate" class="form-input">
+
+          <input type="text" id="pickupWindow" class="form-input" placeholder="Pickup Window (e.g. 4PM - 8PM)">
+        </div>
+
+        <button class="create-btn" onclick="createDonationListing()">Create</button>
+      </div>
+
+    </main>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="partner-data.js"></script>
+  <script src="toast.js"></script>
+
+  <!-- JS -->
+  <script>
+
+    // IMAGE UPLOAD PREVIEW
+    const photoBox = document.getElementById("photoBox");
+    const photoInput = document.getElementById("photoInput");
+    const previewImg = document.getElementById("previewImg");
+
+    photoBox.onclick = () => photoInput.click();
+
+    photoInput.onchange = () => {
+      const file = photoInput.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        previewImg.src = reader.result;
+        photoBox.classList.add("has-image");
+      };
+      reader.readAsDataURL(file);
+    };
+
+    // SUBMIT DONATION LISTING
+    function createDonationListing() {
+      const name = itemName.value.trim();
+      const qty = itemQty.value;
+      const category = itemCategory.value;
+      const prodDateValue = prodDate.value;
+      const expDateValue = expDate.value;
+      const pickup = pickupWindow.value.trim();
+      const image = previewImg.src || "";
+
+      if (!name || !qty || !category || !prodDateValue || !expDateValue || !pickup || !image) {
+        showToast("Please complete all fields.");
+        return;
+      }
+
+      partnerListings.push({
+        id: Date.now(),
+        name,
+        category,
+        qtyLeft: Number(qty),
+        price: 0,            // Donation (free)
+        type: "donation",
+        productionDate: prodDateValue,
+        expiryDate: expDateValue,
+        pickupWindow: pickup,
+        image
+      });
+
+      savePartnerData();
+      showToast("Donation listing created!");
+
+      setTimeout(() => {
+        window.location.href = "partner-listings.html";
+      }, 1000);
+    }
+  </script>
+
+</body>
+</html>

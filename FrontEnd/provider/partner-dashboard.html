@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>WasteNot – Partner Dashboard</title>
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link 
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- MAIN DASHBOARD CSS -->
+  <link rel="stylesheet" href="partner-dashboard.css" />
+</head>
+
+<body>
+  <!-- GLOBAL TOAST CONTAINER -->
+  <div id="toastContainer"></div>
+
+  <div class="layout">
+    <!-- ========== SIDEBAR ========== -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-mark">WasteNot</div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="partner-dashboard.html" class="nav-item active">Dashboard</a>
+        <a href="partner-listings.html" class="nav-item">My Listings</a>
+        <a href="partner-pickups.html" class="nav-item">Request / Claims</a>
+        <a href="partner-inventory.html" class="nav-item">Inventory</a>
+        <a href="partner-impact.html" class="nav-item">Impact Report</a>
+        <a href="partner-settings.html" class="nav-item">Settings</a>
+      </nav>
+
+      <button id="logoutBtn" class="logout-btn">Logout</button>
+    </aside>
+
+    <!-- ========== MAIN ========== -->
+    <main class="main">
+  <!-- Topbar -->
+  <header class="topbar">
+    <div>
+      <h1 class="topbar-title">
+        Welcome, <span id="partnerName">Partner</span>!
+      </h1>
+      <p class="topbar-subtitle">
+        Here’s your store’s performance overview for this month.
+      </p>
+    </div>
+
+    <div class="topbar-actions">
+      <button class="icon-btn" aria-label="Notifications">🔔</button>
+      <div class="avatar" id="avatarInitial">P</div>
+    </div>
+  </header>
+
+  <!-- Quick Actions -->
+  <section class="quick-actions">
+    <button class="qa-btn qa-primary" onclick="window.location.href='partner-listings.html'">
+      ＋ Create New Listing
+    </button>
+    <button class="qa-btn" onclick="window.location.href='partner-pickups.html'">
+      📥 Review Claims
+    </button>
+  </section>
+
+  <!-- DASHBOARD GRID -->
+  <section class="dashboard-grid">
+
+    <!-- LEFT COLUMN -->
+    <div class="grid-left">
+      <article class="card chart-card">
+        <div class="card-header">
+          <h2 class="card-title">Listings this Month</h2>
+          <span class="card-caption" id="monthLabel">Month of November</span>
+        </div>
+        <canvas id="listingsChart"></canvas>
+      </article>
+
+      <article class="card chart-card">
+        <div class="card-header">
+          <h2 class="card-title">Claims & Pickups</h2>
+          <span class="card-caption">Weekly claimed items</span>
+        </div>
+        <canvas id="claimsChart"></canvas>
+      </article>
+
+      
+
+      <!-- Waste Reduced (FULL WIDTH, CLEAN) -->
+      <article class="card stat-card">
+        <h3 class="stat-label">Waste Reduced</h3>
+        <div class="stat-row">
+          <span class="stat-value" id="wasteKg">18.4</span>
+          <span class="stat-sub">kg diverted</span>
+        </div>
+        <p class="stat-sub">Equivalent to <span id="bagsSaved">3 bags</span> saved</p>
+        <p class="stat-change positive" id="impactChange">+12% vs last month</p>
+      </article>
+        </div>
+
+    <!-- RIGHT COLUMN (KPI STACK) -->
+    <div class="grid-right">
+
+      <article class="card stat-card">
+        <h3 class="stat-label">Total Listings</h3>
+        <div class="stat-value" id="totalListings">0</div>
+        <p class="stat-sub">All-time posted items</p>
+      </article>
+
+      <article class="card stat-card">
+        <h3 class="stat-label">Active Listings</h3>
+        <div class="stat-value" id="activeListings">0</div>
+        <p class="stat-sub">Currently visible in marketplace</p>
+      </article>
+
+      <article class="card stat2-card">
+        <h3 class="stat-label">November Data</h3>
+      </article>
+
+      <!-- Charts Section -->
+      <!-- Sales & Donations Stats -->
+      <article class="card stat-card">
+        <h3 class="stat-label">Donated</h3>
+        <div class="stat-row">
+          <span class="stat-value" id="donatedCount">0</span>
+          <span class="stat-change positive" id="donatedChange">+0%</span>
+        </div>
+        <p class="stat-sub">Items given for free / NGO</p>
+      </article>
+
+      <article class="card stat-card">
+        <h3 class="stat-label">Earnings</h3>
+        <div class="stat-row">
+          <span class="stat-currency">₱</span>
+          <span class="stat-value" id="earningsValue">0</span>
+          <span class="stat-change negative" id="earningsChange">0%</span>
+        </div>
+        <p class="stat-sub">Net from rescued item sales</p>
+      </article>
+
+      <article class="card stat-card">
+        <h3 class="stat-label">Sold (Value)</h3>
+        <div class="stat-row">
+          <span class="stat-currency">₱</span>
+          <span class="stat-value" id="soldValue">0</span>
+          <span class="stat-change negative" id="soldChange">0%</span>
+        </div>
+        <p class="stat-sub">Estimated retail value rescued</p>
+      </article>
+    </div>
+  </section>
+
+  <div id="toast" class="toast">Sample message</div>
+</main>
+  </div>
+
+  <!-- SCRIPT ORDER -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="partner-data.js"></script>
+  <script src="toast.js"></script>
+  <script src="partner-dashboard.js"></script>
+</body>
+</html>

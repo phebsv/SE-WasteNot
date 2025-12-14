@@ -1,60 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Announcements</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../ngo/ngo-base.css" />
-  <link rel="stylesheet" href="admin.css" />
-</head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Announcements</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../ngo/ngo-base.css" />
+    <link rel="stylesheet" href="admin.css" />
+    <link rel="stylesheet" href="admin-announcements.css" /> </head>
 <body>
-  <div class="layout">
-    <aside class="sidebar">
-      <div class="sidebar-logo"><div class="logo-mark">WasteNot</div></div>
-      <nav class="sidebar-nav">
-        <a href="admin-dashboard.html" class="nav-item active">Dashboard</a>
-        <a href="admin-manage-providers.html" class="nav-item">Manage Providers</a>
-        <a href="admin-manage-ngos.html" class="nav-item">Manage NGOs</a>
-        <a href="admin-manage-donations.html" class="nav-item">Manage Donations</a>
-        <a href="admin-manage-users.html" class="nav-item">Manage Users</a>
-        <a href="admin-approvals.html" class="nav-item">Approvals</a>
-        <a href="admin-logs.html" class="nav-item">Activity Logs</a>
-        <a href="admin-announcements.html" class="nav-item">Announcements</a>
-        <a href="admin-analytics.html" class="nav-item">Analytics</a>
-        <a href="admin-settings.html" class="nav-item">Settings</a>
-      </nav>
-      <button class="logout-btn">Logout</button>
-    </aside>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-logo"><div class="logo-mark">WasteNot</div></div>
+            <nav class="sidebar-nav">
+                <a href="admin-dashboard.html" class="nav-item">Dashboard</a>
+                <a href="admin-manage-donations.html" class="nav-item">Manage Items</a>
+                <a href="admin-manage-users.html" class="nav-item">Manage Users</a>
+                <a href="admin-approvals.html" class="nav-item">Approvals</a>
+                <a href="admin-logs.html" class="nav-item">Activity Logs</a>
+                <a href="admin-announcements.html" class="nav-item active">Announcements</a>
+                <a href="admin-analytics.html" class="nav-item">Analytics</a>
+                <a href="admin-settings.html" class="nav-item">Settings</a>
+            </nav>
+            <button id="logoutBtn" class="logout-btn">Logout</button>
+        </aside>
 
-    <main class="main">
-      <div class="topbar">
-        <div>
-          <h1 class="topbar-title">Announcements</h1>
-          <p class="topbar-subtitle">Create public announcements for all users</p>
-        </div>
-        <div class="topbar-actions">
-          <button class="icon-btn" aria-label="Notifications">🔔</button>
-          <div class="avatar">A</div>
-        </div>
-      </div>
+        <main class="main">
+            <div class="topbar">
+                <div>
+                    <h1 class="topbar-title">Announcements</h1>
+                    <p class="topbar-subtitle">Create and manage broadcast messages for users.</p>
+                </div>
+                <div class="topbar-actions">
+                    <button class="icon-btn" aria-label="Notifications">🔔</button>
+                    <div class="avatar" id="avatarInitial">A</div>
+                </div>
+            </div>
 
-      <section class="panel">
-        <label class="label">Title</label>
-        <input id="announceTitle" class="input" />
-        <label class="label">Message</label>
-        <textarea id="announceBody" class="input" rows="4"></textarea>
-        <div class="actions">
-          <button id="announceSave" class="btn primary">Publish</button>
-        </div>
+            <section class="panel announcement-panel">
+                <h2>Create New Announcement</h2>
+                <form id="announcementForm">
+                    <div class="form-group">
+                        <label for="announceTitle" class="label">Title</label>
+                        <input type="text" id="announceTitle" class="input" required placeholder="e.g., Scheduled Maintenance Tomorrow">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="announceBody" class="label">Message</label>
+                        <textarea id="announceBody" class="input" rows="4" required placeholder="Full message text..."></textarea>
+                    </div>
+                    
+                    <div class="form-group control-group">
+                        <div class="control-item">
+                            <label for="targetAudience" class="label">Target Audience</label>
+                            <select id="targetAudience" class="input">
+                                <option value="All">All Users (Providers, NGOs, Consumers)</option>
+                                <option value="Providers">Only Providers</option>
+                                <option value="NGOs">Only NGOs</option>
+                                <option value="Consumers">Only Consumers</option>
+                                <option value="System">System/Admin Only</option>
+                            </select>
+                        </div>
+                        <div class="control-item">
+                            <label for="announcementType" class="label">Type / Urgency</label>
+                            <select id="announcementType" class="input">
+                                <option value="Info">Info (General)</option>
+                                <option value="Warning">Warning (Urgent/Action Required)</option>
+                                <option value="Success">Success (New Feature)</option>
+                            </select>
+                        </div>
+                    </div>
 
-        <h3 style="margin-top:1rem">Recent Announcements</h3>
-        <div id="annList"></div>
-      </section>
-    </main>
-  </div>
+                    <div class="actions">
+                        <button type="submit" id="announcePublish" class="btn-primary">Publish Now</button>
+                        <button type="button" id="announceDraft" class="btn-secondary">Save as Draft</button>
+                    </div>
+                </form>
+            </section>
+            
+            <section class="panel history-panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">Announcement History</h2>
+                    <select id="historyFilter" class="filter-select">
+                        <option value="Active">Active</option>
+                        <option value="Draft">Drafts</option>
+                        <option value="Archived">Archived</option>
+                    </select>
+                </div>
+                
+                <div id="annList" class="announcement-list">
+                    <p class="text-muted">Loading history...</p>
+                </div>
+            </section>
+        </main>
+    </div>
 
-  <script src="../notifications.js"></script>
-  <script src="admin.js"></script>
+    <script src="admin-announcements.js"></script>
 </body>
 </html>

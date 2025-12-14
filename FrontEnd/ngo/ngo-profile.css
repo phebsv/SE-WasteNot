@@ -1,11 +1,149 @@
-.profile-card{background:#fff;border-radius:12px;padding:1.6rem;border:1px solid var(--border-soft);box-shadow:0 6px 20px rgba(15,23,42,0.06)}
-.profile-grid{display:grid;grid-template-columns:280px 1fr;gap:1.4rem}
-.profile-avatar{width:160px;height:160px;border-radius:12px;background:linear-gradient(135deg,#e8f5e4,#f8fff1);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;color:var(--green-dark);margin-bottom:1rem}
-.label{display:block;margin-top:0.8rem;font-size:0.85rem;color:var(--text-muted);font-weight:600}
-.input{width:100%;padding:0.7rem 0.9rem;border-radius:8px;border:1px solid var(--border-soft);margin-top:0.4rem}
-textarea.input{resize:vertical}
-.actions{display:flex;gap:0.6rem;margin-top:1rem}
-.btn{padding:0.7rem 1.1rem;border-radius:8px;border:none;cursor:pointer;font-weight:600}
-.btn.primary{background:var(--green-main);color:#fff}
-.btn.ghost{background:transparent;border:1px solid #e5e7eb;color:#444}
-@media(max-width:768px){.profile-grid{grid-template-columns:1fr}.profile-avatar{width:120px;height:120px}}
+/* ================================================= */
+/* NGO PROFILE SPECIFIC STYLES (ngo-profile.css)     */
+/* Designed to match partner-settings.css layout.    */
+/* ================================================= */
+
+.settings-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px 0;
+}
+
+.settings-section {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 40px;
+}
+
+.settings-section h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--green-dark); /* Assumes --green-dark is defined in ngo-base.css */
+    margin-top: 0;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-soft); /* Assumes --border-soft is defined */
+}
+
+/* --- Profile Form Layout (Two Columns) --- */
+.profile-form-grid {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 40px;
+}
+
+.profile-left {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.profile-right {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* --- Profile Avatar Area --- */
+.profile-avatar-wrapper {
+    background-color: var(--bg-sidebar); /* Assumes --bg-sidebar is defined */
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-avatar-large {
+    width: 100%;
+    height: 150px;
+    background-color: var(--green-soft); /* Assumes --green-soft is defined */
+    color: var(--green-dark);
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.about-group {
+    flex-grow: 1; 
+}
+
+/* Ensure textarea fills space */
+.profile-form-grid textarea {
+    flex-grow: 1;
+    min-height: 120px; 
+    resize: vertical;
+}
+
+/* --- Security Form Layout (Single Column) --- */
+.security-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+/* --- Form Elements (Inputs and Labels) --- */
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-main); /* Assumes --text-main is defined */
+    margin-bottom: 8px;
+}
+
+.profile-form-grid input,
+.security-form input,
+.profile-form-grid textarea {
+    padding: 12px;
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    font-size: 1rem;
+    color: var(--text-main);
+    background-color: #fcfcfc;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.profile-form-grid input:focus,
+.security-form input:focus,
+.profile-form-grid textarea:focus {
+    outline: none;
+    border-color: var(--green-soft);
+    box-shadow: 0 0 0 3px rgba(127, 209, 107, 0.2);
+}
+
+.profile-form-grid input[readonly],
+.profile-form-grid input[disabled] {
+    background-color: #f0f0f0;
+    color: var(--text-muted); /* Assumes --text-muted is defined */
+    cursor: not-allowed;
+}
+
+/* --- Action Buttons Container --- */
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* Button placement for security form */
+.security-form .btn-primary {
+    width: fit-content;
+    margin-top: 10px;
+}
+
+/* Responsive adjustment */
+@media (max-width: 900px) {
+    .profile-form-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,19 @@
+/* ================================================= */
+/* ADMIN MANAGE DONATIONS SPECIFIC STYLES            */
+/* (Minimal - Relies heavily on admin-manage-users.css)*/
+/* ================================================= */
+
+/* Ensure the panel padding/box-shadow is applied */
+.panel {
+    padding: 25px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Specific button size for table actions (if needed) */
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 0.85rem;
+    border-radius: 4px;
+}

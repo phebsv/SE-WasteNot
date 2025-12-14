@@ -1,51 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Activity Logs</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../ngo/ngo-base.css" />
-  <link rel="stylesheet" href="admin.css" />
-</head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Activity Logs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../ngo/ngo-base.css" />
+    <link rel="stylesheet" href="admin.css" />
+    <link rel="stylesheet" href="admin-logs.css" /> </head>
 <body>
-  <div class="layout">
-    <aside class="sidebar">
-      <div class="sidebar-logo"><div class="logo-mark">WasteNot</div></div>
-      <nav class="sidebar-nav">
-        <a href="admin-dashboard.html" class="nav-item active">Dashboard</a>
-        <a href="admin-manage-providers.html" class="nav-item">Manage Providers</a>
-        <a href="admin-manage-ngos.html" class="nav-item">Manage NGOs</a>
-        <a href="admin-manage-donations.html" class="nav-item">Manage Donations</a>
-        <a href="admin-manage-users.html" class="nav-item">Manage Users</a>
-        <a href="admin-approvals.html" class="nav-item">Approvals</a>
-        <a href="admin-logs.html" class="nav-item">Activity Logs</a>
-        <a href="admin-announcements.html" class="nav-item">Announcements</a>
-        <a href="admin-analytics.html" class="nav-item">Analytics</a>
-        <a href="admin-settings.html" class="nav-item">Settings</a>
-      </nav>
-      <button class="logout-btn">Logout</button>
-    </aside>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-logo"><div class="logo-mark">WasteNot</div></div>
+            <nav class="sidebar-nav">
+                <a href="admin-dashboard.html" class="nav-item">Dashboard</a>
+                <a href="admin-manage-donations.html" class="nav-item">Manage Items</a>
+                <a href="admin-manage-users.html" class="nav-item">Manage Users</a>
+                <a href="admin-approvals.html" class="nav-item">Approvals</a>
+                <a href="admin-logs.html" class="nav-item active">Activity Logs</a>
+                <a href="admin-announcements.html" class="nav-item">Announcements</a>
+                <a href="admin-analytics.html" class="nav-item">Analytics</a>
+                <a href="admin-settings.html" class="nav-item">Settings</a>
+            </nav>
+            <button id="logoutBtn" class="logout-btn">Logout</button>
+        </aside>
 
-    <main class="main">
-      <div class="topbar">
-        <div>
-          <h1 class="topbar-title">Activity Logs</h1>
-          <p class="topbar-subtitle">Audit trail of important system events</p>
-        </div>
-        <div class="topbar-actions">
-          <button class="icon-btn" aria-label="Notifications">🔔</button>
-          <div class="avatar">A</div>
-        </div>
-      </div>
+        <main class="main">
+            <div class="topbar">
+                <div>
+                    <h1 class="topbar-title">Activity Logs</h1>
+                    <p class="topbar-subtitle">Audit trail of important system events, user actions, and security incidents.</p>
+                </div>
+                <div class="topbar-actions">
+                    <button class="icon-btn" aria-label="Notifications">🔔</button>
+                    <div class="avatar" id="avatarInitial">A</div>
+                </div>
+            </div>
 
-      <section class="panel">
-        <div id="logsContainer">Loading logs...</div>
-      </section>
-    </main>
-  </div>
+            <section class="log-panel">
+                
+                <div class="log-filters">
+                    <input type="text" id="logSearch" placeholder="Search by user or action..." class="filter-input">
+                    
+                    <select id="logTypeFilter" class="filter-select">
+                        <option value="">All Types</option>
+                        <option value="SUCCESS">Success</option>
+                        <option value="INFO">Info</option>
+                        <option value="WARNING">Warning</option>
+                        <option value="DANGER">Danger</option>
+                    </select>
+                    
+                    <input type="date" id="logDateFilter" class="filter-input">
+                    
+                    <button id="resetFilters" class="btn-secondary">Reset Filters</button>
+                </div>
 
-  <script src="../notifications.js"></script>
-  <script src="admin.js"></script>
+                <div class="log-table-wrapper">
+                    <table class="log-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Type</th>
+                                <th>User/Actor</th>
+                                <th>Action</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logsContainer">
+                            <tr><td colspan="5">Loading logs...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+            </section>
+        </main>
+    </div>
+
+    <script src="admin-logs.js"></script>
 </body>
 </html>

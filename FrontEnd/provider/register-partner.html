@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>WasteNot – Register as Partner</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../auth/auth.css">
+</head>
+<body>
+  <div class="auth-page">
+    <!-- LEFT SIDE -->
+    <div class="auth-left">
+      <div class="brand-pill">Partner with WasteNot</div>
+      <p class="brand-kicker">For Providers</p>
+      <h1 class="brand-title">Turn surplus food into impact.</h1>
+      <p class="brand-subtitle">
+        Register as a food provider to list surplus items, request donations,
+        and track the waste you divert from landfills.
+      </p>
+      <ul class="brand-bullet-list">
+        <li>✓ Post surplus food quickly and safely</li>
+        <li>✓ Connect with NGOs and local communities</li>
+        <li>✓ Track your social and environmental impact</li>
+      </ul>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="auth-right">
+      <div class="auth-card fade-in">
+        <div class="auth-logo">WasteNot</div>
+
+        <h2 class="auth-heading">Create your partner account</h2>
+        <p class="auth-subheading">Sign up as a provider or NGO to start sharing surplus food.</p>
+
+        <form class="auth-form" action="#" method="post">
+          <!-- Account Number / ID -->
+          <div>
+            <label class="form-label" for="accountNumber">Account Number / Organization ID</label>
+            <div class="input-wrapper">
+              <input class="input-field" type="text" id="accountNumber" name="accountNumber" placeholder="e.g. PRV-1023" required />
+            </div>
+          </div>
+
+          <!-- Password + Confirm -->
+          <div class="form-row">
+            <div>
+              <label class="form-label" for="partnerPassword">Password</label>
+              <div class="input-wrapper">
+                <input class="input-field" type="password" id="partnerPassword" name="password" required />
+                 <span class="toggle-password">Show</span>
+              </div>
+            </div>
+            <div>
+              <label class="form-label" for="partnerConfirmPassword">Confirm Password</label>
+              <div class="input-wrapper">
+                <input class="input-field" type="password" id="partnerConfirmPassword" name="confirmPassword" required />
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary">Register</button>
+
+          <!-- Terms -->
+          <div class="terms">
+            <input type="checkbox" id="termsPartner" required />
+            <label for="termsPartner">
+              By registering your details, you agree with our
+              <a href="#">Terms and Conditions</a>, and
+              <a href="#">Privacy and Cookie Policy</a>.
+            </label>
+          </div>
+        </form>
+
+        <p class="auth-bottom-text">
+          Already have a partner account?
+          <a href="login-partner.html">Log in</a>
+        </p>
+      </div>
+    </div>
+  </div>
+  
+  <script src="../auth/register-validation.js"></script>
+
+</body>
+</html>

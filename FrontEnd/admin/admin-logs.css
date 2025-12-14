@@ -1,0 +1,83 @@
+/* ================================================= */
+/* ADMIN LOGS SPECIFIC STYLES (admin-logs.css)       */
+/* ================================================= */
+
+.log-panel {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* --- Filter Bar Styling --- */
+.log-filters {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.filter-input, .filter-select {
+    padding: 10px 12px;
+    border: 1px solid var(--border-soft);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    flex-grow: 1;
+}
+
+.filter-input:focus, .filter-select:focus {
+    outline: none;
+    border-color: var(--green-soft);
+    box-shadow: 0 0 0 2px rgba(127, 209, 107, 0.2);
+}
+
+/* Make reset button fit content */
+#resetFilters {
+    flex-grow: 0; 
+}
+
+
+/* --- Log Table Styling --- */
+.log-table-wrapper {
+    overflow-x: auto;
+}
+
+.log-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.log-table th, .log-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.9rem;
+}
+
+.log-table th {
+    background-color: var(--bg-sidebar); 
+    font-weight: 600;
+    color: var(--text-main);
+    text-transform: uppercase;
+    font-size: 0.8rem;
+}
+
+.log-table tr:hover {
+    background-color: #fafafa;
+}
+
+/* Type Column Coloring */
+.log-type {
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.type-SUCCESS { background-color: #d4edda; color: #155724; }
+.type-INFO { background-color: #cce5ff; color: #004085; }
+.type-WARNING { background-color: #fff3cd; color: #856404; }
+.type-DANGER { background-color: #f8d7da; color: #721c24; }

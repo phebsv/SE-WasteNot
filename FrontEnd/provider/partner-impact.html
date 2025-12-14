@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>WasteNot – Impact Report</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="partner-dashboard.css">
+  <link rel="stylesheet" href="partner-impact.css">
+</head>
+
+<body>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">WasteNot</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="partner-dashboard.html" class="nav-item">Dashboard</a>
+      <a href="partner-listings.html" class="nav-item">My Listings</a>
+      <a href="partner-pickups.html" class="nav-item">Request / Claims</a>
+      <a href="partner-inventory.html" class="nav-item">Inventory</a>
+      <a href="partner-impact.html" class="nav-item active">Impact Report</a>
+      <a href="partner-settings.html" class="nav-item">Settings</a>
+    </nav>
+
+    <button id="logoutBtn" class="logout-btn">Logout</button>
+  </aside>
+
+  <main class="main">
+    <header class="topbar"> 
+        <div>
+            <h1 class="topbar-title">Impact Report</h1>
+            <p class="topbar-subtitle">See your monthly reports here</p>
+        </div>
+        <div class="topbar-actions">
+            <button class="icon-btn" aria-label="Notifications">
+                🔔
+            </button>
+            <div class="avatar" id="avatarInitial">P</div>
+        </div>
+    </header>
+
+
+    <div class="impact-actions">
+        <select id="dateFilter">
+            <option>Last 30 Days</option>
+            <option>Last 7 Days</option>
+            <option>Last 90 Days</option>
+        </select>
+
+        <button class="btn-primary" onclick="exportPDF()">Export PDF</button>
+    </div>
+
+
+    <section class="impact-kpis">
+      <div class="kpi-card">
+        <p>Total Waste Reduced</p>
+        <h2 id="wasteKg">18.4 kg</h2>
+        <span class="positive">+12% vs last month</span>
+      </div>
+
+      <div class="kpi-card">
+        <p>Total Donations</p>
+        <h2 id="donationCount">32</h2>
+        <span class="positive">+24% vs last month</span>
+      </div>
+
+      <div class="kpi-card">
+        <p>Total Items Sold</p>
+        <h2 id="revenue">₱2,100</h2>
+        <span class="negative">-5% vs last month</span>
+      </div>
+
+      <div class="kpi-card">
+        <p>Environmental Impact</p>
+        <h2 id="co2Saved">23 kg</h2>
+        <span>CO₂ saved</span>
+      </div>
+    </section>
+
+    <section class="impact-section">
+      <h2>Waste Reduced Overview</h2>
+
+      <div class="impact-grid">
+        <div class="impact-card">
+          <canvas id="wasteBar"></canvas>
+          <p class="impact-caption">Week 2 had the highest waste diversion: 10 kg</p>
+        </div>
+
+        <div class="impact-card">
+          <canvas id="categoryPie"></canvas>
+          <p class="impact-caption">Most diverted category: Bread / Pastry (48.4%)</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="impact-section">
+      <h2>Sales and Donation Performance</h2>
+
+      <div class="impact-grid">
+        <div class="impact-card">
+          <canvas id="salesLine"></canvas>
+          <p class="impact-caption">Sales peaked in Week 2, contributing 47% of revenue</p>
+        </div>
+
+        <div class="impact-card">
+          <canvas id="donationBar"></canvas>
+          <p class="impact-caption">Donations increased by 24% compared to last month</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="partner-data.js"></script>
+<script src="partner-impact.js"></script>
+</body>
+</html>

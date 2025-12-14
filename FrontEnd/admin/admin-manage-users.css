@@ -1,0 +1,110 @@
+/* ================================================= */
+/* ADMIN MANAGE USERS SPECIFIC STYLES                */
+/* ================================================= */
+
+.panel {
+    padding: 25px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* --- Tab Navigation --- */
+.user-tabs {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--border-soft);
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.2s, border-bottom 0.2s;
+    margin-bottom: -2px; /* Pulls button border up to meet bottom line */
+}
+
+.tab-btn:hover {
+    color: var(--green-dark);
+}
+
+.tab-btn.active {
+    color: var(--green-dark);
+    border-bottom: 2px solid var(--green-main);
+}
+
+/* --- Search and Filter Bar --- */
+.user-search-header {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 0;
+}
+
+.filter-input {
+    flex-grow: 1;
+    padding: 10px 12px;
+    border: 1px solid var(--border-soft);
+    border-radius: 6px;
+    font-size: 0.95rem;
+}
+
+.filter-select {
+    flex-grow: 0;
+    width: 200px;
+    padding: 10px 12px;
+    border: 1px solid var(--border-soft);
+    border-radius: 6px;
+    font-size: 0.95rem;
+}
+
+/* --- Tab Content --- */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* --- Admin Table Styling (Reusing styles from admin-logs) --- */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table th, .admin-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.9rem;
+}
+
+.admin-table th {
+    background-color: var(--bg-sidebar); 
+    font-weight: 600;
+    color: var(--text-main);
+    text-transform: uppercase;
+    font-size: 0.8rem;
+}
+
+.admin-table tr:hover {
+    background-color: #fafafa;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.status-Active { background-color: #d4edda; color: #155724; }
+.status-Pending { background-color: #fff3cd; color: #856404; }
+.status-Suspended, .status-Banned { background-color: #f8d7da; color: #721c24; }
