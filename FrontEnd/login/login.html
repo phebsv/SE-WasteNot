@@ -1,27 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WasteNot | Login</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WasteNot | Role Selection Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../auth/auth.css"> 
     <link rel="stylesheet" href="login.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>WasteNot</h1>
-    
-    <div class="login-choices">
-      <h2>Login as:</h2>
-      <div class="button-group">
-        <a href="login-consumer.html" class="btn btn-light-outline">Log in as customer</a>
-        <a href="login-ngo.html" class="btn btn-green">Log in as NGO</a>
-        <a href="login-partner.html" class="btn btn-green">Log in as Provider</a>
-
-      </div>
+    <div class="container login-chooser-container">
+        <h1 class="logo-mark">WasteNot</h1>
+        
+        <div class="login-choices">
+            <h2 class="choices-heading">Select Your Role to Log In</h2>
+            <p class="choices-subtitle">Choose the account type you wish to access:</p>
+            
+            <div class="button-group">
+                <a href="login-consumer.html" class="btn btn-primary btn-full-width">
+                    Log in as Customer (Shopper)
+                </a>
+                
+                <a href="login-ngo.html" class="btn btn-secondary btn-full-width">
+                    Log in as NGO (Non-Profit)
+                </a>
+                
+                <a href="login-partner.html" class="btn btn-secondary btn-full-width">
+                    Log in as Provider (Business Partner)
+                </a>
+            </div>
+        </div>
     </div>
-  </div>
 </body>
 </html>
-
-

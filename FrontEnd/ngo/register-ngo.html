@@ -2,88 +2,66 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>WasteNot – Register as NGO</title>
+    <title>WasteNot – NGO Approval Status</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../auth/auth.css">
-    <link rel="stylesheet" href="register-ngo.css"> 
 </head>
-<body data-role="ngo-register">
+
+<body data-role="ngo-status-check">
     <div class="auth-page">
+
         <div class="auth-left">
-            <div class="brand-pill">Join the WasteNot community</div>
-            <p class="brand-kicker">For NGOs / Charities</p>
-            <h1 class="brand-title">Receive surplus food, grow your reach.</h1>
+            <div class="brand-pill">Thank you for applying!</div>
+            <h1 class="brand-title">Your Partnership is Under Review</h1>
             <p class="brand-subtitle">
-                Create your WasteNot NGO account to gain access to corporate and partner food surplus
-                donations, track requests, and manage claims for beneficiaries.
+                We appreciate your commitment to reducing food waste. Your application is currently being reviewed by our administrative team.
             </p>
             <ul class="brand-bullet-list">
-                <li>✓ Access food donations from local providers</li>
-                <li>✓ Coordinate pickups and distribution efficiently</li>
-                <li>✓ Help feed your community while reducing waste</li>
+                <li>✓ Expected review time: 3-5 business days.</li>
+                <li>✓ We verify non-profit status and compliance.</li>
+                <li>✓ We'll email you a temporary password and account ID upon approval.</li>
             </ul>
         </div>
 
         <div class="auth-right">
-            <div class="auth-card fade-in">
+            <div class="auth-card fade-in" style="max-width: 450px;">
+                
                 <div class="auth-logo">WasteNot</div>
+                <h2 class="auth-heading">Next Steps: First Login</h2>
+                <p class="auth-subheading">
+                    Once you receive our approval email, follow these steps to access your account securely.
+                </p>
 
-                <h2 class="auth-heading">Create your NGO account</h2>
-                <p class="auth-subheading">Sign up your organization to start receiving donations.</p>
-
-                <form class="auth-form" action="#" method="post">
+                <div class="registration-instructions">
                     
-                    <div>
-                        <label class="form-label" for="orgName">Organization Name</label>
-                        <div class="input-wrapper">
-                            <input class="input-field" type="text" id="orgName" name="orgName" placeholder="Hope Foundation" required />
-                        </div>
-                    </div>
+                    <p class="instruction-step">
+                        <strong>1. Check Your Email:</strong>
+                        Look for an email from WasteNot containing your unique **Account ID** and **Temporary Password**.
+                    </p>
+                    
+                    <p class="instruction-step">
+                        <strong>2. Access the Login Page:</strong>
+                        Click the link in the email (or the button below) to go to the NGO login screen.
+                    </p>
+                    
+                    <p class="instruction-step">
+                        <strong>3. Log In and Reset:</strong>
+                        Use the provided email/Account ID and Temporary Password. **You will be required to choose a new, secure password immediately** after logging in.
+                    </p>
 
-                    <div>
-                        <label class="form-label" for="email">Email Address</label>
-                        <div class="input-wrapper">
-                            <input class="input-field" type="email" id="email" name="email" placeholder="contact@ngo.org" required />
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div>
-                            <label class="form-label" for="password">Password</label>
-                            <div class="input-wrapper">
-                                <input class="input-field" type="password" id="password" name="password" required />
-                                <span class="toggle-password">Show</span>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="form-label" for="confirmPassword">Confirm Password</label>
-                            <div class="input-wrapper">
-                                <input class="input-field" type="password" id="confirmPassword" name="confirmPassword" required />
-                            </div>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn-primary">Register</button>
-
-                    <div class="terms">
-                        <input type="checkbox" id="termsNGO" required />
-                        <label for="termsNGO">
-                            By registering your details, you agree with our
-                            <a href="#">Terms and Conditions</a>, and
-                            <a href="#">Privacy and Cookie Policy</a>.
-                        </label>
-                    </div>
-                </form>
+                    <a href="login-ngo.html" class="btn-primary btn-full-width">
+                        Go to NGO Login Page
+                    </a>
+                </div>
 
                 <p class="auth-bottom-text">
-                    Already have an account?
-                    <a href="../../login/login-ngo.html">Log in</a>
+                    Still need to apply? <a href="../../homepage.html">Return to the homepage</a>
                 </p>
+                
             </div>
         </div>
-    </div>
 
-    <script src="../../auth/register-validation.js"></script>
+    </div>
 </body>
 </html>

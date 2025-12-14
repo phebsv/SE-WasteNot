@@ -6,8 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../auth/auth.css">
-    <link rel="stylesheet" href="login-ngo.css">
-</head>
+    </head>
 
 <body data-role="ngo-login">
     <div class="auth-page">
@@ -29,34 +28,46 @@
             <div class="auth-card fade-in">
                 
                 <div class="auth-logo">WasteNot</div>
-                <h2 class="auth-heading">NGO Login</h2>
-                <p class="auth-subheading">Enter your email and password to continue.</p>
+                <h2 class="auth-heading" id="loginHeading">NGO Login</h2>
+                <p class="auth-subheading" id="loginSubheading">Enter your account ID and temporary password from your approval email to continue.</p>
 
-                <form class="auth-form" action="#" method="post">
+                <form class="auth-form" id="ngoLoginForm">
 
                     <div>
-                        <label class="form-label">Organization Name</label>
+                        <label for="accountID" class="form-label">Account ID or Email Address</label>
                         <div class="input-wrapper">
-                            <input id="organizationName" class="input-field" type="text" required>
+                            <input id="accountID" name="accountID" class="input-field" type="text" required autocomplete="username">
                         </div>
                     </div>
 
                     <div>
-                        <label class="form-label">Email Address</label>
+                        <label for="password" class="form-label">Password</label>
                         <div class="input-wrapper">
-                            <input id="email" class="input-field" type="email" required>
+                            <input id="password" name="password" class="input-field" type="password" required autocomplete="current-password">
+                            <span id="togglePassword" class="toggle-password">Show</span>
                         </div>
                     </div>
 
-                    <div>
-                        <label class="form-label">Password</label>
-                        <div class="input-wrapper">
-                            <input id="password" class="input-field" type="password" required>
-                            <span class="toggle-password">Show</span>
+                    <div id="newPasswordGroup" style="display: none;">
+                        <div>
+                            <label for="newPassword" class="form-label">New Password</label>
+                            <div class="input-wrapper">
+                                <input id="newPassword" name="newPassword" class="input-field" type="password" autocomplete="new-password">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="confirmNewPassword" class="form-label">Confirm New Password</label>
+                            <div class="input-wrapper">
+                                <input id="confirmNewPassword" name="confirmNewPassword" class="input-field" type="password" autocomplete="new-password">
+                            </div>
                         </div>
                     </div>
 
-                    <button class="btn-primary">Log In</button>
+                    <div class="forgot-password-link">
+                        <a href="#">Forgot Password?</a>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="loginButton">Log In</button>
 
                 </form>
 
@@ -69,6 +80,5 @@
     </div>
 
     <script src="login-ngo.js"></script>
-    <script src="../auth/register-validation.js"></script>
 </body>
 </html>
