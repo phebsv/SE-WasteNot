@@ -1,27 +1,39 @@
-// ===== AUTH GUARD (Check if admin is logged in) =====
-if (localStorage.getItem("adminLoggedIn") !== "true") {
-    window.location.href = "login-admin.html";
+// ===== AUTH GUARD =====
+if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "admin") {
+    window.location.href = "../login/login-consumer.html";
 }
 
-// --- MOCK LOG DATA ---
-let allLogs = [
-    { time: '2025-12-14 19:55:01', type: 'DANGER', user: 'Admin (System)', actor: 'System', action: 'Login Failure Alert', details: 'Failed login attempt detected from IP: 192.168.1.10.' },
-    { time: '2025-12-14 19:50:30', type: 'SUCCESS', user: 'Admin', actor: 'Admin', action: 'Approved Application', details: 'Approved Provider application: Fresh Bakery Co. (PA005)' },
-    { time: '2025-12-14 18:30:15', type: 'INFO', user: 'NGO_102', actor: 'NGO', action: 'Donation Request', details: 'Requested 10kg of produce from Provider (PR_022).' },
-    { time: '2025-12-13 11:22:45', type: 'WARNING', user: 'Provider_001', actor: 'Provider', action: 'Listing Edited', details: 'Listing LST_302 price reduced from $5 to $2. (Near expiry).' },
-    { time: '2025-12-13 10:05:10', type: 'SUCCESS', user: 'Customer_450', actor: 'Customer', action: 'Account Registration', details: 'New customer account created successfully.' },
-    { time: '2025-12-12 15:40:00', type: 'INFO', user: 'Admin', actor: 'Admin', action: 'Settings Change', details: 'Updated Max Listing Duration to 48 hours.' },
-    { time: '2025-12-12 09:10:20', type: 'DANGER', user: 'Provider_010', actor: 'Provider', action: 'Suspended Account', details: 'Provider (PR_010) account suspended due to repeated policy violations.' },
-    { time: '2025-12-11 14:00:00', type: 'SYSTEM', user: 'System', actor: 'System', action: 'Cron Job', details: 'Daily data backup completed successfully.' },
-    { time: '2025-12-11 12:30:00', type: 'WARNING', user: 'Provider_003', actor: 'Provider', action: 'Login Failure', details: '3 failed password attempts in 5 minutes.' },
-    { time: '2025-12-10 17:00:00', type: 'SUCCESS', user: 'NGO_110', actor: 'NGO', action: 'Profile Update', details: 'Updated contact information.' },
-];
+const API_URL = 'http://localhost/wastenot-api/api/logs.php';
 
+let allLogs = [];
 const logsPerPage = 10;
 let currentPage = 1;
-let filteredLogs = [...allLogs]; // Working array
+let filteredLogs = [];
 
-document.addEventListener("DOMContentLoaded", () => {
+// ===== LOAD LOGS FROM BACKEND =====
+async function loadLogs(limit = 100, offset = 0) {
+    try {
+        const token = localStorage.getItem('authToken');
+        const response = await fetch(`${API_URL}?limit=${limit}&offset=${offset}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            return data.logs || [];
+        }
+        return [];
+    } catch (error) {
+        console.error('Error loading logs:', error);
+        return [];
+    }
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+    
+    // Load logs from backend
+    allLogs = await loadLogs(200);
+    filteredLogs = [...allLogs];
     
     // --- Element References ---
     const logsContainer = document.getElementById('logsContainer');
@@ -50,12 +62,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         currentLogs.forEach(log => {
             const row = logsContainer.insertRow();
+            const timestamp = new Date(log.timestamp).toLocaleString();
+            const logType = (log.level || 'INFO').toUpperCase();
             row.innerHTML = `
-                <td>${log.time}</td>
-                <td class="log-type ${log.type}">${log.type}</td>
-                <td>${log.user}</td>
+                <td>${timestamp}</td>
+                <td class="log-type ${logType}">${logType}</td>
+                <td>User #${log.user_id || 'System'}</td>
                 <td>${log.action}</td>
-                <td>${log.details}</td>
+                <td>${log.message}</td>
             `;
         });
         
@@ -74,25 +88,22 @@ document.addEventListener("DOMContentLoaded", () => {
     function applyFilters() {
         const search = logSearch.value.toLowerCase();
         const type = logTypeFilter.value;
-        const actor = logActorFilter.value;
         const date = logDateFilter.value; // YYYY-MM-DD
 
         filteredLogs = allLogs.filter(log => {
-            // Search filter (User or Action or Details)
-            const searchMatch = log.user.toLowerCase().includes(search) || 
-                                log.action.toLowerCase().includes(search) ||
-                                log.details.toLowerCase().includes(search);
+            // Search filter (Action or Message)
+            const searchMatch = (log.action || '').toLowerCase().includes(search) || 
+                                (log.message || '').toLowerCase().includes(search) ||
+                                (log.user_id || '').toString().includes(search);
 
             // Type filter
-            const typeMatch = !type || log.type === type;
-            
-            // Actor filter
-            const actorMatch = !actor || log.actor === actor;
+            const logLevel = (log.level || 'INFO').toUpperCase();
+            const typeMatch = !type || logLevel === type;
 
-            // Date filter
-            const dateMatch = !date || log.time.startsWith(date);
+            // Date filter (check if timestamp starts with the date)
+            const dateMatch = !date || log.timestamp.startsWith(date);
 
-            return searchMatch && typeMatch && actorMatch && dateMatch;
+            return searchMatch && typeMatch && dateMatch;
         });
 
         currentPage = 1;
@@ -134,8 +145,8 @@ document.addEventListener("DOMContentLoaded", () => {
     
     if (logoutBtn) {
         logoutBtn.addEventListener("click", () => {
-            localStorage.removeItem("adminLoggedIn");
-            window.location.href = "login-admin.html";
+            localStorage.clear();
+            window.location.href = "../login/login-consumer.html";
         });
     }
 });

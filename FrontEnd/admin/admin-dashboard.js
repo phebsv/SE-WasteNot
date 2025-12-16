@@ -1,71 +1,146 @@
 // ===== AUTH GUARD (Check if admin is logged in) =====
-// if (localStorage.getItem("adminLoggedIn") !== "true") {
-//     window.location.href = "login-admin.html";
-// }
+if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "admin") {
+    window.location.href = "../login/login-consumer.html";
+}
+
+const API_AUTH = 'http://localhost/wastenot-api/api';
+const API_MARKETPLACE = 'http://localhost:8081/api';
 
 document.addEventListener("DOMContentLoaded", () => {
-    
-    // Mock Data for demonstration
-    const mockStats = {
-        totalProviders: 42,
-        totalNgos: 28,
-        pendingApprovals: 7, // Highlighting this one
-        activeDonations: 155
-    };
+    loadDashboardStats();
+    loadRecentActivity();
+    setupLogout();
+});
 
-    const mockActivity = [
-        { type: 'SUCCESS', user: 'AdminUser', action: 'Approved new NGO "Green Hands"', time: '2 mins ago' },
-        { type: 'DANGER', user: 'System', action: 'Login attempt failed (IP: 192.168.1.1)', time: '10 mins ago' },
-        { type: 'INFO', user: 'Provider XYZ', action: 'Submitted new listing: 50kg produce', time: '1 hour ago' },
-        { type: 'WARNING', user: 'AdminUser', action: 'Maintenance mode disabled', time: '2 hours ago' },
-        { type: 'INFO', user: 'NGO Hope', action: 'Claimed donation #4582', time: '3 hours ago' },
-        { type: 'SUCCESS', user: 'AdminUser', action: 'Updated system settings', time: '5 hours ago' },
-    ];
-
-    // --- 1. Populate KPI Stats ---
-    document.getElementById('statProviders').textContent = mockStats.totalProviders;
-    document.getElementById('statNgos').textContent = mockStats.totalNgos;
-    document.getElementById('statPendingApprovals').textContent = mockStats.pendingApprovals;
-    document.getElementById('statActiveDonations').textContent = mockStats.activeDonations;
-
-    // --- 2. Populate Recent Activity ---
-    const activityListContainer = document.getElementById('recentActivity');
-    activityListContainer.innerHTML = ''; // Clear 'Loading...' message
-
-    mockActivity.forEach(activity => {
-        let statusClass;
-        switch (activity.type) {
-            case 'SUCCESS':
-                statusClass = 'status-success';
-                break;
-            case 'WARNING':
-                statusClass = 'status-warning';
-                break;
-            case 'DANGER':
-                statusClass = 'status-danger';
-                break;
-            default:
-                statusClass = 'status-info';
+// ===== LOAD DASHBOARD STATISTICS =====
+async function loadDashboardStats() {
+    try {
+        const token = localStorage.getItem('authToken');
+        
+        // Get all users to count providers and NGOs
+        const usersResponse = await fetch(`${API_AUTH}/users.php`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (usersResponse.ok) {
+            const usersData = await usersResponse.json();
+            const users = usersData.users || [];
+            
+            const providers = users.filter(u => u.role === 'partner').length;
+            const ngos = users.filter(u => u.role === 'ngo').length;
+            const pendingUsers = users.filter(u => u.status === 'pending').length;
+            
+            document.getElementById('statProviders').textContent = providers;
+            document.getElementById('statNgos').textContent = ngos;
+            document.getElementById('statPendingApprovals').textContent = pendingUsers;
+        } else {
+            // Fallback to mock data
+            document.getElementById('statProviders').textContent = '--';
+            document.getElementById('statNgos').textContent = '--';
+            document.getElementById('statPendingApprovals').textContent = '--';
         }
+        
+        // Get active donations/products count
+        const productsResponse = await fetch(`${API_MARKETPLACE}/products`);
+        if (productsResponse.ok) {
+            const productsData = await productsResponse.json();
+            const activeProducts = productsData.data ? productsData.data.length : 0;
+            document.getElementById('statActiveDonations').textContent = activeProducts;
+        } else {
+            document.getElementById('statActiveDonations').textContent = '--';
+        }
+        
+    } catch (error) {
+        console.error('Error loading dashboard stats:', error);
+        // Show fallback values
+        document.getElementById('statProviders').textContent = '--';
+        document.getElementById('statNgos').textContent = '--';
+        document.getElementById('statPendingApprovals').textContent = '--';
+        document.getElementById('statActiveDonations').textContent = '--';
+    }
+}
 
-        const item = document.createElement('div');
-        item.className = 'activity-item';
-        item.innerHTML = `
-            <span class="${statusClass}">[${activity.type}]</span> 
-            ${activity.user}: ${activity.action} 
-            <span class="text-muted float-right" style="font-size: 0.85rem;">(${activity.time})</span>
-        `;
-        activityListContainer.appendChild(item);
-    });
+// ===== LOAD RECENT ACTIVITY =====
+async function loadRecentActivity() {
+    const activityListContainer = document.getElementById('recentActivity');
+    activityListContainer.innerHTML = '<p class="text-muted">Loading recent activity...</p>';
+    
+    try {
+        const token = localStorage.getItem('authToken');
+        
+        // Try to get activity logs
+        const response = await fetch(`${API_AUTH}/logs.php?limit=6`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            const activities = data.logs || [];
+            
+            activityListContainer.innerHTML = '';
+            
+            if (activities.length === 0) {
+                activityListContainer.innerHTML = '<p class="text-muted">No recent activity</p>';
+                return;
+            }
+            
+            activities.forEach(activity => {
+                const item = document.createElement('div');
+                item.className = 'activity-item';
+                
+                let statusClass = 'status-info';
+                if (activity.level === 'error') statusClass = 'status-danger';
+                else if (activity.level === 'warning') statusClass = 'status-warning';
+                else if (activity.level === 'success') statusClass = 'status-success';
+                
+                const timeAgo = formatTimeAgo(activity.created_at);
+                
+                item.innerHTML = `
+                    <span class="${statusClass}">[${activity.level?.toUpperCase() || 'INFO'}]</span> 
+                    ${activity.user_name || 'System'}: ${activity.message} 
+                    <span class="text-muted float-right" style="font-size: 0.85rem;">(${timeAgo})</span>
+                `;
+                activityListContainer.appendChild(item);
+            });
+        } else {
+            // Fallback: Show recent user registrations
+            showFallbackActivity(activityListContainer);
+        }
+    } catch (error) {
+        console.error('Error loading activity:', error);
+        showFallbackActivity(activityListContainer);
+    }
+}
 
-    // --- 3. Handle Logout ---
+function showFallbackActivity(container) {
+    container.innerHTML = `
+        <div class="activity-item">
+            <span class="status-info">[INFO]</span> 
+            System: Dashboard loaded successfully
+            <span class="text-muted float-right" style="font-size: 0.85rem;">(Just now)</span>
+        </div>
+    `;
+}
+
+function formatTimeAgo(timestamp) {
+    if (!timestamp) return 'Recently';
+    const date = new Date(timestamp);
+    const now = new Date();
+    const seconds = Math.floor((now - date) / 1000);
+    
+    if (seconds < 60) return 'Just now';
+    if (seconds < 3600) return `${Math.floor(seconds / 60)} mins ago`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
+    return `${Math.floor(seconds / 86400)} days ago`;
+}
+
+// ===== LOGOUT HANDLER =====
+function setupLogout() {
     const logoutBtn = document.getElementById("logoutBtn");
     if (logoutBtn) {
         logoutBtn.addEventListener("click", () => {
-            localStorage.removeItem("adminLoggedIn");
-            // Assuming adminSession storage exists
-            // localStorage.removeItem("adminSession"); 
-            window.location.href = "login-admin.html";
+            localStorage.clear();
+            window.location.href = "../login/login-consumer.html";
         });
     }
-});
+}

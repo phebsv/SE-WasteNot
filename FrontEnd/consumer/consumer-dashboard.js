@@ -1,49 +1,90 @@
 // === AUTH CHECK ===
-if (!localStorage.getItem("consumerName")) {
+if (!localStorage.getItem("consumerLoggedIn") || localStorage.getItem("consumerLoggedIn") !== "true") {
     window.location.href = "../login/login-consumer.html";
 }
 
-let claims = [
-  {
-    id: 1,
-    provider: "FreshLeaf Cafe",
-    item: "Green Salad Bowl",
-    pickup: "Today • 5:30 PM",
-    status: "pending"
-  },
-  {
-    id: 2,
-    provider: "EatSmart",
-    item: "Vegetable Fried Rice",
-    pickup: "Today • 3:00 PM",
-    status: "pending"
-  },
-  {
-    id: 3,
-    provider: "BreadTalk",
-    item: "Croissant",
-    pickup: "Yesterday • 1:00 PM",
-    status: "confirm"
-  },
-  {
-    id: 4,
-    provider: "Stop N Snack",
-    item: "Tuna Wrap",
-    pickup: "Mon • 4:45 PM",
-    status: "completed"
-  },
-  {
-    id: 5,
-    provider: "EatSmart",
-    item: "Spaghetti Meal Box",
-    pickup: "Sun • 6:20 PM",
-    status: "completed"
-  }
-];
+// Claims will be loaded from backend API
+let claims = [];
 
-// Load saved data if it exists (simulates database persistence)
-if (localStorage.getItem("claimsData")) {
-  claims = JSON.parse(localStorage.getItem("claimsData"));
+// ================================
+// LOAD CLAIMS FROM BACKEND
+// ================================
+async function loadClaims() {
+  try {
+    const userId = localStorage.getItem("userId");
+    const authToken = localStorage.getItem("authToken");
+    
+    if (!userId || !authToken) {
+      console.error("User ID or auth token not found");
+      return;
+    }
+
+    const response = await fetch(`http://localhost:8081/api/orders/consumer/${userId}`, {
+      headers: {
+        'Authorization': `Bearer ${authToken}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to load orders: ${response.status}`);
+    }
+
+    const orders = await response.json();
+    
+    // Transform backend data to match existing claims structure
+    claims = orders.map(order => ({
+      id: order.orderId,
+      provider: order.providerName || "Unknown Provider",
+      item: order.productName,
+      pickup: formatPickupTime(order.pickupTime),
+      status: mapOrderStatus(order.status)
+    }));
+
+    renderClaims();
+    loadTodaysPickups();
+
+  } catch (error) {
+    console.error("Error loading claims:", error);
+    // Keep empty claims array if API fails
+  }
+}
+
+// Helper: Format pickup time
+function formatPickupTime(timestamp) {
+  if (!timestamp) return "TBD";
+  
+  const date = new Date(timestamp);
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  
+  const time = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  
+  // Check if today
+  if (date.toDateString() === today.toDateString()) {
+    return `Today • ${time}`;
+  }
+  // Check if yesterday
+  else if (date.toDateString() === yesterday.toDateString()) {
+    return `Yesterday • ${time}`;
+  }
+  // Format as day of week
+  else {
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    return `${dayNames[date.getDay()]} • ${time}`;
+  }
+}
+
+// Helper: Map backend status to frontend status
+function mapOrderStatus(backendStatus) {
+  const statusMap = {
+    'PENDING': 'pending',
+    'CONFIRMED': 'confirmed',
+    'READY_FOR_PICKUP': 'confirm',
+    'COMPLETED': 'completed',
+    'CANCELLED': 'cancelled'
+  };
+  return statusMap[backendStatus] || 'pending';
 }
 
 
@@ -59,8 +100,18 @@ function saveData() {
 // RENDER CLAIMS TABLE
 // ================================
 function renderClaims() {
-  const tableBody = document.querySelector(".claims-table tbody");
+  const tableBody = document.getElementById("recentClaimsBody");
+  if (!tableBody) return;
+  
   tableBody.innerHTML = ""; // Clear old rows
+
+  if (claims.length === 0) {
+    const row = document.createElement("tr");
+    row.innerHTML = '<td colspan="4" style="text-align: center;">No recent claims</td>';
+    tableBody.appendChild(row);
+    updateSummaryCounters();
+    return;
+  }
 
   claims.forEach((claim) => {
     const row = document.createElement("tr");
@@ -155,10 +206,22 @@ function updateSummaryCounters() {
 // LOAD TODAY'S PICKUPS
 // ================================
 function loadTodaysPickups() {
-  const list = document.querySelector(".pickup-list");
+  const list = document.getElementById("todaysPickupsList");
+  if (!list) return;
+  
   list.innerHTML = "";
 
   const todayClaims = claims.filter(c => c.pickup.includes("Today"));
+
+  if (todayClaims.length === 0) {
+    const emptyMsg = document.createElement("p");
+    emptyMsg.textContent = "No pickups scheduled for today";
+    emptyMsg.style.textAlign = "center";
+    emptyMsg.style.color = "#999";
+    emptyMsg.style.padding = "20px";
+    list.appendChild(emptyMsg);
+    return;
+  }
 
   todayClaims.forEach((claim) => {
     const item = document.createElement("div");
@@ -181,8 +244,15 @@ function loadTodaysPickups() {
 // INITIAL PAGE LOAD
 // ================================
 window.addEventListener("DOMContentLoaded", () => {
-  renderClaims();
-  loadTodaysPickups();
+  // Display user name
+  const userName = localStorage.getItem("userName") || "User";
+  const userNameElement = document.querySelector(".topbar-title .accent");
+  if (userNameElement) {
+    userNameElement.textContent = userName;
+  }
+  
+  // Load claims from backend
+  loadClaims();
 });
 
 document.querySelector(".logout-btn").addEventListener("click", () => {

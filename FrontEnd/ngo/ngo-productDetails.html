@@ -53,35 +53,49 @@
             </div>
           </div>
 
+          <!-- EDIT BUTTON -->
+          <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <button id="editToggleBtn" class="btn primary" style="flex: 1;">✏️ Edit Details</button>
+            <button id="saveChangesBtn" class="btn" style="flex: 1; display: none; background-color: #4CAF50; color: white;">💾 Save Changes</button>
+            <button id="cancelEditBtn" class="btn ghost" style="flex: 1; display: none;">Cancel</button>
+          </div>
+
           <!-- MAIN DETAILS -->
-          <div class="details-grid">
+          <div class="details-grid" id="detailsGrid">
             <div class="detail-row">
               <label class="detail-label">Item Name</label>
               <p id="detailItemName" class="detail-value">-</p>
+              <input type="text" id="editItemName" class="detail-input" style="display: none;" />
             </div>
             <div class="detail-row">
               <label class="detail-label">Provider</label>
               <p id="detailProvider" class="detail-value">-</p>
+              <input type="text" id="editProvider" class="detail-input" style="display: none;" />
             </div>
             <div class="detail-row">
               <label class="detail-label">Quantity</label>
               <p id="detailQty" class="detail-value">-</p>
+              <input type="text" id="editQty" class="detail-input" style="display: none;" placeholder="e.g., 50 Servings" />
             </div>
             <div class="detail-row">
               <label class="detail-label">Tagged As</label>
               <p id="detailTagged" class="detail-value">-</p>
+              <input type="text" id="editTagged" class="detail-input" style="display: none;" placeholder="e.g., Urgent Donation" />
             </div>
             <div class="detail-row">
               <label class="detail-label">Expiry Date</label>
               <p id="detailExpiry" class="detail-value">-</p>
+              <input type="date" id="editExpiry" class="detail-input" style="display: none;" />
             </div>
             <div class="detail-row">
               <label class="detail-label">Store Location</label>
               <p id="detailLocation" class="detail-value">-</p>
+              <input type="text" id="editLocation" class="detail-input" style="display: none;" />
             </div>
             <div class="detail-row">
               <label class="detail-label">Pickup Window</label>
               <p id="detailPickup" class="detail-value">-</p>
+              <input type="text" id="editPickup" class="detail-input" style="display: none;" placeholder="e.g., 2:00-3:00 PM" />
             </div>
             <div class="detail-row">
               <label class="detail-label">Request Status</label>
@@ -104,9 +118,9 @@
           </div>
 
           <!-- ACTIONS -->
-          <div class="action-buttons">
-            <button id="cancelRequestBtn" class="btn ghost">Cancel Request</button>
-            <button id="backBtn" class="btn primary">Back to Claims</button>
+          <div class="action-buttons" style="display: flex; gap: 10px;">
+            <button id="cancelRequestBtn" class="btn ghost" style="flex: 1;">✗ Cancel Request</button>
+            <button id="backBtn" class="btn primary" style="flex: 1;">← Back to Claims</button>
           </div>
         </div>
       </section>

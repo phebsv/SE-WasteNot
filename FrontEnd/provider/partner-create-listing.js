@@ -1,25 +1,51 @@
-function saveListingToStorage(listing) {
-  let listings = JSON.parse(localStorage.getItem("partnerListings")) || [];
-  listings.push(listing);
-  localStorage.setItem("partnerListings", JSON.stringify(listings));
+// ===== AUTH GUARD =====
+if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "partner") {
+  window.location.href = "../login/login-consumer.html";
 }
 
-function createListing(type) {
-  const listing = {
-    id: Date.now(),
+const PRODUCTS_API = 'http://localhost:8081/api/products';
+
+async function createProduct(productData) {
+  try {
+    const response = await fetch(PRODUCTS_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(productData)
+    });
+    
+    return response.ok;
+  } catch (error) {
+    console.error('Error creating product:', error);
+    return false;
+  }
+}
+
+async function createListing(type) {
+  const productData = {
     name: document.getElementById("name").value,
-    qtyLeft: Number(document.getElementById("quantity").value),
+    quantity: Number(document.getElementById("quantity").value),
+    unit: document.getElementById("unit")?.value || 'pcs',
     category: document.getElementById("category").value,
-    production: document.getElementById("productionDate").value,
-    expiry: document.getElementById("expiryDate").value,
-    pickup: document.getElementById("pickupWindow").value,
+    productionDate: document.getElementById("productionDate").value,
+    expiryDate: document.getElementById("expiryDate").value,
+    pickupInstructions: document.getElementById("pickupWindow").value,
     price: type === "sale" ? Number(document.getElementById("price").value) : 0,
-    listingType: type
+    type: type === "sale" ? "marketplace" : "donation",
+    partnerId: Number(localStorage.getItem("userId")),
+    partnerName: localStorage.getItem("userName"),
+    available: true
   };
 
-  saveListingToStorage(listing);
-
-  window.location.href = "partner-listings.html";
+  const success = await createProduct(productData);
+  
+  if (success) {
+    showToast("Listing created successfully!");
+    setTimeout(() => {
+      window.location.href = "partner-listings.html";
+    }, 1000);
+  } else {
+    showToast("Failed to create listing", "error");
+  }
 }
 
 // BUTTON EVENTS

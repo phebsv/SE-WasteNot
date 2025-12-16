@@ -49,10 +49,11 @@
                     <input id="userSearch" placeholder="Search users by name, email, or organization..." class="filter-input" />
                     <select id="statusFilter" class="filter-select">
                         <option value="">All Statuses</option>
-                        <option value="Active">Active</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Suspended">Suspended</option>
+                        <option value="active">Active</option>
+                        <option value="pending">Pending</option>
+                        <option value="suspended">Suspended</option>
                     </select>
+                    <button id="createUserBtn" class="create-user-btn">+ Create New User</button>
                 </div>
 
                 <div class="tab-content-wrapper">
@@ -81,6 +82,51 @@
                 
             </section>
         </main>
+    </div>
+
+    <!-- Create User Modal -->
+    <div id="createUserModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New User Account</h2>
+                <button class="modal-close" id="closeCreateModal">&times;</button>
+            </div>
+            <form id="createUserForm">
+                <div class="form-group">
+                    <label for="newUserRole">User Role *</label>
+                    <select id="newUserRole" required>
+                        <option value="">Select Role</option>
+                        <option value="partner">Partner/Provider</option>
+                        <option value="ngo">NGO</option>
+                        <option value="consumer">Consumer</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="newUserEmail">Email *</label>
+                    <input type="email" id="newUserEmail" required placeholder="user@example.com" />
+                </div>
+                <div class="form-group">
+                    <label for="newUserPassword">Password *</label>
+                    <input type="password" id="newUserPassword" required placeholder="Minimum 6 characters" minlength="6" />
+                </div>
+                <div class="form-group">
+                    <label for="newUserName">Full Name/Organization *</label>
+                    <input type="text" id="newUserName" required placeholder="Full name or organization name" />
+                </div>
+                <div class="form-group">
+                    <label for="newUserPhone">Phone Number</label>
+                    <input type="tel" id="newUserPhone" placeholder="Optional" />
+                </div>
+                <div class="form-group">
+                    <label for="newUserLocation">Location/Area</label>
+                    <input type="text" id="newUserLocation" placeholder="Optional" />
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn modal-btn-secondary" id="cancelCreateBtn">Cancel</button>
+                    <button type="submit" class="modal-btn modal-btn-primary">Create Account</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script src="admin-manage-users.js"></script>

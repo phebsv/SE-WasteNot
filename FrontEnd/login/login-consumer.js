@@ -7,10 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const togglePassword = document.getElementById('togglePassword');
     const passwordField = document.getElementById('password');
     
-    // --- Mock User Credentials ---
-    // NOTE: In a real application, credentials would be checked against a server database.
-    const MOCK_EMAIL = "consumer@wastenot.com";
-    const MOCK_PASSWORD = "password123";
+    // --- Backend API Configuration ---
+    const API_URL = "http://localhost/wastenot-api/api";
 
     // --- Utility for showing status messages ---
     function showAuthMessage(message, isError = false) {
@@ -30,24 +28,88 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- Form Submission Handler ---
     if (loginForm) {
-        loginForm.addEventListener('submit', (e) => {
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const email = document.getElementById('email').value.trim();
             const password = passwordField.value.trim();
 
-            if (email === MOCK_EMAIL && password === MOCK_PASSWORD) {
+            try {
+                showAuthMessage("Logging in...", false);
                 
-                showAuthMessage("Login successful! Redirecting...", false);
+                console.log('Attempting login to:', `${API_URL}/login.php`);
+                console.log('Request body:', { email, password: '***' });
                 
-                // Set flag and redirect to the Consumer Dashboard
-                localStorage.setItem("consumerLoggedIn", "true");
-                setTimeout(() => {
-                    window.location.href = "../consumer/consumer-dashboard.html";
-                }, 1000);
+                const response = await fetch(`${API_URL}/login.php`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                        // Role is detected automatically by backend
+                    })
+                });
 
-            } else {
-                showAuthMessage("Invalid email or password. Please try again.", true);
+                console.log('Response received:', response.status, response.statusText);
+                const data = await response.json();
+                console.log('Backend response:', data);
+                console.log('Response status:', response.status);
+
+                if (data.success) {
+                    showAuthMessage("Login successful! Redirecting...", false);
+                    
+                    // Store user data
+                    const userRole = data.user.role;
+                    localStorage.setItem("authToken", data.token);
+                    localStorage.setItem("userId", data.user.id);
+                    localStorage.setItem("userName", data.user.full_name);
+                    localStorage.setItem("userEmail", data.user.email);
+                    localStorage.setItem("userPhone", data.user.phone || "");
+                    localStorage.setItem("userAddress", data.user.address || "");
+                    localStorage.setItem("userRole", userRole);
+                    
+                    // Set role-specific login flag
+                    if (userRole === 'consumer') {
+                        localStorage.setItem("consumerLoggedIn", "true");
+                    } else if (userRole === 'admin') {
+                        localStorage.setItem("adminLoggedIn", "true");
+                    } else if (userRole === 'ngo') {
+                        localStorage.setItem("ngoLoggedIn", "true");
+                    } else if (userRole === 'partner') {
+                        localStorage.setItem("partnerLoggedIn", "true");
+                    }
+                    
+                    // Redirect based on role
+                    setTimeout(() => {
+                        let redirectUrl;
+                        switch(userRole) {
+                            case 'admin':
+                                redirectUrl = "../admin/admin-dashboard.html";
+                                break;
+                            case 'ngo':
+                                redirectUrl = "../ngo/ngo-dashboard.html";
+                                break;
+                            case 'partner':
+                                redirectUrl = "../provider/provider-dashboard.html";
+                                break;
+                            case 'consumer':
+                            default:
+                                redirectUrl = "../consumer/consumer-dashboard.html";
+                                break;
+                        }
+                        window.location.href = redirectUrl;
+                    }, 1000);
+                } else {
+                    showAuthMessage(data.message || "Invalid email or password. Please try again.", true);
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                console.error('Error type:', error.name);
+                console.error('Error message:', error.message);
+                console.error('Full error:', error);
+                showAuthMessage("Connection error: " + error.message + ". Please check console (F12).", true);
             }
         });
     }

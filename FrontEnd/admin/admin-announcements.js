@@ -1,7 +1,7 @@
-// ===== AUTH GUARD (Check if admin is logged in) =====
-// if (localStorage.getItem("adminLoggedIn") !== "true") {
-//     window.location.href = "login-admin.html";
-// }
+// ===== AUTH GUARD =====
+if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "admin") {
+    window.location.href = "../login/login-consumer.html";
+}
 
 // Mock Data Store
 let announcements = JSON.parse(localStorage.getItem('adminAnnouncements')) || [
@@ -154,8 +154,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (logoutBtn) {
         logoutBtn.addEventListener("click", () => {
-            localStorage.removeItem("adminLoggedIn");
-            window.location.href = "login-admin.html";
+            localStorage.clear();
+            window.location.href = "../login/login-consumer.html";
         });
     }
 });

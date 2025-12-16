@@ -1,28 +1,72 @@
-document.addEventListener("DOMContentLoaded", () => {
-    // ===== AUTH GUARD =====
-    if (localStorage.getItem("partnerLoggedIn") !== "true") {
-        window.location.href = "login-partner.html";
-    }
+// ===== AUTH GUARD =====
+if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "partner") {
+    window.location.href = "../login/login-consumer.html";
+}
 
-    // --- Logout and Avatar Setup (Retained from previous files) ---
-    let session = {};
+const PRODUCTS_API = 'http://localhost:8081/api/products';
+const ORDERS_API = 'http://localhost:8081/api/orders';
+
+// Load partner's impact data
+async function loadImpactData() {
     try {
-        session = JSON.parse(localStorage.getItem("partnerSession")) || {};
-    } catch {}
+        const userId = localStorage.getItem('userId');
+        const [productsRes, ordersRes] = await Promise.all([
+            fetch(PRODUCTS_API),
+            fetch(ORDERS_API)
+        ]);
+        
+        const allProducts = productsRes.ok ? await productsRes.json() : [];
+        const allOrders = ordersRes.ok ? await ordersRes.json() : [];
+        
+        const myProducts = allProducts.filter(p => p.partnerId == userId);
+        const myOrders = allOrders.filter(o => myProducts.some(p => p.id === o.productId));
+        
+        // Calculate impact metrics
+        const totalDonations = myProducts.filter(p => p.type === 'donation').length;
+        const totalSold = myOrders.filter(o => o.status === 'completed').length;
+        const wasteReduced = myOrders.reduce((sum, o) => sum + (o.quantity || 0), 0) * 0.6;
+        const revenue = myOrders.filter(o => o.status === 'completed').reduce((sum, o) => {
+            const product = myProducts.find(p => p.id === o.productId);
+            return sum + ((product?.price || 0) * (o.quantity || 0));
+        }, 0);
+        
+        return {
+            totalDonations,
+            totalSold,
+            wasteReduced: wasteReduced.toFixed(1),
+            co2Saved: (wasteReduced * 1.2).toFixed(1),
+            revenue: revenue.toFixed(2)
+        };
+    } catch (error) {
+        console.error('Error loading impact data:', error);
+        return {
+            totalDonations: 0,
+            totalSold: 0,
+            wasteReduced: '0',
+            co2Saved: '0',
+            revenue: '0'
+        };
+    }
+}
 
+document.addEventListener("DOMContentLoaded", async () => {
+    // --- Logout and Avatar Setup ---
     const avatarInitial = document.getElementById("avatarInitial");
-    if (avatarInitial && session.name) {
-        avatarInitial.textContent = session.name.charAt(0).toUpperCase();
+    const userName = localStorage.getItem('userName');
+    if (avatarInitial && userName) {
+        avatarInitial.textContent = userName.charAt(0).toUpperCase();
     }
 
     const logoutBtn = document.getElementById("logoutBtn");
     if (logoutBtn) {
         logoutBtn.addEventListener("click", () => {
-            localStorage.removeItem("partnerLoggedIn");
-            localStorage.removeItem("partnerSession");
-            window.location.href = "login-partner.html";
+            localStorage.clear();
+            window.location.href = "../login/login-consumer.html";
         });
     }
+    
+    // Load impact data from backend
+    const impactData = await loadImpactData();
 
     // --- Placeholder Data & Aggregates ---
     // In a real app, these values would be computed from your listings and claims data.

@@ -1,6 +1,6 @@
 // ===== AUTH GUARD (Check if NGO user is logged in) =====
-if (localStorage.getItem("ngoLoggedIn") !== "true") {
-    window.location.href = "login-ngo.html";
+if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "ngo") {
+    window.location.href = "../login/login-ngo.html";
 }
 
 // Global function for utility 

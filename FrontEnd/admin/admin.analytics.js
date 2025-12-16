@@ -1,45 +1,61 @@
-// ===== AUTH GUARD (Check if admin is logged in) =====
-if (localStorage.getItem("adminLoggedIn") !== "true") {
-    window.location.href = "login-admin.html";
+// ===== AUTH GUARD =====
+if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "admin") {
+    window.location.href = "../login/login-consumer.html";
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+const USERS_API = 'http://localhost/wastenot-api/api/users.php';
+const PRODUCTS_API = 'http://localhost:8081/api/products';
+
+// ===== LOAD ANALYTICS DATA =====
+async function loadAnalyticsData() {
+    try {
+        const token = localStorage.getItem('authToken');
+        const [usersRes, productsRes] = await Promise.all([
+            fetch(USERS_API, { headers: { 'Authorization': `Bearer ${token}` } }),
+            fetch(PRODUCTS_API)
+        ]);
+        
+        const users = usersRes.ok ? (await usersRes.json()).users || [] : [];
+        const products = productsRes.ok ? await productsRes.json() : [];
+        
+        return {
+            totalUsers: users.length,
+            totalProviders: users.filter(u => u.role === 'partner').length,
+            totalNGOs: users.filter(u => u.role === 'ngo').length,
+            totalConsumers: users.filter(u => u.role === 'consumer').length,
+            totalDonations: products.filter(p => p.type === 'donation').length,
+            donationsClaimed: products.filter(p => p.type === 'donation' && !p.available).length,
+            totalProducts: products.length,
+            availableProducts: products.filter(p => p.available).length
+        };
+    } catch (error) {
+        console.error('Error loading analytics:', error);
+        return {};
+    }
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
     
     // --- Element References ---
     const timeFilter = document.getElementById('timeFilter');
     const mainKpisContainer = document.getElementById('mainKpis');
     const topProvidersTbody = document.getElementById('topProvidersTbody');
     
-    // --- MOCK DATA (Data would change based on the selected timeFilter) ---
-    const mockData = {
-        '30d': {
-            totalDonations: 450,
-            donationsClaimed: 380,
-            newProviders: 12,
-            totalUsers: 1520,
-            totalWasteDiverted: '12.5 T', // Tons
-            topProviders: [
-                { name: 'Fresh Foods Inc.', count: 85 },
-                { name: 'Bakery Delights', count: 72 },
-                { name: 'MegaStore', count: 60 },
-                { name: 'Local Fresh Market', count: 48 },
-                { name: 'City Diner', count: 35 },
-            ]
-        },
-        // In a real app, you'd have data objects for '7d', '90d', '12m' too
-        // ...
-    };
+    // Load real data
+    const analyticsData = await loadAnalyticsData();
 
     // --- 1. Rendering Functions ---
 
     function renderKpis(data) {
-        mainKpisContainer.innerHTML = ''; // Clear previous KPIs
+        mainKpisContainer.innerHTML = '';
 
         const kpiStructure = [
-            { label: 'Donations Posted', value: data.totalDonations, id: 'statTotalDonations' },
-            { label: 'Donations Claimed', value: data.donationsClaimed, id: 'statClaimedDonations' },
-            { label: 'Waste Diverted (Est.)', value: data.totalWasteDiverted, id: 'statWasteDiverted', highlight: true },
-            { label: 'New Providers', value: data.newProviders, id: 'statNewProviders' },
+            { label: 'Total Users', value: data.totalUsers || 0, id: 'statTotalUsers' },
+            { label: 'Total Providers', value: data.totalProviders || 0, id: 'statProviders' },
+            { label: 'Total NGOs', value: data.totalNGOs || 0, id: 'statNGOs' },
+            { label: 'Total Products', value: data.totalProducts || 0, id: 'statProducts', highlight: true },
+            { label: 'Donations Posted', value: data.totalDonations || 0, id: 'statDonations' },
+            { label: 'Donations Claimed', value: data.donationsClaimed || 0, id: 'statClaimed' },
         ];
 
         kpiStructure.forEach(kpi => {
@@ -53,46 +69,48 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
     
-    function renderTopProviders(providers) {
+    function renderTopProviders(users) {
         topProvidersTbody.innerHTML = '';
-        providers.forEach(p => {
+        const providers = users.filter(u => u.role === 'partner').slice(0, 5);
+        if (providers.length === 0) {
+            topProvidersTbody.innerHTML = '<tr><td colspan="2" style="text-align: center; padding: 20px;">No providers found</td></tr>';
+            return;
+        }
+        providers.forEach((p, index) => {
             const row = topProvidersTbody.insertRow();
             row.innerHTML = `
-                <td>${p.name}</td>
-                <td>${p.count}</td>
+                <td>${p.full_name}</td>
+                <td>${p.email}</td>
             `;
         });
     }
 
     // --- 2. Main Data Loader ---
-    function loadAnalytics(timeframe) {
-        const data = mockData[timeframe] || mockData['30d']; // Default to 30d mock data
-
-        // Update KPIs
+    async function loadAnalytics() {
+        const data = await loadAnalyticsData();
         renderKpis(data);
         
-        // Update Top Providers List
-        renderTopProviders(data.topProviders);
-
-        // NOTE: In a real application, you would initialize Chart.js/D3.js here
-        // e.g., initUserGrowthChart(data.userGrowth);
-        // e.g., initDonationVolumeChart(data.donationVolume);
-
-        showToast(`Analytics loaded for ${timeFilter.options[timeFilter.selectedIndex].text}.`, 'info');
+        // Load users for top providers
+        const token = localStorage.getItem('authToken');
+        const usersRes = await fetch(USERS_API, { headers: { 'Authorization': `Bearer ${token}` } });
+        if (usersRes.ok) {
+            const usersData = await usersRes.json();
+            renderTopProviders(usersData.users || []);
+        }
     }
 
     // --- 3. Event Listeners and Initial Load ---
-    timeFilter.addEventListener('change', (e) => {
-        loadAnalytics(e.target.value);
+    timeFilter?.addEventListener('change', () => {
+        loadAnalytics();
     });
 
-    // Initial load (default to 30 days)
-    loadAnalytics(timeFilter.value);
+    // Initial load
+    loadAnalytics();
     
     // Logout Handler
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-        localStorage.removeItem("adminLoggedIn");
-        window.location.href = "login-admin.html";
+    document.getElementById("logoutBtn")?.addEventListener("click", () => {
+        localStorage.clear();
+        window.location.href = "../login/login-consumer.html";
     });
 
     // Utility for toasts 

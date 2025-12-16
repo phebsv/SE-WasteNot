@@ -1,110 +1,46 @@
-// ========= SAMPLE DATA =========
-const products = [
-  {
-    id: 1,
-    name: "BreadTalk Croissant",
-    partner: "BreadTalk",
-    price: 60,
-    oldPrice: 120,
-    discountPercent: 50,
-    category: "breads",
-    image: "croissant.png",
-    description: "Buttery croissant, best consumed within 24 hours.",
-    expiry: "Today • 8 PM",
-    pickupWindow: "4:00 PM – 7:30 PM"
-  },
-  {
-    id: 2,
-    name: "Goldilocks Cake Slice",
-    partner: "Goldilocks",
-    price: 28,
-    oldPrice: 45,
-    discountPercent: 35,
-    category: "breads",
-    image: "goldilocks-slice.jpg",
-    description: "Moist cake slice, perfect with coffee. Near best-before date.",
-    expiry: "Tomorrow • 10 AM",
-    pickupWindow: "3:00 PM – 8:00 PM"
-  },
-  {
-    id: 3,
-    name: "Gardenia Classic Bread",
-    partner: "Gardenia",
-    price: 95,
-    oldPrice: 105,
-    discountPercent: 10,
-    category: "breads",
-    image: "gardenia.jpg",
-    description: "Classic loaf, still fresh. Best-before in 2 days.",
-    expiry: "In 2 days",
-    pickupWindow: "Anytime within store hours"
-  },
-  {
-    id: 4,
-    name: "Stop N Shop Fruit Cup",
-    partner: "Stop N Shop",
-    price: 85,
-    oldPrice: 120,
-    discountPercent: 30,
-    category: "drinks",
-    image: "fruit-cup.jpg",
-    description: "Mixed fruits in syrup. Slightly bruised but perfectly edible.",
-    expiry: "Tomorrow • 6 PM",
-    pickupWindow: "2:00 PM – 6:00 PM"
-  },
-  {
-    id: 5,
-    name: "Stop N Shop Mango Juice",
-    partner: "Stop N Shop",
-    price: 30,
-    oldPrice: 50,
-    discountPercent: 40,
-    category: "drinks",
-    image: "mango-juice.jpg",
-    description: "Chilled mango drink from near-expiry stock.",
-    expiry: "Today • 9 PM",
-    pickupWindow: "5:00 PM – 8:30 PM"
-  },
-  {
-    id: 6,
-    name: "Assorted Pastry Box",
-    partner: "SM Supermarket",
-    price: 95,
-    oldPrice: 150,
-    discountPercent: 37,
-    category: "breads",
-    image: "pastry-box.jpg",
-    description: "Assorted bread and pastries from today’s unsold items.",
-    expiry: "Today • 10 PM",
-    pickupWindow: "5:30 PM – 9:30 PM"
-  },
-  {
-  id: 7,
-  name: "Jollibee Chickenjoy Meal",
-  partner: "Jollibee",
-  price: 75,
-  oldPrice: 150,
-  discountPercent: 50,
-  category: "meals",
-  image: "chickenjoy.jpg", 
-  description: "1pc Chickenjoy with rice. Near end-of-day surplus but perfectly safe and delicious.",
-  expiry: "Today • 7 PM",
-  pickupWindow: "4:00 PM – 6:30 PM"
-},
-{
-  id: 8,
-  name: "Jollibee Jolly Spaghetti",
-  partner: "Jollibee",
-  price: 40,
-  oldPrice: 60,
-  discountPercent: 33,
-  category: "meals",
-  image: "jolly-spaghetti.jpg", 
-  description: "Sweet-style Jolly Spaghetti from end-of-day batch. Best consumed within the hour.",
-  expiry: "Today • 7 PM",
-  pickupWindow: "4:30 PM – 6:45 PM"
+// ========= BACKEND API CONFIGURATION =========
+const API_URL = "http://localhost:8081/api";
+
+// ========= GLOBAL PRODUCTS ARRAY =========
+let products = [];
+
+// ========= FETCH PRODUCTS FROM BACKEND =========
+async function loadProducts() {
+  try {
+    const response = await fetch(`${API_URL}/products`);
+    const data = await response.json();
+    
+    if (data.success) {
+      // Transform backend data to frontend format
+      products = data.data.map(product => ({
+        id: product.id,
+        name: product.name,
+        partner: product.partnerName,
+        price: product.price,
+        oldPrice: product.oldPrice,
+        discountPercent: product.discountPercent,
+        category: product.category,
+        image: product.imageUrl || "placeholder.jpg",
+        description: product.description,
+        expiry: product.expiryDisplay || "Check with provider",
+        pickupWindow: product.pickupWindow || "Contact provider"
+      }));
+      
+      // Initialize the page after products are loaded
+      initializePage();
+    } else {
+      console.error('Failed to load products:', data.message);
+      showError('Failed to load products from backend.');
+      products = [];
+      initializePage();
+    }
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    showError('Could not connect to server. Please ensure backend is running on port 8081.');
+    products = [];
+    initializePage();
+  }
 }
-];
 
 // ========= DOM ELEMENTS =========
 const productGrid = document.getElementById("productGrid");
@@ -236,10 +172,57 @@ if (logoutBtn) {
   });
 }
 
-// ========= EVENT LISTENERS =========
-searchInput.addEventListener("input", onSearchInput);
-filterChips.forEach((chip) => chip.addEventListener("click", onFilterChipClick));
-partnerChips.forEach((chip) => chip.addEventListener("click", onPartnerChipClick));
+// ========= GENERATE PARTNER CHIPS =========
+function generatePartnerChips() {
+  const partnerList = document.getElementById("partnerList");
+  if (!partnerList) return;
 
-// ========= INITIAL RENDER =========
-renderProducts();
+  // Get unique partners from products
+  const uniquePartners = [...new Set(products.map(p => p.partner))];
+  
+  // Clear existing chips
+  partnerList.innerHTML = '';
+  
+  // Add "All" chip
+  const allChip = document.createElement('button');
+  allChip.className = 'partner-chip active';
+  allChip.dataset.partner = 'All';
+  allChip.innerHTML = '<span>All Partners</span>';
+  partnerList.appendChild(allChip);
+  
+  // Add partner chips
+  uniquePartners.forEach(partner => {
+    const chip = document.createElement('button');
+    chip.className = 'partner-chip';
+    chip.dataset.partner = partner;
+    chip.innerHTML = `<span>${partner}</span>`;
+    partnerList.appendChild(chip);
+  });
+}
+
+// ========= INITIALIZE PAGE =========
+function initializePage() {
+  generatePartnerChips();
+  
+  searchInput.addEventListener("input", onSearchInput);
+  filterChips.forEach((chip) => chip.addEventListener("click", onFilterChipClick));
+  
+  // Re-query partner chips after generating them
+  const partnerChips = document.querySelectorAll(".partner-chip");
+  partnerChips.forEach((chip) => chip.addEventListener("click", onPartnerChipClick));
+  
+  renderProducts();
+}
+
+function showError(message) {
+  const productGrid = document.querySelector(".product-grid");
+  if (productGrid) {
+    const errorDiv = document.createElement('div');
+    errorDiv.style.cssText = 'grid-column: 1/-1; text-align: center; padding: 20px; color: #ff6b6b;';
+    errorDiv.textContent = message;
+    productGrid.prepend(errorDiv);
+  }
+}
+
+// ========= START APPLICATION =========
+loadProducts();

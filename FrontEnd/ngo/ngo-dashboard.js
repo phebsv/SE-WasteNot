@@ -2,7 +2,7 @@
 
 // === AUTH CHECK ===
 // Redirects to NGO login if no session data is found
-if (!localStorage.getItem("ngoName")) {
+if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "ngo") {
     // Redirect path: Up one level (to FrontEnd/), then down into 'login'
     window.location.href = "../login/login-ngo.html";
 }

@@ -29,12 +29,16 @@
     <!-- RIGHT SIDE -->
     <div class="auth-right">
       <div class="auth-card fade-in">
+        <a href="../homepage/homepage.html" class="back-button" style="display: inline-block; margin-bottom: 15px; color: #666; text-decoration: none; font-size: 14px;">
+          ← Back to Homepage
+        </a>
+        
         <div class="auth-logo">WasteNot</div>
 
         <h2 class="auth-heading">Create your account</h2>
         <p class="auth-subheading">Sign up as a consumer to start rescuing food.</p>
 
-        <form class="auth-form" action="#" method="post">
+        <form id="consumerRegisterForm" class="auth-form" action="#" method="post">
           <!-- Email -->
           <div>
             <label class="form-label" for="email">Email Address</label>
@@ -49,7 +53,7 @@
               <label class="form-label" for="password">Password</label>
               <div class="input-wrapper">
                 <input class="input-field" type="password" id="password" name="password" required />
-                 <span class="toggle-password">Show</span>
+                 <span id="togglePassword" class="toggle-password">Show</span>
               </div>
             </div>
             <div>

@@ -29,11 +29,15 @@
     <div class="auth-right">
       <div class="auth-card fade-in">
         
+        <a href="../homepage/homepage.html" class="back-button" style="display: inline-block; margin-bottom: 15px; color: #666; text-decoration: none; font-size: 14px;">
+          ← Back to Homepage
+        </a>
+        
         <div class="auth-logo">WasteNot</div>
         <h2 class="auth-heading">Consumer Login</h2>
         <p class="auth-subheading">Enter your email and password to continue.</p>
 
-        <form class="auth-form" action="#" method="post">
+        <form id="consumerLoginForm" class="auth-form" action="#" method="post">
 
           <div>
             <label class="form-label">Email Address</label>
@@ -46,7 +50,7 @@
             <label class="form-label">Password</label>
             <div class="input-wrapper">
               <input id="password" class="input-field" type="password" required>
-              <span class="toggle-password">Show</span>
+              <span id="togglePassword" class="toggle-password">Show</span>
             </div>
           </div>
 
@@ -54,7 +58,7 @@
               <a href="#">Forgot Password?</a>
           </div>
 
-          <button class="btn-primary">Log In</button>
+          <button type="submit" class="btn-primary">Log In</button>
 
         </form>
 

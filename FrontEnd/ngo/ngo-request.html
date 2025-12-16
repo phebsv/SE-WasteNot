@@ -18,10 +18,10 @@
       </div>
 
       <nav class="sidebar-nav">
-        <a href="donor-dashboard.html" class="nav-item">Dashboard</a>
-        <a href="donor-donations.html" class="nav-item">Available Donations</a>
-        <a href="donor-requests.html" class="nav-item active">Requests</a>
-        <a href="donor-profile.html" class="nav-item">Profile</a>
+        <a href="ngo-dashboard.html" class="nav-item">Dashboard</a>
+        <a href="ngo-marketplace.html" class="nav-item">Available Donations</a>
+        <a href="ngo-claims.html" class="nav-item active">Requests</a>
+        <a href="ngo-profile.html" class="nav-item">Profile</a>
       </nav>
 
       <button class="logout-btn" id="logoutBtn">Logout</button>
@@ -54,34 +54,46 @@
         <h2 id="reqItem">Item</h2>
         <p id="reqCategory" class="muted">Category</p>
 
-        <div class="request-details">
+        <!-- EDIT BUTTONS -->
+        <div style="display: flex; gap: 10px; margin-bottom: 20px; margin-top: 20px;">
+          <button id="editToggleBtn" class="btn primary" style="flex: 1;">✏️ Edit Details</button>
+          <button id="saveChangesBtn" class="btn" style="flex: 1; display: none; background-color: #4CAF50; color: white;">💾 Save</button>
+          <button id="cancelEditBtn" class="btn ghost" style="flex: 1; display: none;">Cancel</button>
+        </div>
+
+        <div class="request-details" id="requestDetailsDisplay">
           <div class="row">
             <div class="label">Tagged as</div>
             <div class="value" id="reqTagged">Urgent Donation</div>
+            <input type="text" id="editTagged" class="detail-input" style="display: none;" />
           </div>
           <div class="row">
             <div class="label">Expiry date</div>
             <div class="value" id="reqExpiry">-</div>
+            <input type="date" id="editExpiry" class="detail-input" style="display: none;" />
           </div>
           <div class="row">
             <div class="label">Pickup Window</div>
             <div class="value" id="reqPickup">-</div>
+            <input type="text" id="editPickup" class="detail-input" style="display: none;" placeholder="e.g., 2:00-3:00 PM" />
           </div>
           <div class="row">
             <div class="label">Store</div>
             <div class="value" id="reqStore">-</div>
+            <input type="text" id="editStore" class="detail-input" style="display: none;" />
           </div>
           <div class="row">
             <div class="label">Quantity</div>
             <div class="value" id="reqQty">-</div>
+            <input type="text" id="editQty" class="detail-input" style="display: none;" placeholder="e.g., 50 Servings" />
           </div>
         </div>
 
         <p class="hint" id="reqDistance">You are -- km away from the shop. Claim Now!</p>
 
-        <div class="actions">
-          <button id="viewDirections" class="btn ghost">View Directions</button>
-          <button id="confirmRequest" class="btn primary">Confirm Request</button>
+        <div class="actions" id="actionsContainer">
+          <button id="viewDirections" class="btn ghost">🗺️ View Directions</button>
+          <button id="confirmRequest" class="btn primary">✓ Confirm Request</button>
         </div>
       </section>
 

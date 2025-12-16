@@ -19,9 +19,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let currentStep = isFirstTimeLogin ? 1 : 0; // 0=Normal Login, 1=Temporary Auth, 2=Reset
 
-    // --- Mock User Credentials ---
-    const MOCK_CREDENTIAL = "NGO987";
-    const MOCK_TEMP_PASSWORD = "ngo_temp123"; // Password sent via email
+    // --- API Configuration ---
+    const API_URL = 'http://localhost/wastenot-api/api/login.php';
 
     // --- Utility for showing status messages ---
     function showAuthMessage(message, isError = false) {
@@ -37,6 +36,33 @@ document.addEventListener("DOMContentLoaded", () => {
         messageElement.textContent = message;
         messageElement.classList.toggle('error', isError);
         messageElement.style.display = 'block';
+    }
+
+    // --- Backend Login Function ---
+    async function authenticateUser(email, password, role) {
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password, role })
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                localStorage.setItem('authToken', data.token);
+                localStorage.setItem('userId', data.user.id);
+                localStorage.setItem('userRole', data.user.role);
+                localStorage.setItem('userName', data.user.full_name || data.user.name);
+                localStorage.setItem('ngoLoggedIn', 'true');
+                return { success: true, user: data.user };
+            } else {
+                return { success: false, message: data.message || 'Login failed' };
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            return { success: false, message: 'Connection error. Please try again.' };
+        }
     }
 
     // --- UI Update Function ---
@@ -71,14 +97,21 @@ document.addEventListener("DOMContentLoaded", () => {
             const password = passwordField.value.trim();
 
             if (currentStep === 0) {
-                // --- STEP 0: STANDARD LOGIN (Assuming a user is already set up) ---
-                if (inputCredential === MOCK_CREDENTIAL && password === "a_standard_ngo_password") { 
-                    showAuthMessage("Login successful! Redirecting to NGO Dashboard...", false);
-                    localStorage.setItem("ngoLoggedIn", "true");
-                    setTimeout(() => window.location.href = "../ngo/ngo-dashboard.html", 1000);
-                } else {
-                    showAuthMessage("Invalid credentials.", true);
-                }
+                // --- STEP 0: STANDARD LOGIN ---
+                const email = inputCredential; // Use email instead of ID
+                
+                showAuthMessage('Authenticating...', false);
+                
+                authenticateUser(email, password, 'ngo').then(result => {
+                    if (result.success) {
+                        showAuthMessage("Login successful! Redirecting to NGO Dashboard...", false);
+                        setTimeout(() => window.location.href = "../ngo/ngo-dashboard.html", 1000);
+                    } else {
+                        showAuthMessage(result.message || "Invalid credentials.", true);
+                    }
+                }).catch(error => {
+                    showAuthMessage('Authentication error. Please try again.', true);
+                });
 
             } else if (currentStep === 1) {
                 // --- STEP 1: TEMPORARY PASSWORD AUTHENTICATION ---

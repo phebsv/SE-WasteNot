@@ -1,7 +1,71 @@
+// ===== AUTH GUARD =====
+if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "ngo") {
+    window.location.href = "../login/login-ngo.html";
+}
+
+// API Configuration
+const API_URL = 'http://localhost:8081/api/donations';
+
 // FILTER FUNCTION
 const filterChips = document.querySelectorAll('.filter-chip');
-const cards = document.querySelectorAll('.card');
+let cards = document.querySelectorAll('.card');
 const searchInput = document.getElementById('search');
+let donations = [];
+
+// Load donations from backend
+async function loadDonations() {
+  try {
+    const response = await fetch(`${API_URL}/available`);
+    if (!response.ok) throw new Error('Failed to fetch donations');
+    
+    const data = await response.json();
+    donations = data;
+    renderDonations(data);
+  } catch (error) {
+    console.error('Error loading donations:', error);
+  }
+}
+
+function renderDonations(items) {
+  const container = document.querySelector('.cards-container');
+  if (!container) return;
+  
+  container.innerHTML = items.map(donation => `
+    <div class="card" data-category="${donation.category || 'food'}">
+      <div class="card-content">
+        <h3 class="card-title">${donation.donorName || 'Anonymous Donor'}</h3>
+        <div class="card-item">${donation.description || 'Food donation available'}</div>
+        <div class="card-location">${donation.location || 'Location TBD'}</div>
+        <div class="card-expiry">Available: ${formatDate(donation.availableDate)}</div>
+      </div>
+      <button class="request-btn" data-id="${donation.id}" data-donor="${donation.donorName}">
+        Request
+      </button>
+    </div>
+  `).join('');
+  
+  cards = document.querySelectorAll('.card');
+  attachRequestHandlers();
+}
+
+function formatDate(dateString) {
+  if (!dateString) return 'Now';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function attachRequestHandlers() {
+  document.querySelectorAll('.request-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const donationId = btn.dataset.id;
+      window.location.href = `ngo-productDetails.html?id=${donationId}`;
+    });
+  });
+}
+
+// Initialize on load
+loadDonations();
 
 filterChips.forEach(chip => {
   chip.addEventListener('click', () => {
@@ -65,6 +129,7 @@ if (requestBtns) {
 const logoutBtn = document.getElementById('logoutBtn');
 if (logoutBtn) {
   logoutBtn.addEventListener('click', () => {
-    console.log('Logout clicked');
+    localStorage.clear();
+    window.location.href = "../login/login-ngo.html";
   });
 }

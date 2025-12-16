@@ -1,3 +1,51 @@
+// ===== AUTH GUARD =====
+if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "partner") {
+  window.location.href = "../login/login-consumer.html";
+}
+
+const PRODUCTS_API = 'http://localhost:8081/api/products';
+
+// Load partner's inventory from products
+async function loadInventory() {
+  try {
+    const userId = localStorage.getItem('userId');
+    const response = await fetch(PRODUCTS_API);
+    if (response.ok) {
+      const allProducts = await response.json();
+      return allProducts.filter(p => p.partnerId == userId);
+    }
+    return [];
+  } catch (error) {
+    console.error('Error loading inventory:', error);
+    return [];
+  }
+}
+
+let partnerInventory = [];
+
+// Initialize inventory on load
+document.addEventListener('DOMContentLoaded', async () => {
+  partnerInventory = await loadInventory();
+  
+  // Setup logout
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      localStorage.clear();
+      window.location.href = '../login/login-consumer.html';
+    });
+  }
+  
+  // Setup avatar
+  const avatarInitial = document.getElementById('avatarInitial');
+  const userName = localStorage.getItem('userName');
+  if (avatarInitial && userName) {
+    avatarInitial.textContent = userName.charAt(0).toUpperCase();
+  }
+  
+  renderInventory();
+});
+
 function daysUntilExpiry(date) {
   const today = new Date();
   const exp = new Date(date);
@@ -6,7 +54,14 @@ function daysUntilExpiry(date) {
 
 function renderInventory() {
   const tbody = document.getElementById("inventoryBody");
+  if (!tbody) return;
+  
   tbody.innerHTML = "";
+
+  if (partnerInventory.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">No inventory items. Products are managed in Listings.</td></tr>';
+    return;
+  }
 
   partnerInventory.forEach(item => {
     const days = daysUntilExpiry(item.expiryDate);
@@ -18,38 +73,26 @@ function renderInventory() {
     tbody.innerHTML += `
       <tr class="${rowClass}">
         <td>${item.name}</td>
-        <td>${item.qty}</td>
-        <td>${item.productionDate}</td>
-        <td>${item.expiryDate}</td>
+        <td>${item.quantity} ${item.unit || 'pcs'}</td>
+        <td>${item.productionDate || 'N/A'}</td>
+        <td>${item.expiryDate || 'N/A'}</td>
         <td>
-          <button class="edit-btn" onclick="openEditModal(${item.id})">Edit</button>
+          <span class="status-badge status-${item.available ? 'active' : 'inactive'}">${item.available ? 'Available' : 'Unavailable'}</span>
         </td>
       </tr>
     `;
   });
 }
 
-renderInventory();
-
 let editingId = null;
 
 function openAddModal() {
-  editingId = null;
-  document.getElementById("modalTitle").innerText = "Add Inventory";
-  document.getElementById("inventoryModal").classList.add("show");
+  // Redirect to create listing page
+  window.location.href = 'partner-add-item.html';
 }
 
 function openEditModal(id) {
-  const item = partnerInventory.find(i => i.id === id);
-  editingId = id;
-
-  itemName.value = item.name;
-  itemQty.value = item.qty;
-  itemProd.value = item.productionDate;
-  itemExp.value = item.expiryDate;
-
-  document.getElementById("modalTitle").innerText = "Edit Inventory";
-  document.getElementById("inventoryModal").classList.add("show");
+  alert('Edit functionality: Products can be edited from the Listings page');
 }
 
 function saveInventory() {

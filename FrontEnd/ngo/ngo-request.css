@@ -21,6 +21,28 @@ body{font-family:Inter,system-ui,Arial,sans-serif;background:linear-gradient(135
 .row{display:flex;justify-content:space-between;padding:6px 0}
 .label{font-weight:600}
 .value{color:var(--muted);text-align:right}
+
+.detail-input{
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: #111827;
+  background: #fff;
+  transition: all 0.2s ease;
+}
+
+.detail-input:focus{
+  outline: none;
+  border-color: var(--green-main);
+  box-shadow: 0 0 0 2px rgba(21, 128, 61, 0.1);
+}
+
+.detail-input::placeholder{
+  color: var(--muted);
+}
 .hint{font-style:italic;color:var(--muted);margin-top:0.8rem}
 .actions{display:flex;gap:0.8rem;margin-top:1rem}
 .btn{padding:0.8rem 1.2rem;border-radius:20px;border:none;cursor:pointer}

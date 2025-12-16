@@ -1,30 +1,73 @@
 // Guard
-if (localStorage.getItem("partnerLoggedIn") !== "true") {
-  window.location.href = "login-partner.html";
+if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "partner") {
+  window.location.href = "../login/login-consumer.html";
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  let session = {};
-  try {
-    session = JSON.parse(localStorage.getItem("partnerSession")) || {};
-  } catch (e) {}
+const PRODUCTS_API = 'http://localhost:8081/api/products';
 
+// Load partner's products
+async function loadListings() {
+  try {
+    const userId = localStorage.getItem('userId');
+    const response = await fetch(PRODUCTS_API);
+    if (response.ok) {
+      const allProducts = await response.json();
+      return allProducts.filter(p => p.partnerId == userId);
+    }
+    return [];
+  } catch (error) {
+    console.error('Error loading listings:', error);
+    return [];
+  }
+}
+
+// Create or update product
+async function saveProduct(productData) {
+  try {
+    const method = productData.id ? 'PUT' : 'POST';
+    const url = productData.id ? `${PRODUCTS_API}/${productData.id}` : PRODUCTS_API;
+    
+    const response = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(productData)
+    });
+    
+    return response.ok;
+  } catch (error) {
+    console.error('Error saving product:', error);
+    return false;
+  }
+}
+
+// Delete product
+async function deleteProduct(productId) {
+  try {
+    const response = await fetch(`${PRODUCTS_API}/${productId}`, { method: 'DELETE' });
+    return response.ok;
+  } catch (error) {
+    console.error('Error deleting product:', error);
+    return false;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
   const avatarInitial = document.getElementById("avatarInitial");
-  if (avatarInitial && session.name) {
-    avatarInitial.textContent = session.name.charAt(0).toUpperCase();
+  const userName = localStorage.getItem('userName');
+  if (avatarInitial && userName) {
+    avatarInitial.textContent = userName.charAt(0).toUpperCase();
   }
 
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
-      localStorage.removeItem("partnerLoggedIn");
-      localStorage.removeItem("partnerSession");
-      window.location.href = "login-partner.html";
+      localStorage.clear();
+      window.location.href = "../login/login-consumer.html";
     });
   }
 
-  // base data from partner-data.js
-  const listings = window.partnerListings || [];
+  // Load listings from backend
+  let listings = await loadListings();
 
   const container = document.getElementById("listingsContainer");
   const searchInput = document.getElementById("searchListings");
@@ -54,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
       editingId = null;
 
       titleInput.value = "";
-      typeInput.value = "Marketplace";
+      typeInput.value = "marketplace";
       priceInput.value = "";
       categoryInput.value = "";
       qtyInput.value = "";
@@ -64,13 +107,13 @@ document.addEventListener("DOMContentLoaded", () => {
       modalTitle.textContent = "Edit Listing";
       editingId = listing.id;
 
-      titleInput.value = listing.title || "";
-      typeInput.value = listing.type || "Marketplace";
+      titleInput.value = listing.name || "";
+      typeInput.value = listing.type || "marketplace";
       priceInput.value = listing.price || 0;
       categoryInput.value = listing.category || "";
-      qtyInput.value = listing.qtyLeft ?? 0;
+      qtyInput.value = listing.quantity ?? 0;
       expiryInput.value = listing.expiryDate ? listing.expiryDate.substring(0, 10) : "";
-      imageInput.value = listing.image || "";
+      imageInput.value = listing.imageUrl || "";
     }
   }
 
@@ -99,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
     container.innerHTML = "";
 
     const filtered = listings.filter(l => {
-      const hay = (l.title + " " + (l.category || "") + " " + (l.type || "")).toLowerCase();
+      const hay = (l.name + " " + (l.category || "") + " " + (l.type || "")).toLowerCase();
       return hay.includes(filterText.toLowerCase());
     });
 
@@ -113,23 +156,25 @@ document.addEventListener("DOMContentLoaded", () => {
       card.className = "listing-card";
 
       const priceLabel =
-        listing.type === "Donation" || listing.price === 0
+        listing.type === "donation" || listing.price === 0
           ? "Donation"
           : "₱" + listing.price + " · Discounted";
+          
+      const status = listing.available ? "Available" : "Claimed";
 
       card.innerHTML = `
-        <img src="${listing.image}" alt="${listing.title}" class="listing-image">
+        <img src="${listing.imageUrl || 'https://via.placeholder.com/150'}" alt="${listing.name}" class="listing-image">
         <div class="listing-main">
-          <div class="listing-title">${listing.title}</div>
+          <div class="listing-title">${listing.name}</div>
           <div class="listing-meta">
             ${priceLabel}
-            · ${listing.category || "Mixed items"}
-            · Listed on ${formatDate(listing.listedDate)}<br>
-            ${(listing.qtyLeft ?? 0)} pcs left · Expiry Date: ${formatDate(listing.expiryDate)}
+            · ${listing.category || "General"}
+            · Status: ${status}<br>
+            ${listing.quantity} ${listing.unit || 'pcs'} · Expiry: ${formatDate(listing.expiryDate)}
           </div>
           <div class="listing-bottom">
-            <button class="listing-btn listing-btn-primary" data-action="claim" data-id="${listing.id}">
-              Mark As Claimed
+            <button class="listing-btn listing-btn-primary" data-action="toggle" data-id="${listing.id}" ${!listing.available ? 'disabled' : ''}>
+              ${listing.available ? 'Mark As Claimed' : 'Claimed'}
             </button>
             <div class="listing-actions">
               <button class="listing-btn listing-btn-outline" data-action="edit" data-id="${listing.id}">
@@ -151,7 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Button actions inside listing cards
-  container.addEventListener("click", e => {
+  container.addEventListener("click", async (e) => {
     const btn = e.target.closest("button");
     if (!btn) return;
     const id = Number(btn.dataset.id);
@@ -160,22 +205,34 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!listing) return;
 
     switch (action) {
-      case "claim":
-        listing.status = "claimed";
-        showToast(`"${listing.title}" marked as claimed!`, "success");
+      case "toggle":
+        // Toggle availability
+        const newAvailable = !listing.available;
+        const success = await saveProduct({ ...listing, available: newAvailable });
+        if (success) {
+          listing.available = newAvailable;
+          showToast(`Listing ${newAvailable ? 'reactivated' : 'marked as claimed'}!`, "success");
+          listings = await loadListings();
+          renderListings(searchInput.value);
+        }
         break;
       case "edit":
         openModal("edit", listing);
         return;
       case "more":
-        alert(`More actions for: ${listing.title} (demo only).`);
+        alert(`More actions for: ${listing.name} (demo only).`);
         break;
       case "delete":
-        deleteListing(id);
+        if (confirm(`Delete "${listing.name}"?`)) {
+          const deleted = await deleteProduct(id);
+          if (deleted) {
+            showToast("Listing deleted!", "success");
+            listings = await loadListings();
+            renderListings(searchInput.value);
+          }
+        }
         return;
     }
-
-    renderListings(searchInput.value);
   });
 
   // Search
@@ -193,48 +250,48 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Handle form submit (add/edit)
-  listingForm.addEventListener("submit", (e) => {
+  listingForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const base = {
-      title: titleInput.value.trim(),
+    const productData = {
+      name: titleInput.value.trim(),
       type: typeInput.value,
       price: Number(priceInput.value) || 0,
-      category: categoryInput.value.trim() || "Uncategorized",
-      qtyLeft: Number(qtyInput.value) || 0,
-      image: imageInput.value.trim() || "placeholder.jpg",
-      expiryDate: expiryInput.value || null
+      category: categoryInput.value.trim() || "General",
+      quantity: Number(qtyInput.value) || 0,
+      unit: 'pcs',
+      imageUrl: imageInput.value.trim() || "",
+      expiryDate: expiryInput.value || null,
+      partnerId: Number(localStorage.getItem('userId')),
+      partnerName: localStorage.getItem('userName'),
+      available: true
     };
 
-    if (!base.title) {
-      alert("Please enter a title.");
+    if (!productData.name) {
+      alert("Please enter a product name.");
       return;
     }
 
     if (editingId == null) {
-      // Add
-      const newListing = {
-        id: Date.now(),
-        listedDate: new Date().toISOString(),
-        week: 1,
-        ...base
-      };
-      partnerListings.push(newListing);
-      showToast("New listing created!", "success");
+      // Add new product
+      const success = await saveProduct(productData);
+      if (success) {
+        showToast("Listing created!", "success");
+        listings = await loadListings();
+      } else {
+        showToast("Failed to create listing", "error");
+      }
     } else {
-      // Edit
-      const idx = partnerListings.findIndex(l => l.id === editingId);
-      if (idx !== -1) {
-        partnerListings[idx] = {
-          ...partnerListings[idx],
-          ...base
-        };
-        showToast("Listing updated successfully!", "success");
+      // Edit existing product
+      productData.id = editingId;
+      const success = await saveProduct(productData);
+      if (success) {
+        showToast("Listing updated!", "success");
+        listings = await loadListings();
+      } else {
+        showToast("Failed to update listing", "error");
       }
     }
-
-    // Persist
-    localStorage.setItem("partnerListings", JSON.stringify(partnerListings));
 
     closeModal();
     renderListings(searchInput.value);
@@ -243,13 +300,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initial render
   renderListings();
 });
-
-// Delete helper
-function deleteListing(id) {
-  if (!confirm("Delete this listing?")) {
-    showToast("Delete cancelled.", "info");
-    return;
-}
 
 showToast("Listing deleted.", "info");
 
@@ -297,25 +347,14 @@ function openEditModal(id) {
 }
 
 // CLOSE MODAL
-function closeEditModal() {
-  document.getElementById("editModal").classList.add("hidden");
-}
-
-// SAVE EDITS
-function saveEditListing() {
-  let idx = listings.findIndex(l => l.id === editingId);
-
-  listings[idx].name = document.getElementById("editName").value;
-  listings[idx].qtyLeft = Number(document.getElementById("editQty").value);
-  listings[idx].price = Number(document.getElementById("editPrice").value);
-  listings[idx].pickup = document.getElementById("editPickup").value;
-  listings[idx].expiry = document.getElementById("editExpiry").value;
-
-  localStorage.setItem("partnerListings", JSON.stringify(listings));
-
-  showToast("Listing Updated Successfully!");
-  closeEditModal();
-  loadListings();
+// Toast notification
+function showToast(message, type = "success") {
+  const toast = document.createElement('div');
+  toast.textContent = message;
+  toast.className = `toast show ${type}`;
+  toast.style.cssText = 'position: fixed; bottom: 20px; right: 20px; background: #15803d; color: white; padding: 12px 20px; border-radius: 8px; z-index: 10000;';
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2500);
 }
 
 // DELETE LISTING

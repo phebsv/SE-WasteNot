@@ -19,9 +19,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let currentStep = isFirstTimeLogin ? 1 : 0; // 0=Normal Login, 1=Temporary Auth, 2=Reset
 
-    // --- Mock User Credentials ---
-    const MOCK_CREDENTIAL = "ID12345";
-    const MOCK_TEMP_PASSWORD = "temporary123"; // Password sent via email
+    // --- API Configuration ---
+    const API_URL = 'http://localhost/wastenot-api/api/login.php';
 
     // --- Utility for showing status messages ---
     function showAuthMessage(message, isError = false) {
@@ -37,6 +36,33 @@ document.addEventListener("DOMContentLoaded", () => {
         messageElement.textContent = message;
         messageElement.classList.toggle('error', isError);
         messageElement.style.display = 'block';
+    }
+
+    // --- Backend Login Function ---
+    async function authenticateUser(email, password, role) {
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password, role })
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                localStorage.setItem('authToken', data.token);
+                localStorage.setItem('userId', data.user.id);
+                localStorage.setItem('userRole', data.user.role);
+                localStorage.setItem('userName', data.user.name);
+                localStorage.setItem('providerLoggedIn', 'true');
+                return { success: true, user: data.user };
+            } else {
+                return { success: false, message: data.message || 'Login failed' };
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            return { success: false, message: 'Connection error. Please try again.' };
+        }
     }
 
     // --- UI Update Function ---
@@ -72,13 +98,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (currentStep === 0) {
                 // --- STEP 0: STANDARD LOGIN ---
-                if (inputCredential === MOCK_CREDENTIAL && password === "a_standard_password") { 
-                    showAuthMessage("Login successful! Redirecting...", false);
-                    localStorage.setItem("providerLoggedIn", "true");
-                    setTimeout(() => window.location.href = "../provider/provider-dashboard.html", 1000);
-                } else {
-                    showAuthMessage("Invalid credentials.", true);
-                }
+                const email = inputCredential; // Use email instead of ID
+                
+                showAuthMessage('Authenticating...', false);
+                
+                authenticateUser(email, password, 'partner').then(result => {
+                    if (result.success) {
+                        showAuthMessage("Login successful! Redirecting...", false);
+                        setTimeout(() => window.location.href = "../provider/provider-dashboard.html", 1000);
+                    } else {
+                        showAuthMessage(result.message || "Invalid credentials.", true);
+                    }
+                }).catch(error => {
+                    showAuthMessage('Authentication error. Please try again.', true);
+                });
 
             } else if (currentStep === 1) {
                 // --- STEP 1: TEMPORARY PASSWORD AUTHENTICATION ---

@@ -87,30 +87,8 @@
         <!-- Today's pickups -->
         <article class="panel panel-side">
           <h2 class="panel-title">Today’s pickups</h2>
-          <div class="pickup-list">
-            <div class="pickup-item">
-              <div>
-                <p class="pickup-store">EatSmart</p>
-                <p class="pickup-detail">2 boxes • Bonifacio Street</p>
-              </div>
-              <p class="pickup-time">3:00 PM</p>
-            </div>
-
-            <div class="pickup-item">
-              <div>
-                <p class="pickup-store">FreshLeaf Cafe</p>
-                <p class="pickup-detail">1 salad bowl • Greenlane</p>
-              </div>
-              <p class="pickup-time">5:30 PM</p>
-            </div>
-
-            <div class="pickup-item">
-              <div>
-                <p class="pickup-store">BreadTalk</p>
-                <p class="pickup-detail">3 breads • High Street</p>
-              </div>
-              <p class="pickup-time">6:15 PM</p>
-            </div>
+          <div class="pickup-list" id="todaysPickupsList">
+            <!-- Pickup items will be dynamically loaded from backend -->
           </div>
         </article>
       </section>
@@ -131,37 +109,8 @@
                 <th>Status</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td>FreshLeaf Cafe</td>
-                <td>Green Salad Bowl</td>
-                <td>Today • 5:30 PM</td>
-                <td><span class="status-pill status-pending">Pending</span></td>
-              </tr>
-              <tr>
-                <td>EatSmart</td>
-                <td>Vegetable Fried Rice</td>
-                <td>Today • 3:00 PM</td>
-                <td><span class="status-pill status-pending">Pending</span></td>
-              </tr>
-              <tr>
-                <td>BreadTalk</td>
-                <td>Croissant</td>
-                <td>Yesterday • 1:00 PM</td>
-                <td><span class="status-pill status-confirm">Confirm pickup</span></td>
-              </tr>
-              <tr>
-                <td>Stop N Snack</td>
-                <td>Tuna Wrap</td>
-                <td>Mon • 4:45 PM</td>
-                <td><span class="status-pill status-complete">Completed</span></td>
-              </tr>
-              <tr>
-                <td>EatSmart</td>
-                <td>Spaghetti Meal Box</td>
-                <td>Sun • 6:20 PM</td>
-                <td><span class="status-pill status-complete">Completed</span></td>
-              </tr>
+            <tbody id="recentClaimsBody">
+              <!-- Recent claims will be dynamically loaded from backend -->
             </tbody>
           </table>
         </div>

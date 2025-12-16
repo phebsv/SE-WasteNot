@@ -77,14 +77,30 @@ document.addEventListener("click", (e) => {
         e.target.innerText = input.type === "password" ? "Show" : "Hide";
     }
 });
+// Backend API Configuration
+const API_URL = "http://localhost/wastenot-api/api";
+
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.querySelector(".auth-form");
     if (!form) return;
 
-    // ... (Your live validation setup code remains the same here) ...
-    // ... (The live validation listeners are correct) ...
+    const email = document.getElementById("email");
+    const password = document.getElementById("password");
+    const confirmPassword = document.getElementById("confirmPassword");
+    const accountNumber = document.getElementById("accountNumber");
+    const terms = document.getElementById("termsConsumer") || document.getElementById("termsNGO") || document.getElementById("termsPartner");
 
-    form.addEventListener("submit", (e) => {
+    // Add live validation
+    if (email) addLiveValidation(email, validateEmail);
+    if (accountNumber) addLiveValidation(accountNumber, validateAccountNumber);
+    if (password) addLiveValidation(password, validatePassword);
+    if (confirmPassword) {
+        addLiveValidation(confirmPassword, (input) => validateConfirmPassword(input, password));
+    }
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        
         let valid = true;
 
         if (email && !validateEmail(email)) valid = false;
@@ -97,28 +113,52 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (!valid) {
-            e.preventDefault();
             return;
         }
 
-        e.preventDefault();
+        // Determine role from page
+        const currentPath = window.location.pathname;
+        let role = 'consumer';
+        let redirectPath = '../login/login-consumer.html';
+        
+        if (currentPath.includes('ngo')) {
+            role = 'ngo';
+            redirectPath = '../../login/login-ngo.html';
+        } else if (currentPath.includes('partner')) {
+            role = 'partner';
+            redirectPath = '../../login/login-partner.html';
+        }
 
-        // --- ROLE-BASED REDIRECTION LOGIC (IMPROVED) ---
-        const role = document.body.getAttribute("data-role");
-        
-        // Consumer Register is in frontend/consumer/. Needs: ../login/login-consumer.html
-        if (role === "consumer-register") {
-            window.location.href = "../login/login-consumer.html";
+        // Prepare registration data
+        const registrationData = {
+            email: email.value.trim(),
+            password: password.value,
+            full_name: email.value.split('@')[0], // Default name from email
+            role: role,
+            phone: '',
+            address: ''
+        };
+
+        try {
+            const response = await fetch(`${API_URL}/register.php`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(registrationData)
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert('Registration successful! Please login.');
+                window.location.href = redirectPath;
+            } else {
+                alert(data.message || 'Registration failed. Please try again.');
+            }
+        } catch (error) {
+            console.error('Registration error:', error);
+            alert('Connection error. Please check if backend is running.');
         }
-        
-        // NGO Register is in frontend/ngo/. Needs: ../../login/login-ngo.html
-        else if (role === "ngo-register") {
-            window.location.href = "../../login/login-ngo.html"; // CORRECTED PATH
-        }
-        
-        // Partner Register is in frontend/partner/ (Assuming). Needs: ../../login/login-partner.html
-        else if (role === "partner-register") {
-            window.location.href = "../../login/login-partner.html"; 
-        }   
     });
 });

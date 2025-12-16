@@ -1,6 +1,6 @@
-// ===== AUTH GUARD (Check if admin is logged in) =====
-if (localStorage.getItem("adminLoggedIn") !== "true") {
-    window.location.href = "login-admin.html";
+// ===== AUTH GUARD =====
+if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "admin") {
+    window.location.href = "../login/login-consumer.html";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -46,8 +46,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     // Logout Handler
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-        localStorage.removeItem("adminLoggedIn");
-        window.location.href = "login-admin.html";
+    document.getElementById("logoutBtn")?.addEventListener("click", () => {
+        localStorage.clear();
+        window.location.href = "../login/login-consumer.html";
     });
 });
