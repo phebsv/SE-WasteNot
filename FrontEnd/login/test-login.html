@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Provider Login Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { border: 1px solid #ccc; padding: 15px; margin: 10px 0; }
+        .success { color: green; }
+        .error { color: red; }
+        button { padding: 8px 15px; margin: 5px; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Provider Login Debug Test</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: CORS Preflight</h2>
+        <button onclick="testCORS()">Test CORS</button>
+        <div id="cors-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Login Request</h2>
+        <input type="email" id="email" placeholder="Email" value="partner@wastenot.com">
+        <input type="password" id="password" placeholder="Password" value="password123">
+        <button onclick="testLogin()">Test Login</button>
+        <div id="login-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: Check LocalStorage</h2>
+        <button onclick="checkStorage()">Check Storage</button>
+        <pre id="storage-result"></pre>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 4: Simulate Full Login Flow</h2>
+        <button onclick="simulateFullLogin()">Simulate Login</button>
+        <div id="full-login-result"></div>
+    </div>
+
+    <script>
+        function log(section, message, isError = false) {
+            const element = document.getElementById(section);
+            const span = document.createElement('div');
+            span.className = isError ? 'error' : 'success';
+            span.textContent = message;
+            element.appendChild(span);
+            console.log(message);
+        }
+
+        async function testCORS() {
+            log('cors-result', 'Testing CORS preflight...', false);
+            try {
+                const response = await fetch('http://localhost/wastenot-api/api/login.php', {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Access-Control-Request-Method': 'POST',
+                        'Access-Control-Request-Headers': 'Content-Type',
+                    }
+                });
+                log('cors-result', `CORS Response Status: ${response.status}`, false);
+                log('cors-result', `CORS Headers: ${JSON.stringify(Object.fromEntries(response.headers))}`, false);
+            } catch (error) {
+                log('cors-result', `CORS Error: ${error.message}`, true);
+            }
+        }
+
+        async function testLogin() {
+            document.getElementById('login-result').innerHTML = '';
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            log('login-result', `Attempting login with email: ${email}`, false);
+            
+            try {
+                const response = await fetch('http://localhost/wastenot-api/api/login.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, role: 'partner' })
+                });
+
+                log('login-result', `Response Status: ${response.status}`, false);
+                
+                const data = await response.json();
+                log('login-result', `Response: ${JSON.stringify(data, null, 2)}`, data.success);
+                
+                if (data.success) {
+                    log('login-result', '✓ Login successful!', false);
+                } else {
+                    log('login-result', `✗ Login failed: ${data.message}`, true);
+                }
+            } catch (error) {
+                log('login-result', `Error: ${error.message}`, true);
+                console.error('Full error:', error);
+            }
+        }
+
+        function checkStorage() {
+            const storage = {
+                authToken: localStorage.getItem('authToken'),
+                userId: localStorage.getItem('userId'),
+                userRole: localStorage.getItem('userRole'),
+                userName: localStorage.getItem('userName'),
+                providerLoggedIn: localStorage.getItem('providerLoggedIn')
+            };
+            document.getElementById('storage-result').textContent = JSON.stringify(storage, null, 2);
+        }
+
+        async function simulateFullLogin() {
+            document.getElementById('full-login-result').innerHTML = '';
+            const email = 'partner@wastenot.com';
+            const password = 'password123';
+            
+            try {
+                log('full-login-result', 'Starting login flow...', false);
+                
+                const response = await fetch('http://localhost/wastenot-api/api/login.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, role: 'partner' })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    log('full-login-result', 'Login successful, storing data...', false);
+                    
+                    localStorage.setItem('authToken', data.token);
+                    localStorage.setItem('userId', data.user.id);
+                    localStorage.setItem('userRole', data.user.role);
+                    localStorage.setItem('userName', data.user.full_name);
+                    localStorage.setItem('providerLoggedIn', 'true');
+                    
+                    log('full-login-result', 'Data stored. Would redirect to: ../provider/partner-dashboard.html', false);
+                    log('full-login-result', 'Stored data: ' + JSON.stringify({
+                        token: data.token,
+                        userId: data.user.id,
+                        role: data.user.role,
+                        name: data.user.full_name
+                    }, null, 2), false);
+                } else {
+                    log('full-login-result', `Login failed: ${data.message}`, true);
+                }
+            } catch (error) {
+                log('full-login-result', `Error: ${error.message}`, true);
+            }
+        }
+    </script>
+</body>
+</html>

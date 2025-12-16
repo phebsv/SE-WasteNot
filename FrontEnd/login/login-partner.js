@@ -2,6 +2,11 @@
 
 document.addEventListener("DOMContentLoaded", () => {
     
+    // Debug: Log the page URL and origin
+    console.log('=== PROVIDER LOGIN DEBUG ===');
+    console.log('Page URL:', window.location.href);
+    console.log('Page Origin:', window.location.origin);
+    
     // --- Element References ---
     const loginForm = document.getElementById('providerLoginForm');
     const togglePassword = document.getElementById('togglePassword');
@@ -41,26 +46,36 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- Backend Login Function ---
     async function authenticateUser(email, password, role) {
         try {
+            console.log(`Attempting login: email=${email}, role=${role}`);
+            console.log(`Sending request to: ${API_URL}`);
+            
             const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password, role })
             });
 
+            console.log(`Response status: ${response.status}`);
+            console.log(`Response headers:`, Object.fromEntries(response.headers));
+            
             const data = await response.json();
+            console.log(`Response data:`, data);
             
             if (data.success) {
+                console.log('Login successful, storing token and user data');
                 localStorage.setItem('authToken', data.token);
                 localStorage.setItem('userId', data.user.id);
                 localStorage.setItem('userRole', data.user.role);
-                localStorage.setItem('userName', data.user.name);
+                localStorage.setItem('userName', data.user.full_name);
                 localStorage.setItem('providerLoggedIn', 'true');
                 return { success: true, user: data.user };
             } else {
+                console.log('Login failed:', data.message);
                 return { success: false, message: data.message || 'Login failed' };
             }
         } catch (error) {
             console.error('Login error:', error);
+            console.error('Error stack:', error.stack);
             return { success: false, message: 'Connection error. Please try again.' };
         }
     }
@@ -105,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 authenticateUser(email, password, 'partner').then(result => {
                     if (result.success) {
                         showAuthMessage("Login successful! Redirecting...", false);
-                        setTimeout(() => window.location.href = "../provider/provider-dashboard.html", 1000);
+                        setTimeout(() => window.location.href = "../provider/partner-dashboard.html", 1000);
                     } else {
                         showAuthMessage(result.message || "Invalid credentials.", true);
                     }
@@ -142,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 showAuthMessage("Password updated successfully! Redirecting to dashboard.", false);
                 localStorage.setItem("providerLoggedIn", "true");
                 
-                setTimeout(() => window.location.href = "../provider/provider-dashboard.html", 1000);
+                setTimeout(() => window.location.href = "../provider/partner-dashboard.html", 1000);
             }
         });
     }
@@ -165,6 +180,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- Initial Check (Prevent going back to login if already logged in) ---
     if (localStorage.getItem("providerLoggedIn") === "true" && !isFirstTimeLogin) {
-        window.location.href = "../provider/provider-dashboard.html";
+        window.location.href = "../provider/partner-dashboard.html";
     }
 });

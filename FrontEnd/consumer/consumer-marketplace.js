@@ -1,228 +1,248 @@
-// ========= BACKEND API CONFIGURATION =========
-const API_URL = "http://localhost:8081/api";
+// ========= AUTH GUARD =========
+if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "consumer") {
+  window.location.href = "../login/login-consumer.html";
+}
 
-// ========= GLOBAL PRODUCTS ARRAY =========
-let products = [];
+// ========= BACKEND API CONFIGURATION =========
+const PRODUCTS_API = "http://localhost:8081/api/products";
+const ORDERS_API = "http://localhost:8081/api/orders";
+
+// ========= GLOBAL STATE =========
+let allProducts = [];
+let filteredProducts = [];
+let selectedCategories = new Set();
+let selectedPartners = new Set();
+let searchQuery = "";
 
 // ========= FETCH PRODUCTS FROM BACKEND =========
 async function loadProducts() {
   try {
-    const response = await fetch(`${API_URL}/products`);
+    console.log('Fetching products from:', PRODUCTS_API);
+    const response = await fetch(PRODUCTS_API);
     const data = await response.json();
     
-    if (data.success) {
-      // Transform backend data to frontend format
-      products = data.data.map(product => ({
+    console.log('API Response:', data);
+    
+    if (data.success && data.data && Array.isArray(data.data)) {
+      allProducts = data.data.map(product => ({
         id: product.id,
         name: product.name,
         partner: product.partnerName,
+        partnerId: product.partnerId,
         price: product.price,
         oldPrice: product.oldPrice,
         discountPercent: product.discountPercent,
-        category: product.category,
-        image: product.imageUrl || "placeholder.jpg",
+        category: product.category || 'general',
+        imageUrl: product.imageUrl || 'https://via.placeholder.com/200',
         description: product.description,
-        expiry: product.expiryDisplay || "Check with provider",
-        pickupWindow: product.pickupWindow || "Contact provider"
+        expiryDisplay: product.expiryDisplay || 'Check with provider',
+        pickupWindow: product.pickupWindow || 'Contact provider',
+        quantity: product.quantity || 0,
+        status: product.status || 'ACTIVE'
       }));
       
-      // Initialize the page after products are loaded
-      initializePage();
+      console.log('Loaded products:', allProducts);
+      populateFilters();
+      applyFilters();
     } else {
-      console.error('Failed to load products:', data.message);
+      console.error('Invalid response format:', data);
       showError('Failed to load products from backend.');
-      products = [];
-      initializePage();
     }
   } catch (error) {
     console.error('Error fetching products:', error);
     showError('Could not connect to server. Please ensure backend is running on port 8081.');
-    products = [];
-    initializePage();
   }
 }
 
-// ========= DOM ELEMENTS =========
-const productGrid = document.getElementById("productGrid");
-const searchInput = document.getElementById("searchInput");
-const filterChips = document.querySelectorAll(".filter-chip");
-const partnerChips = document.querySelectorAll(".partner-chip");
-const resultsText = document.getElementById("resultsText");
-const avatarInitial = document.getElementById("avatarInitial");
-const logoutBtn = document.getElementById("logoutBtn");
-
-// ========= SESSION =========
-(function checkConsumerSession() {
-  try {
-    const session = JSON.parse(localStorage.getItem("consumerSession"));
-    if (session && session.name && avatarInitial) {
-      avatarInitial.textContent = session.name.charAt(0).toUpperCase();
-    }
-  } catch (err) {
-    console.warn("Invalid session", err);
+// ========= POPULATE FILTER OPTIONS =========
+function populateFilters() {
+  const categories = [...new Set(allProducts.map(p => p.category))].sort();
+  const partners = [...new Set(allProducts.map(p => p.partner))].sort();
+  
+  console.log('Categories:', categories);
+  console.log('Partners:', partners);
+  
+  const categoryContainer = document.getElementById("categoryFilters");
+  const partnerContainer = document.getElementById("partnerFilters");
+  
+  if (categoryContainer) {
+    categoryContainer.innerHTML = categories.map(cat => `
+      <label class="filter-checkbox">
+        <input type="checkbox" class="category-filter" value="${cat}" data-category="${cat}">
+        <span>${cat.charAt(0).toUpperCase() + cat.slice(1)}</span>
+      </label>
+    `).join('');
+    
+    document.querySelectorAll('.category-filter').forEach(checkbox => {
+      checkbox.addEventListener('change', (e) => {
+        if (e.target.checked) {
+          selectedCategories.add(e.target.value);
+        } else {
+          selectedCategories.delete(e.target.value);
+        }
+        applyFilters();
+      });
+    });
   }
-})();
+  
+  if (partnerContainer) {
+    partnerContainer.innerHTML = partners.map(partner => `
+      <label class="filter-checkbox">
+        <input type="checkbox" class="partner-filter" value="${partner}" data-partner="${partner}">
+        <span>${partner}</span>
+      </label>
+    `).join('');
+    
+    document.querySelectorAll('.partner-filter').forEach(checkbox => {
+      checkbox.addEventListener('change', (e) => {
+        if (e.target.checked) {
+          selectedPartners.add(e.target.value);
+        } else {
+          selectedPartners.delete(e.target.value);
+        }
+        applyFilters();
+      });
+    });
+  }
+}
 
-// ========= STATE =========
-let activePartner = "All";
-let activeFilter = "all";
-let searchTerm = "";
+// ========= FILTER AND SEARCH LOGIC =========
+function applyFilters() {
+  filteredProducts = allProducts.filter(product => {
+    // Category filter
+    if (selectedCategories.size > 0 && !selectedCategories.has(product.category)) {
+      return false;
+    }
+    
+    // Partner filter
+    if (selectedPartners.size > 0 && !selectedPartners.has(product.partner)) {
+      return false;
+    }
+    
+    // Search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      const matches = product.name.toLowerCase().includes(query) ||
+                     product.description.toLowerCase().includes(query) ||
+                     product.partner.toLowerCase().includes(query);
+      if (!matches) return false;
+    }
+    
+    // Status filter - only show active products
+    if (product.status !== 'ACTIVE') {
+      return false;
+    }
+    
+    return true;
+  });
+  
+  console.log('Filtered products:', filteredProducts);
+  renderProducts();
+}
 
 // ========= RENDER PRODUCTS =========
 function renderProducts() {
-  productGrid.innerHTML = "";
-
-  const filtered = products.filter((p) => {
-    // partner filter
-    if (activePartner !== "All" && p.partner !== activePartner) return false;
-
-    // search filter
-    if (searchTerm.trim() !== "") {
-      const term = searchTerm.toLowerCase();
-      const matches =
-        p.name.toLowerCase().includes(term) ||
-        p.partner.toLowerCase().includes(term) ||
-        (p.category && p.category.toLowerCase().includes(term));
-      if (!matches) return false;
-    }
-
-    // filter chips
-    switch (activeFilter) {
-      case "high-discount":
-        if (p.discountPercent < 30) return false;
-        break;
-      case "under-50":
-        if (p.price >= 50) return false;
-        break;
-      case "breads":
-        if (p.category !== "breads") return false;
-        break;
-      case "drinks":
-        if (p.category !== "drinks") return false;
-        break;
-      case "all":
-      default:
-        break;
-    }
-
-    return true;
-  });
-
-  // Update text
-  if (filtered.length === 0) {
-    resultsText.textContent = "No results. Try adjusting filters.";
-  } else {
-    resultsText.textContent =
-      activePartner === "All" && activeFilter === "all" && !searchTerm
-        ? "Showing all deals"
-        : `Showing ${filtered.length} item${filtered.length > 1 ? "s" : ""}`;
+  const productGrid = document.getElementById("productGrid");
+  const resultsText = document.getElementById("resultsText");
+  
+  if (!productGrid) return;
+  
+  if (filteredProducts.length === 0) {
+    productGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">No products found. Try adjusting your filters.</div>';
+    if (resultsText) resultsText.textContent = `Showing 0 results`;
+    return;
   }
-
-  // Create cards
-  filtered.forEach((product) => {
-    const card = document.createElement("article");
-    card.className = "product-card";
-
-    card.innerHTML = `
-      <div class="discount-badge">${product.discountPercent}% Off</div>
-      <img src="${product.image}" alt="${product.name}">
-      <div class="product-name">${product.name}</div>
-      <div class="product-meta">${product.partner} • ${product.expiry}</div>
-      <div class="product-price-row">
-        <span class="product-price">₱${product.price}</span>
-        ${product.oldPrice ? `<span class="product-old-price">₱${product.oldPrice}</span>` : ""}
+  
+  productGrid.innerHTML = filteredProducts.map(product => `
+    <article class="product-card" data-product-id="${product.id}">
+      <div class="product-image">
+        <img src="${product.imageUrl}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/200'">
+        ${product.discountPercent ? `<span class="discount-badge">${product.discountPercent}% OFF</span>` : ''}
       </div>
-      <div class="product-arrow">›</div>
-    `;
-
-    // ⬇ Navigate to product page
-    card.addEventListener("click", () => {
-      window.location.href = `product.html?id=${product.id}`;
-    });
-
-    productGrid.appendChild(card);
-  });
-}
-
-// ========= HANDLERS =========
-function onSearchInput(e) {
-  searchTerm = e.target.value;
-  renderProducts();
-}
-
-function onFilterChipClick(e) {
-  filterChips.forEach((chip) => chip.classList.remove("active"));
-  e.currentTarget.classList.add("active");
-  activeFilter = e.currentTarget.dataset.filter;
-  renderProducts();
-}
-
-function onPartnerChipClick(e) {
-  partnerChips.forEach((chip) => chip.classList.remove("active"));
-  e.currentTarget.classList.add("active");
-  activePartner = e.currentTarget.dataset.partner;
-  renderProducts();
-}
-
-// ========= LOGOUT =========
-if (logoutBtn) {
-  logoutBtn.addEventListener("click", () => {
-    localStorage.removeItem("consumerSession");
-    alert("Logged out!");
-  });
-}
-
-// ========= GENERATE PARTNER CHIPS =========
-function generatePartnerChips() {
-  const partnerList = document.getElementById("partnerList");
-  if (!partnerList) return;
-
-  // Get unique partners from products
-  const uniquePartners = [...new Set(products.map(p => p.partner))];
+      <div class="product-content">
+        <div class="product-partner">${product.partner}</div>
+        <h3 class="product-name">${product.name}</h3>
+        <p class="product-description">${product.description || 'No description available'}</p>
+        <div class="product-meta">
+          <div class="meta-item">
+            <span class="meta-label">Category:</span>
+            <span>${product.category}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Pickup:</span>
+            <span>${product.pickupWindow}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Expiry:</span>
+            <span>${product.expiryDisplay}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Available:</span>
+            <span>${product.quantity} units</span>
+          </div>
+        </div>
+        <div class="product-footer">
+          <div class="product-pricing">
+            ${product.oldPrice ? `<span class="old-price">₱${product.oldPrice}</span>` : ''}
+            <span class="current-price">₱${product.price}</span>
+          </div>
+          <button class="product-action-btn" onclick="claimProduct(${product.id}, '${product.name}')">
+            ${product.discountPercent ? 'Buy Now' : 'Claim'}
+          </button>
+        </div>
+      </div>
+    </article>
+  `).join('');
   
-  // Clear existing chips
-  partnerList.innerHTML = '';
-  
-  // Add "All" chip
-  const allChip = document.createElement('button');
-  allChip.className = 'partner-chip active';
-  allChip.dataset.partner = 'All';
-  allChip.innerHTML = '<span>All Partners</span>';
-  partnerList.appendChild(allChip);
-  
-  // Add partner chips
-  uniquePartners.forEach(partner => {
-    const chip = document.createElement('button');
-    chip.className = 'partner-chip';
-    chip.dataset.partner = partner;
-    chip.innerHTML = `<span>${partner}</span>`;
-    partnerList.appendChild(chip);
-  });
+  if (resultsText) {
+    resultsText.textContent = `Showing ${filteredProducts.length} of ${allProducts.length} products`;
+  }
+}
+
+// ========= CLAIM/BUY PRODUCT =========
+function claimProduct(productId, productName) {
+  alert(`Feature coming soon: You would claim "${productName}" (Product ID: ${productId})`);
+  // TODO: Implement order creation endpoint
+}
+
+// ========= SEARCH HANDLER =========
+function handleSearch(event) {
+  searchQuery = event.target.value;
+  applyFilters();
+}
+
+// ========= ERROR DISPLAY =========
+function showError(message) {
+  const errorDiv = document.createElement('div');
+  errorDiv.style.cssText = 'padding: 20px; background: #fee; color: #c00; border-radius: 8px; margin: 20px; text-align: center;';
+  errorDiv.textContent = message;
+  document.body.insertBefore(errorDiv, document.body.firstChild);
 }
 
 // ========= INITIALIZE PAGE =========
-function initializePage() {
-  generatePartnerChips();
-  
-  searchInput.addEventListener("input", onSearchInput);
-  filterChips.forEach((chip) => chip.addEventListener("click", onFilterChipClick));
-  
-  // Re-query partner chips after generating them
-  const partnerChips = document.querySelectorAll(".partner-chip");
-  partnerChips.forEach((chip) => chip.addEventListener("click", onPartnerChipClick));
-  
-  renderProducts();
-}
-
-function showError(message) {
-  const productGrid = document.querySelector(".product-grid");
-  if (productGrid) {
-    const errorDiv = document.createElement('div');
-    errorDiv.style.cssText = 'grid-column: 1/-1; text-align: center; padding: 20px; color: #ff6b6b;';
-    errorDiv.textContent = message;
-    productGrid.prepend(errorDiv);
+document.addEventListener('DOMContentLoaded', () => {
+  // Setup logout
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      localStorage.clear();
+      window.location.href = '../login/login-consumer.html';
+    });
   }
-}
-
-// ========= START APPLICATION =========
-loadProducts();
+  
+  // Setup avatar
+  const avatarInitial = document.getElementById('avatarInitial');
+  const userName = localStorage.getItem('userName');
+  if (avatarInitial && userName) {
+    avatarInitial.textContent = userName.charAt(0).toUpperCase();
+  }
+  
+  // Setup search handler
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', handleSearch);
+  }
+  
+  // Load products
+  loadProducts();
+});

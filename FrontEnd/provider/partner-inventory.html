@@ -28,7 +28,7 @@
       <a href="partner-settings.html" class="nav-item">Settings</a>
     </nav>
 
-    <button class="logout-btn">Logout</button>
+    <button class="logout-btn" id="logoutBtn">Logout</button>
   </aside>
 
   <main class="main">
@@ -44,7 +44,7 @@
         <button class="icon-btn" aria-label="Notifications">
           <span class="notification-count">2</span> 🔔
         </button>
-        <div class="avatar" title="Partner User">
+        <div class="avatar" id="avatarInitial" title="Partner User">
           P
         </div>
       </div>
@@ -70,41 +70,12 @@
             <th>Item Name</th>
             <th>Quantity</th>
             <th>Production Date</th>
-            <th>Expiry</th>
-            <th>Actions</th>
+            <th>Expiry Date</th>
+            <th>Status</th>
           </tr>
         </thead>
         <tbody id="inventoryBody">
-          <tr>
-            <td>Organic Apples</td>
-            <td>10 kg</td>
-            <td>2023-10-20</td>
-            <td>2023-11-05</td>
-            <td class="table-actions">
-              <a href="partner-add-item.html?id=123" class="edit-btn">Edit</a>
-              <button class="delete-btn">Delete</button>
-            </td>
-          </tr>
-          <tr class="expiry-warning">
-            <td>Canned Soup</td>
-            <td>20 cans</td>
-            <td>2023-08-15</td>
-            <td>2023-11-15</td>
-            <td class="table-actions">
-              <a href="partner-add-item.html?id=124" class="edit-btn">Edit</a>
-              <button class="delete-btn">Delete</button>
-            </td>
-          </tr>
-          <tr class="expiry-danger">
-            <td>Fresh Bread</td>
-            <td>5 loaves</td>
-            <td>2023-11-01</td>
-            <td>2023-11-03</td>
-            <td class="table-actions">
-              <a href="partner-add-item.html?id=125" class="edit-btn">Edit</a>
-              <button class="delete-btn">Delete</button>
-            </td>
-          </tr>
+          <!-- Items will be populated by JavaScript -->
         </tbody>
       </table>
     </div>

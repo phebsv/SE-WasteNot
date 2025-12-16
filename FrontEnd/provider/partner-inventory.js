@@ -9,10 +9,20 @@ const PRODUCTS_API = 'http://localhost:8081/api/products';
 async function loadInventory() {
   try {
     const userId = localStorage.getItem('userId');
+    console.log('Loading inventory for userId:', userId, 'Type:', typeof userId);
     const response = await fetch(PRODUCTS_API);
     if (response.ok) {
-      const allProducts = await response.json();
-      return allProducts.filter(p => p.partnerId == userId);
+      const data = await response.json();
+      console.log('API Response:', data);
+      const allProducts = data.data || [];  // Extract data array from response
+      console.log('All products from API:', allProducts);
+      const filtered = allProducts.filter(p => {
+        const matches = p.partnerId == userId;
+        console.log(`Product ID ${p.id}: partnerId=${p.partnerId} (${typeof p.partnerId}), userId=${userId} (${typeof userId}), matches=${matches}`);
+        return matches;
+      });
+      console.log('Filtered inventory:', filtered);
+      return filtered;
     }
     return [];
   } catch (error) {

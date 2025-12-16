@@ -26,7 +26,7 @@
                 <a href="consumer-profile.html" class="nav-item">Account</a>
             </nav>
 
-            <a href="button class="logout-btn" id="logoutBtn">Logout</button>
+            <button class="logout-btn" id="logoutBtn">Logout</button>
         </aside>
 
         <!-- ========= MAIN CONTENT ========= -->
@@ -56,28 +56,27 @@
                         type="text"
                         id="searchInput"
                         class="market-search"
-                        placeholder="Got something you're looking for?"
+                        placeholder="Search products, partners..."
                     />
-                </div>
-
-                <div class="filter-row">
-                    <button class="filter-chip active" data-filter="all">All</button>
-                    <button class="filter-chip" data-filter="high-discount">High Discount</button>
-                    <button class="filter-chip" data-filter="under-50">Under ₱50</button>
-                    <button class="filter-chip" data-filter="breads">Breads & Pastries</button>
-                    <button class="filter-chip" data-filter="drinks">Drinks & Refreshments</button>
                 </div>
             </section>
 
-            <!-- Partners -->
-            <section class="partners-section">
-                <div class="section-header">
-                    <h2 class="section-title">Our Partners</h2>
-                    <span class="section-caption">Tap a partner to filter products</span>
-                </div>
+            <!-- Filters Sidebar -->
+            <section class="filters-section">
+                <div class="filter-panel">
+                    <div class="filter-group">
+                        <h3 class="filter-title">Category</h3>
+                        <div id="categoryFilters" class="filter-options">
+                            <!-- Categories will be populated by JS -->
+                        </div>
+                    </div>
 
-                <div class="partner-logos" id="partnerList">
-                    <!-- Partners will be dynamically loaded from backend -->
+                    <div class="filter-group">
+                        <h3 class="filter-title">Partner</h3>
+                        <div id="partnerFilters" class="filter-options">
+                            <!-- Partners will be populated by JS -->
+                        </div>
+                    </div>
                 </div>
             </section>
 

@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false,
+        maintainAspectRatio: true,
         plugins: { legend: { display: false } },
         scales: {
           x: { grid: { display: false } },
@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false,
+        maintainAspectRatio: true,
         plugins: { legend: { display: false } },
         scales: {
           x: { grid: { display: false } },
