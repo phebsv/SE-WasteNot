@@ -1,30 +1,59 @@
 // ===== AUTH GUARD =====
 if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "partner") {
-  window.location.href = "../login/login-consumer.html";
+  window.location.href = "../login/login-partner.html";
 }
 
 const PRODUCTS_API = 'http://localhost:8081/api/products';
+
+function unwrapData(payload) {
+  if (payload && typeof payload === 'object' && Array.isArray(payload.data)) return payload.data;
+  return Array.isArray(payload) ? payload : [];
+}
+
+function parseProductionDate(item) {
+  if (item?.productionDate) return item.productionDate;
+  const desc = String(item?.description || '');
+  const m = desc.match(/Production\s*Date:\s*(\d{4}-\d{2}-\d{2})/i);
+  return m ? m[1] : null;
+}
+
+function isExpired(expiryDate) {
+  if (!expiryDate) return false;
+  const d = new Date(expiryDate);
+  if (Number.isNaN(d.getTime())) return false;
+  return d.getTime() < Date.now();
+}
+
+function computeInventoryStatus(item) {
+  const status = String(item?.status || 'ACTIVE').toUpperCase();
+  const qty = Number(item?.quantity ?? 0);
+
+  if (status !== 'ACTIVE') return { label: 'Unavailable', tone: 'inactive' };
+  if (!Number.isFinite(qty) || qty <= 0) return { label: 'Unavailable', tone: 'inactive' };
+  if (isExpired(item?.expiryDate)) return { label: 'Unavailable', tone: 'inactive' };
+  return { label: 'Available', tone: 'active' };
+}
 
 // Load partner's inventory from products
 async function loadInventory() {
   try {
     const userId = localStorage.getItem('userId');
-    console.log('Loading inventory for userId:', userId, 'Type:', typeof userId);
-    const response = await fetch(PRODUCTS_API);
-    if (response.ok) {
-      const data = await response.json();
-      console.log('API Response:', data);
-      const allProducts = data.data || [];  // Extract data array from response
-      console.log('All products from API:', allProducts);
-      const filtered = allProducts.filter(p => {
-        const matches = p.partnerId == userId;
-        console.log(`Product ID ${p.id}: partnerId=${p.partnerId} (${typeof p.partnerId}), userId=${userId} (${typeof userId}), matches=${matches}`);
-        return matches;
-      });
-      console.log('Filtered inventory:', filtered);
-      return filtered;
+    if (!userId) return [];
+
+    // Prefer server-side filtering.
+    const partnerRes = await fetch(`${PRODUCTS_API}/partner/${encodeURIComponent(userId)}`);
+    if (partnerRes.ok) {
+      const payload = await partnerRes.json();
+      const data = unwrapData(payload);
+      return data;
     }
-    return [];
+
+    // Fallback: load all active products and filter by partnerId client-side.
+    const response = await fetch(PRODUCTS_API);
+    if (!response.ok) return [];
+    const payload = await response.json();
+    const allProducts = unwrapData(payload);
+    return allProducts.filter(p => String(p?.partnerId) === String(userId));
   } catch (error) {
     console.error('Error loading inventory:', error);
     return [];
@@ -41,8 +70,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   const logoutBtn = document.getElementById('logoutBtn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
-      localStorage.clear();
-      window.location.href = '../login/login-consumer.html';
+      // Clear only auth/session flags; keep cached profile + app data.
+      [
+        'authToken',
+        'userId',
+        'userRole',
+        'userName',
+        'userEmail',
+        'ngoName',
+        'consumerLoggedIn',
+        'partnerLoggedIn',
+        'providerLoggedIn',
+        'ngoLoggedIn',
+        'adminLoggedIn'
+      ].forEach(k => localStorage.removeItem(k));
+      sessionStorage.clear();
+      window.location.href = '../login/login-partner.html';
     });
   }
   
@@ -84,10 +127,13 @@ function renderInventory() {
       <tr class="${rowClass}">
         <td>${item.name}</td>
         <td>${item.quantity} ${item.unit || 'pcs'}</td>
-        <td>${item.productionDate || 'N/A'}</td>
-        <td>${item.expiryDate || 'N/A'}</td>
+        <td>${parseProductionDate(item) || 'N/A'}</td>
+        <td>${item.expiryDate || item.expiryDisplay || 'N/A'}</td>
         <td>
-          <span class="status-badge status-${item.available ? 'active' : 'inactive'}">${item.available ? 'Available' : 'Unavailable'}</span>
+          ${(() => {
+            const s = computeInventoryStatus(item);
+            return `<span class="status-badge status-${s.tone}">${s.label}</span>`;
+          })()}
         </td>
       </tr>
     `;

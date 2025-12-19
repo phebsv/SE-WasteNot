@@ -1,6 +1,6 @@
 // Mandatory setup auth guard:
 if (localStorage.getItem("partnerLoggedIn") !== "true") {
-  window.location.href = "login-partner.html";
+  window.location.href = "../login/login-partner.html";
 }
 
 const form = document.getElementById("setupForm");

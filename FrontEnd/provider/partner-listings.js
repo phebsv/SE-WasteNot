@@ -1,20 +1,57 @@
 // Guard
 if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "partner") {
-  window.location.href = "../login/login-consumer.html";
+  window.location.href = "../login/login-partner.html";
 }
 
 const PRODUCTS_API = 'http://localhost:8081/api/products';
+
+// Local toast fallback for partner pages that only have a legacy #toast element.
+// This prevents JS from crashing when showToast is not provided by another script.
+if (typeof window.showToast !== 'function') {
+  window.showToast = (message, type = 'info') => {
+    const toast = document.getElementById('toast');
+    if (!toast) return;
+    toast.textContent = String(message);
+    toast.classList.remove('success', 'error');
+    if (type === 'success') toast.classList.add('success');
+    if (type === 'error') toast.classList.add('error');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  };
+}
+
+function unwrapData(payload) {
+  if (payload && typeof payload === 'object' && Array.isArray(payload.data)) return payload.data;
+  return Array.isArray(payload) ? payload : [];
+}
+
+function toIsoStartOfDay(dateStr) {
+  if (!dateStr) return null;
+  return `${dateStr}T00:00:00`;
+}
 
 // Load partner's products
 async function loadListings() {
   try {
     const userId = localStorage.getItem('userId');
-    const response = await fetch(PRODUCTS_API);
+    if (!userId) return [];
+
+    // Prefer server-side filtering.
+    const response = await fetch(`${PRODUCTS_API}/partner/${encodeURIComponent(userId)}`);
     if (response.ok) {
-      const allProducts = await response.json();
-      return allProducts.filter(p => p.partnerId == userId);
+      const payload = await response.json();
+      const data = unwrapData(payload);
+      if (data.length > 0) return data;
+    } else {
+      console.warn('Partner products endpoint failed:', response.status);
     }
-    return [];
+
+    // Fallback: load all active products and filter by partnerId client-side.
+    const allRes = await fetch(PRODUCTS_API);
+    if (!allRes.ok) return [];
+    const allPayload = await allRes.json();
+    const all = unwrapData(allPayload);
+    return all.filter(p => String(p?.partnerId) === String(userId));
   } catch (error) {
     console.error('Error loading listings:', error);
     return [];
@@ -61,16 +98,48 @@ document.addEventListener("DOMContentLoaded", async () => {
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
-      localStorage.clear();
-      window.location.href = "../login/login-consumer.html";
+      // Clear only auth/session flags; keep cached profile + app data.
+      [
+        'authToken',
+        'userId',
+        'userRole',
+        'userName',
+        'userEmail',
+        'ngoName',
+        'consumerLoggedIn',
+        'partnerLoggedIn',
+        'providerLoggedIn',
+        'ngoLoggedIn',
+        'adminLoggedIn'
+      ].forEach(k => localStorage.removeItem(k));
+      sessionStorage.clear();
+      window.location.href = "../login/login-partner.html";
     });
   }
 
   // Load listings from backend
   let listings = await loadListings();
 
+  // Ensure newly-created listing appears immediately after redirect.
+  try {
+    const raw = sessionStorage.getItem('lastCreatedProduct');
+    if (raw) {
+      const created = JSON.parse(raw);
+      if (created && created.id != null) {
+        const exists = listings.some(p => String(p?.id) === String(created.id));
+        if (!exists) {
+          listings = [created, ...listings];
+        }
+      }
+      sessionStorage.removeItem('lastCreatedProduct');
+    }
+  } catch (e) {
+    console.warn('Could not apply lastCreatedProduct:', e);
+  }
+
   const container = document.getElementById("listingsContainer");
-  const searchInput = document.getElementById("searchListings");
+  // partner-listings.html uses #search
+  const searchInput = document.getElementById("search") || document.getElementById("searchListings");
   const createBtn = document.getElementById("createListingBtn");
 
   // Modal elements
@@ -97,7 +166,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       editingId = null;
 
       titleInput.value = "";
-      typeInput.value = "marketplace";
+      typeInput.value = "sale";
       priceInput.value = "";
       categoryInput.value = "";
       qtyInput.value = "";
@@ -108,7 +177,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       editingId = listing.id;
 
       titleInput.value = listing.name || "";
-      typeInput.value = listing.type || "marketplace";
+      typeInput.value = listing.listingType || listing.type || "sale";
       priceInput.value = listing.price || 0;
       categoryInput.value = listing.category || "";
       qtyInput.value = listing.quantity ?? 0;
@@ -142,7 +211,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     container.innerHTML = "";
 
     const filtered = listings.filter(l => {
-      const hay = (l.name + " " + (l.category || "") + " " + (l.type || "")).toLowerCase();
+      const hay = (l.name + " " + (l.category || "") + " " + (l.listingType || l.type || "")).toLowerCase();
       return hay.includes(filterText.toLowerCase());
     });
 
@@ -156,11 +225,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       card.className = "listing-card";
 
       const priceLabel =
-        listing.type === "donation" || listing.price === 0
+        String(listing.listingType || listing.type || '').toLowerCase() === 'donation' || Number(listing.price) === 0
           ? "Donation"
           : "₱" + listing.price + " · Discounted";
-          
-      const status = listing.available ? "Available" : "Claimed";
+
+      const status = String(listing.status || 'ACTIVE');
+      const isAvailable = status === 'ACTIVE';
 
       card.innerHTML = `
         <img src="${listing.imageUrl || 'https://via.placeholder.com/150'}" alt="${listing.name}" class="listing-image">
@@ -173,15 +243,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             ${listing.quantity} ${listing.unit || 'pcs'} · Expiry: ${formatDate(listing.expiryDate)}
           </div>
           <div class="listing-bottom">
-            <button class="listing-btn listing-btn-primary" data-action="toggle" data-id="${listing.id}" ${!listing.available ? 'disabled' : ''}>
-              ${listing.available ? 'Mark As Claimed' : 'Claimed'}
+            <button class="listing-btn listing-btn-primary" data-action="toggle" data-id="${listing.id}" ${!isAvailable ? 'disabled' : ''}>
+              ${isAvailable ? 'Mark As Claimed' : 'Claimed'}
             </button>
             <div class="listing-actions">
               <button class="listing-btn listing-btn-outline" data-action="edit" data-id="${listing.id}">
                 Edit Listing
-              </button>
-              <button class="listing-icon-btn" data-action="more" data-id="${listing.id}">
-                ☰
               </button>
               <button class="listing-icon-btn delete" data-action="delete" data-id="${listing.id}">
                 🗑
@@ -206,12 +273,26 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     switch (action) {
       case "toggle":
-        // Toggle availability
-        const newAvailable = !listing.available;
-        const success = await saveProduct({ ...listing, available: newAvailable });
+        // Mark as claimed by switching status to SOLD
+        const nextStatus = 'SOLD';
+        const success = await saveProduct({ ...listing, status: nextStatus });
         if (success) {
-          listing.available = newAvailable;
-          showToast(`Listing ${newAvailable ? 'reactivated' : 'marked as claimed'}!`, "success");
+          showToast('Listing marked as claimed!', "success");
+          try {
+            const partnerId = Number(localStorage.getItem('userId'));
+            if (window.WasteNotNotifications?.notifyTargets && Number.isFinite(partnerId) && partnerId > 0) {
+              window.WasteNotNotifications.notifyTargets(
+                [{ role: 'partner', userId: partnerId }],
+                {
+                  title: 'Listing marked as claimed',
+                  body: `"${listing.name}" was marked as claimed.`,
+                  link: '/provider/partner-listings.html'
+                }
+              );
+            }
+          } catch (_) {
+            // ignore
+          }
           listings = await loadListings();
           renderListings(searchInput.value);
         }
@@ -219,14 +300,26 @@ document.addEventListener("DOMContentLoaded", async () => {
       case "edit":
         openModal("edit", listing);
         return;
-      case "more":
-        alert(`More actions for: ${listing.name} (demo only).`);
-        break;
       case "delete":
         if (confirm(`Delete "${listing.name}"?`)) {
           const deleted = await deleteProduct(id);
           if (deleted) {
             showToast("Listing deleted!", "success");
+            try {
+              const partnerId = Number(localStorage.getItem('userId'));
+              if (window.WasteNotNotifications?.notifyTargets && Number.isFinite(partnerId) && partnerId > 0) {
+                window.WasteNotNotifications.notifyTargets(
+                  [{ role: 'partner', userId: partnerId }],
+                  {
+                    title: 'Listing deleted',
+                    body: `"${listing.name}" was deleted.`,
+                    link: '/provider/partner-listings.html'
+                  }
+                );
+              }
+            } catch (_) {
+              // ignore
+            }
             listings = await loadListings();
             renderListings(searchInput.value);
           }
@@ -255,16 +348,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const productData = {
       name: titleInput.value.trim(),
-      type: typeInput.value,
+      listingType: typeInput.value,
       price: Number(priceInput.value) || 0,
       category: categoryInput.value.trim() || "General",
       quantity: Number(qtyInput.value) || 0,
-      unit: 'pcs',
       imageUrl: imageInput.value.trim() || "",
-      expiryDate: expiryInput.value || null,
+      expiryDate: toIsoStartOfDay(expiryInput.value),
       partnerId: Number(localStorage.getItem('userId')),
       partnerName: localStorage.getItem('userName'),
-      available: true
+      status: 'ACTIVE'
     };
 
     if (!productData.name) {
@@ -277,6 +369,49 @@ document.addEventListener("DOMContentLoaded", async () => {
       const success = await saveProduct(productData);
       if (success) {
         showToast("Listing created!", "success");
+        try {
+          const partnerId = Number(localStorage.getItem('userId'));
+          const partnerName = String(localStorage.getItem('userName') || 'Partner');
+          const isDonation = String(productData?.listingType || '').toLowerCase() === 'donation' || Number(productData?.price) === 0;
+
+          if (window.WasteNotNotifications?.notifyTargets) {
+            // Partner (personal)
+            if (Number.isFinite(partnerId) && partnerId > 0) {
+              window.WasteNotNotifications.notifyTargets(
+                [{ role: 'partner', userId: partnerId }],
+                {
+                  title: 'Listing created',
+                  body: `You created "${productData.name}".`,
+                  link: '/provider/partner-listings.html'
+                }
+              );
+            }
+
+            // Consumer (broadcast)
+            window.WasteNotNotifications.notifyTargets(
+              [{ role: 'consumer', userId: 'all' }],
+              {
+                title: 'New listing available',
+                body: `${partnerName} posted "${productData.name}".`,
+                link: '/consumer/consumer-marketplace.html'
+              }
+            );
+
+            // NGO (broadcast, donation only)
+            if (isDonation) {
+              window.WasteNotNotifications.notifyTargets(
+                [{ role: 'ngo', userId: 'all' }],
+                {
+                  title: 'New donation available',
+                  body: `${partnerName} posted a donation: "${productData.name}".`,
+                  link: '/ngo/ngo-marketplace.html'
+                }
+              );
+            }
+          }
+        } catch (_) {
+          // ignore
+        }
         listings = await loadListings();
       } else {
         showToast("Failed to create listing", "error");
@@ -287,6 +422,21 @@ document.addEventListener("DOMContentLoaded", async () => {
       const success = await saveProduct(productData);
       if (success) {
         showToast("Listing updated!", "success");
+        try {
+          const partnerId = Number(localStorage.getItem('userId'));
+          if (window.WasteNotNotifications?.notifyTargets && Number.isFinite(partnerId) && partnerId > 0) {
+            window.WasteNotNotifications.notifyTargets(
+              [{ role: 'partner', userId: partnerId }],
+              {
+                title: 'Listing updated',
+                body: `You updated "${productData.name}".`,
+                link: '/provider/partner-listings.html'
+              }
+            );
+          }
+        } catch (_) {
+          // ignore
+        }
         listings = await loadListings();
       } else {
         showToast("Failed to update listing", "error");
@@ -294,7 +444,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     closeModal();
-    renderListings(searchInput.value);
+    renderListings(searchInput ? searchInput.value : "");
   });
 
   // Initial render

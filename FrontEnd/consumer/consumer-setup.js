@@ -1,6 +1,6 @@
 // Mandatory setup redirect
 if (localStorage.getItem("consumerLoggedIn") !== "true") {
-  window.location.href = "login-consumer.html";
+  window.location.href = "../login/login-consumer.html";
 }
 
 const form = document.getElementById("setupForm");

@@ -216,7 +216,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const logoutBtn = document.getElementById('logoutBtn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
-      localStorage.clear();
+      // Clear only auth/session flags; keep cached profile + app data.
+      [
+        'authToken',
+        'userId',
+        'userRole',
+        'userName',
+        'userEmail',
+        'ngoName',
+        'consumerLoggedIn',
+        'partnerLoggedIn',
+        'ngoLoggedIn',
+        'adminLoggedIn'
+      ].forEach(k => localStorage.removeItem(k));
+      sessionStorage.clear();
       window.location.href = "../login/login-ngo.html";
     });
   }

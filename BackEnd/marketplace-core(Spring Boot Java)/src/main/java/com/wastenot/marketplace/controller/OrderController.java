@@ -28,15 +28,6 @@ public class OrderController {
     @Autowired
     private ProductRepository productRepository;
 
-    @GetMapping
-    public ResponseEntity<Map<String, Object>> getAllOrders() {
-        List<Order> orders = orderRepository.findAll();
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
-        response.put("data", orders);
-        return ResponseEntity.ok(response);
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getOrderById(@PathVariable Long id) {
         return orderRepository.findById(id)
@@ -123,61 +114,5 @@ public class OrderController {
         response.put("message", "Order created successfully");
         response.put("data", savedOrder);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-    @PutMapping("/{id}/status")
-    public ResponseEntity<Map<String, Object>> updateOrderStatus(
-            @PathVariable Long id,
-            @RequestBody Map<String, String> statusUpdate) {
-        
-        return orderRepository.findById(id)
-                .map(order -> {
-                    OrderStatus newStatus = OrderStatus.valueOf(statusUpdate.get("status"));
-                    order.setStatus(newStatus);
-                    
-                    if (newStatus == OrderStatus.COMPLETED) {
-                        order.setCompletedAt(LocalDateTime.now());
-                    }
-                    
-                    Order updatedOrder = orderRepository.save(order);
-                    Map<String, Object> response = new HashMap<>();
-                    response.put("success", true);
-                    response.put("message", "Order status updated successfully");
-                    response.put("data", updatedOrder);
-                    return ResponseEntity.ok(response);
-                })
-                .orElseGet(() -> {
-                    Map<String, Object> response = new HashMap<>();
-                    response.put("success", false);
-                    response.put("message", "Order not found");
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-                });
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> cancelOrder(@PathVariable Long id) {
-        return orderRepository.findById(id)
-                .map(order -> {
-                    order.setStatus(OrderStatus.CANCELLED);
-                    orderRepository.save(order);
-                    
-                    // Restore product quantity
-                    productRepository.findById(order.getProductId()).ifPresent(product -> {
-                        product.setQuantity(product.getQuantity() + order.getQuantity());
-                        product.setStatus(Product.ProductStatus.ACTIVE);
-                        productRepository.save(product);
-                    });
-                    
-                    Map<String, Object> response = new HashMap<>();
-                    response.put("success", true);
-                    response.put("message", "Order cancelled successfully");
-                    return ResponseEntity.ok(response);
-                })
-                .orElseGet(() -> {
-                    Map<String, Object> response = new HashMap<>();
-                    response.put("success", false);
-                    response.put("message", "Order not found");
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-                });
     }
 }

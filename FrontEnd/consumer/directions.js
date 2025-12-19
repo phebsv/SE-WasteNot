@@ -49,15 +49,9 @@ async function loadProduct() {
 
 function setupButtons() {
   const openMapsBtn = document.getElementById("openMapsBtn");
-  const claimBtn = document.getElementById("claimBtn");
 
   // ---- Google Maps link ----
   openMapsBtn.href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(product.partner)}`;
-
-  // ---- Go to claim page ----
-  claimBtn.onclick = () => {
-    window.location.href = `claim.html?id=${product.id}`;
-  };
 }
 
 // Initialize on page load

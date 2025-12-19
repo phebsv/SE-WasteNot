@@ -94,9 +94,9 @@
 }
 
         </style>
-       <button class="qa-btn qa-primary" onclick="window.location.href='partner-create-type.html'">
-       ＋ Create New Listing
-       </button>
+      <button id="createListingBtn" class="qa-btn qa-primary" type="button">
+      ＋ Create New Listing
+      </button>
 
       </section>
 
@@ -125,8 +125,8 @@
           <div>
             <label>Type</label>
             <select id="listingType" required>
-              <option value="Marketplace">Marketplace</option>
-              <option value="Donation">Donation</option>
+              <option value="sale">Sale</option>
+              <option value="donation">Donation</option>
             </select>
           </div>
           <div>
@@ -164,49 +164,15 @@
             Save Listing
           </button>
         </div>
-        <!-- EDIT LISTING MODAL -->
-<div id="editModal" class="modal hidden">
-  <div class="modal-content">
-    <h2>Edit Listing</h2>
-
-    <div class="form-grid">
-
-      <div class="form-field">
-        <input id="editName" placeholder="Product Name">
-      </div>
-
-      <div class="form-field">
-        <input id="editQty" type="number" placeholder="Quantity Left">
-      </div>
-
-      <div class="form-field">
-        <input id="editPrice" type="number" placeholder="Price (₱)">
-      </div>
-
-      <div class="form-field">
-        <input id="editPickup" placeholder="Pickup Window">
-      </div>
-
-      <div class="form-field">
-        <input id="editExpiry" type="date">
-      </div>
-
-    </div>
-
-    <div class="modal-actions">
-      <button onclick="saveEditListing()" class="btn-primary">Save</button>
-      <button onclick="closeEditModal()" class="btn-cancel">Cancel</button>
-    </div>
-  </div>
-</div>
-<div id="toast" class="toast">Sample message</div>
-
       </form>
     </div>
   </div>
 
+  <div id="toast" class="toast">Sample message</div>
+
 
   <script src="partner-data.js"></script>
   <script src="partner-listings.js"></script>
+  <script src="../notifications.js"></script>
 </body>
 </html>

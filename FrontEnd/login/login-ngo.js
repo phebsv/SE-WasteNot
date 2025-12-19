@@ -50,11 +50,35 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await response.json();
             
             if (data.success) {
+                let existingNgoSession = {};
+                try {
+                    existingNgoSession = JSON.parse(localStorage.getItem('ngoSession')) || {};
+                } catch {
+                    existingNgoSession = {};
+                }
+
                 localStorage.setItem('authToken', data.token);
                 localStorage.setItem('userId', data.user.id);
                 localStorage.setItem('userRole', data.user.role);
-                localStorage.setItem('userName', data.user.full_name || data.user.name);
+                const displayName = data.user.full_name || data.user.name || '';
+                const resolvedEmail = data.user.email || email;
+
+                localStorage.setItem('userName', displayName);
+                localStorage.setItem('ngoName', displayName);
+                localStorage.setItem('userEmail', resolvedEmail);
                 localStorage.setItem('ngoLoggedIn', 'true');
+
+                // Keep NGO session data consistent with the profile page
+                const ngoSession = {
+                    id: data.user.id,
+                    organizationName: displayName || existingNgoSession.organizationName || existingNgoSession.name || '',
+                    name: displayName || existingNgoSession.name || existingNgoSession.organizationName || '',
+                    email: resolvedEmail,
+                    phone: data.user.phone || existingNgoSession.phone || '',
+                    address: data.user.address || existingNgoSession.address || '',
+                    about: data.user.about || existingNgoSession.about || ''
+                };
+                localStorage.setItem('ngoSession', JSON.stringify(ngoSession));
                 return { success: true, user: data.user };
             } else {
                 return { success: false, message: data.message || 'Login failed' };

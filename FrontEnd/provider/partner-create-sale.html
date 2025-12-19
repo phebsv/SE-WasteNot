@@ -10,6 +10,26 @@
 
   <!-- Extra CSS tweaks for create pages -->
   <style>
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: #ffffff;
+      color: var(--green-dark);
+      font-weight: 600;
+      text-decoration: none;
+      width: fit-content;
+      transition: background-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .back-btn:hover {
+      background: var(--green-soft);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+    }
     .create-wrapper {
       max-width: 900px;
       margin: 20px auto;
@@ -76,6 +96,18 @@
       font-size: 15px;
     }
 
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #555;
+    }
+
     .create-btn {
       margin-top: 25px;
       width: 180px;
@@ -125,6 +157,8 @@
       <!-- CONTENT -->
       <div class="create-wrapper">
 
+        <a class="back-btn" href="partner-listings.html">← Back</a>
+
         <h1 class="create-title">Create Sale Listing</h1>
 
         <!-- PHOTO UPLOAD -->
@@ -152,79 +186,199 @@
             <option>Vegetables</option>
           </select>
 
-          <input type="date" id="prodDate" class="form-input">
-          <input type="date" id="expDate" class="form-input">
+          <div class="field-group">
+            <div class="field-label">Production Date - when the item was made</div>
+            <input type="date" id="prodDate" class="form-input" aria-label="Production Date - when the item was made">
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">Expiry Date - last day it can be sold/picked up</div>
+            <input type="date" id="expDate" class="form-input" aria-label="Expiry Date - last day it can be sold/picked up">
+          </div>
 
           <input type="text" id="pickupWindow" class="form-input" placeholder="Pickup Window (e.g. 4PM - 8PM)">
         </div>
 
-        <button class="create-btn" onclick="createSaleListing()">Create</button>
+        <button id="createBtn" type="button" class="create-btn">Create</button>
       </div>
 
     </main>
   </div>
 
-  <div id="toast" class="toast"></div>
+  <div id="toastContainer"></div>
 
   <script src="partner-data.js"></script>
   <script src="toast.js"></script>
+  <script src="../notifications.js"></script>
 
   <!-- MAIN JS -->
   <script>
+    const PRODUCTS_API = "http://localhost:8081/api/products";
+
+    function notify(message, type = 'info', withButton = false) {
+      if (typeof showToast === 'function') {
+        try {
+          showToast(message, type, withButton);
+          return;
+        } catch (_) {
+          // fall through to alert
+        }
+      }
+      alert(String(message));
+    }
+
     // Photo Upload
     const photoBox = document.getElementById("photoBox");
     const photoInput = document.getElementById("photoInput");
     const previewImg = document.getElementById("previewImg");
 
-    photoBox.onclick = () => photoInput.click();
+    if (photoBox && photoInput) {
+      photoBox.onclick = () => photoInput.click();
+    }
 
-    photoInput.onchange = () => {
-      const file = photoInput.files[0];
-      if (!file) return;
+    if (photoInput && previewImg && photoBox) {
+      photoInput.onchange = () => {
+        const file = photoInput.files && photoInput.files[0];
+        if (!file) return;
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        previewImg.src = reader.result;
-        photoBox.classList.add("has-image");
+        const reader = new FileReader();
+        reader.onload = () => {
+          previewImg.src = String(reader.result || "");
+          photoBox.classList.add("has-image");
+        };
+        reader.readAsDataURL(file);
       };
-      reader.readAsDataURL(file);
-    };
+    }
 
-    // Create Listing
-    function createSaleListing() {
-      const name = itemName.value.trim();
-      const qty = itemQty.value;
-      const price = itemPrice.value;
-      const category = itemCategory.value;
-      const prodDateValue = prodDate.value;
-      const expDateValue = expDate.value;
-      const pickup = pickupWindow.value.trim();
-      const image = previewImg.src || "";
+    function toIsoStartOfDay(dateStr) {
+      if (!dateStr) return null;
+      // Backend expects LocalDateTime; send ISO date-time.
+      return `${dateStr}T00:00:00`;
+    }
 
-      if (!name || !qty || !price || !category || !prodDateValue || !expDateValue || !pickup || !image) {
-        showToast("Please complete all fields.");
+    async function createSaleListing() {
+      const nameEl = document.getElementById('itemName');
+      const qtyEl = document.getElementById('itemQty');
+      const priceEl = document.getElementById('itemPrice');
+      const categoryEl = document.getElementById('itemCategory');
+      const prodDateEl = document.getElementById('prodDate');
+      const expDateEl = document.getElementById('expDate');
+      const pickupEl = document.getElementById('pickupWindow');
+
+      const name = (nameEl?.value || '').trim();
+      const qty = Number(qtyEl?.value);
+      const price = Number(priceEl?.value);
+      const categoryRaw = String(categoryEl?.value || "").trim();
+      const prodDateValue = String(prodDateEl?.value || '');
+      const expDateValue = String(expDateEl?.value || '');
+      const pickup = (pickupEl?.value || '').trim();
+      const imageUrl = (previewImg?.src || '').trim() || "https://via.placeholder.com/600x300";
+
+      const category = categoryRaw.toLowerCase();
+      const isCategoryValid = categoryRaw && !/^type\s+of\s+product$/i.test(categoryRaw);
+
+      const pickupFinal = pickup || "Contact provider";
+
+      if (!name || !Number.isFinite(qty) || qty <= 0 || !Number.isFinite(price) || price < 0 || !isCategoryValid || !prodDateValue || !expDateValue) {
+        notify("Please complete all required fields (name, qty, price, category, dates).", "error");
         return;
       }
 
-      partnerListings.push({
-        id: Date.now(),
+      const partnerId = Number(localStorage.getItem("userId"));
+      const partnerName = localStorage.getItem("userName") || "Partner";
+
+      if (!Number.isFinite(partnerId) || partnerId <= 0) {
+        notify("Missing partner session. Please login again.", "error", true);
+        return;
+      }
+
+      const payload = {
         name,
+        partnerId,
+        partnerName,
+        listingType: "sale",
+        price,
         category,
-        qtyLeft: Number(qty),
-        price: Number(price),
-        type: "sale",
-        productionDate: prodDateValue,
-        expiryDate: expDateValue,
-        pickupWindow: pickup,
-        image
+        quantity: qty,
+        imageUrl,
+        pickupWindow: pickupFinal,
+        expiryDate: toIsoStartOfDay(expDateValue),
+        expiryDisplay: expDateValue,
+        description: `Production Date: ${prodDateValue}`
+      };
+
+      try {
+        const res = await fetch(PRODUCTS_API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await res.json().catch(() => null);
+        if (!res.ok || !result?.success) {
+          console.error("Create sale failed:", res.status, result);
+          notify(result?.message || "Failed to create listing.", "error", true);
+          return;
+        }
+
+        notify("Sale listing created!", "success");
+        try {
+          const created = result?.data || payload;
+          sessionStorage.setItem('lastCreatedProduct', JSON.stringify(created));
+        } catch (_) {
+          // ignore
+        }
+
+        // Role-based notifications
+        try {
+          const partnerIdTarget = Number(partnerId);
+          const partnerNameTarget = String(partnerName || 'Partner');
+          if (window.WasteNotNotifications?.notifyTargets && Number.isFinite(partnerIdTarget) && partnerIdTarget > 0) {
+            window.WasteNotNotifications.notifyTargets(
+              [{ role: 'partner', userId: partnerIdTarget }],
+              {
+                title: 'Listing created',
+                body: `You created "${name}".`,
+                link: '/provider/partner-listings.html'
+              }
+            );
+
+            window.WasteNotNotifications.notifyTargets(
+              [{ role: 'consumer', userId: 'all' }],
+              {
+                title: 'New listing available',
+                body: `${partnerNameTarget} posted "${name}".`,
+                link: '/consumer/consumer-marketplace.html'
+              }
+            );
+          }
+        } catch (_) {
+          // ignore
+        }
+
+        setTimeout(() => {
+          window.location.href = "partner-listings.html";
+        }, 800);
+      } catch (err) {
+        console.error("Create sale error:", err);
+        notify("Could not reach marketplace server (8081).", "error", true);
+      }
+    }
+
+    function bindCreateButton() {
+      const createBtn = document.getElementById('createBtn') || document.querySelector('.create-btn');
+      if (!createBtn) return;
+      createBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        createSaleListing();
       });
+    }
 
-      savePartnerData();
-      showToast("Listing created successfully!");
-
-      setTimeout(() => {
-        window.location.href = "partner-listings.html";
-      }, 1000);
+    // Bind button click explicitly (do not rely on inline handlers).
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', bindCreateButton);
+    } else {
+      bindCreateButton();
     }
   </script>
 

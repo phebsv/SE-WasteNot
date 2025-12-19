@@ -65,6 +65,13 @@ function renderProduct() {
   }
   
   container.innerHTML = `
+    <button class="back-button" onclick="history.back()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      Back
+    </button>
+    
     <div class="product-top">
         <div class="discount-box">
             <div class="percent">${product.discountPercent}% Off</div>
@@ -90,7 +97,6 @@ function renderProduct() {
 
             <div class="action-row">
                 <button class="btn directions-btn" onclick="goDirections(${product.id})">View Directions</button>
-                <button class="btn claim-btn" onclick="goClaim(${product.id})">Claim</button>
             </div>
         </div>
     </div>
@@ -112,10 +118,6 @@ function renderProduct() {
 // ---- NAVIGATION ----
 function goDirections(id) {
   window.location.href = `directions.html?id=${id}`;
-}
-
-function goClaim(id) {
-  window.location.href = `claim.html?id=${id}`;
 }
 
 // ---- INITIALIZE ON PAGE LOAD ----

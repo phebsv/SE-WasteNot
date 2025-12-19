@@ -67,7 +67,32 @@ document.addEventListener("DOMContentLoaded", () => {
                 localStorage.setItem('userId', data.user.id);
                 localStorage.setItem('userRole', data.user.role);
                 localStorage.setItem('userName', data.user.full_name);
-                localStorage.setItem('providerLoggedIn', 'true');
+                if (data.user.email) {
+                    localStorage.setItem('userEmail', data.user.email);
+                }
+                // Keep naming consistent across the app (partner pages use partnerLoggedIn)
+                localStorage.setItem('partnerLoggedIn', 'true');
+                localStorage.removeItem('providerLoggedIn');
+
+                // Seed partner profile cache so Settings is always prefilled
+                try {
+                    const existing = JSON.parse(localStorage.getItem('partnerSession')) || {};
+                    const session = {
+                        ...existing,
+                        id: data.user.id,
+                        full_name: data.user.full_name || existing.full_name || '',
+                        email: data.user.email || existing.email || '',
+                        business_name: data.user.business_name || data.user.store_name || existing.business_name || existing.storeName || ''
+                    };
+                    localStorage.setItem('partnerSession', JSON.stringify(session));
+                } catch {
+                    localStorage.setItem('partnerSession', JSON.stringify({
+                        id: data.user.id,
+                        full_name: data.user.full_name || '',
+                        email: data.user.email || '',
+                        business_name: data.user.business_name || data.user.store_name || ''
+                    }));
+                }
                 return { success: true, user: data.user };
             } else {
                 console.log('Login failed:', data.message);
@@ -155,7 +180,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 // --- Mock Success Action ---
                 // In a real app, this sends the new password to the server.
                 showAuthMessage("Password updated successfully! Redirecting to dashboard.", false);
-                localStorage.setItem("providerLoggedIn", "true");
+                localStorage.setItem("partnerLoggedIn", "true");
+                localStorage.removeItem('providerLoggedIn');
                 
                 setTimeout(() => window.location.href = "../provider/partner-dashboard.html", 1000);
             }
@@ -179,7 +205,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // --- Initial Check (Prevent going back to login if already logged in) ---
-    if (localStorage.getItem("providerLoggedIn") === "true" && !isFirstTimeLogin) {
+    // Clean up legacy flag that previously caused redirect loops.
+    if (localStorage.getItem('providerLoggedIn') === 'true' && !localStorage.getItem('authToken')) {
+        localStorage.removeItem('providerLoggedIn');
+    }
+
+    if (localStorage.getItem('authToken') && localStorage.getItem('userRole') === 'partner' && !isFirstTimeLogin) {
         window.location.href = "../provider/partner-dashboard.html";
     }
 });

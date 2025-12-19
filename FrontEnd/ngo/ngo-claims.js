@@ -38,21 +38,70 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const html = filtered.map(r => {
       const status = r.status || 'Pending Provider Confirmation';
+      const statusClass = status.toLowerCase().replace(/ /g, '-');
       return `
       <div class="claim-item">
-        <div class="claim-logo">
-          <img src="${logoMap[r.company] || 'placeholder-logo.jpg'}" alt="${r.company}" />
-        </div>
-        <div class="claim-content">
-          <div class="claim-title">${r.item}</div>
-          <div class="claim-provider">Provider: ${r.company}</div>
-          <div class="claim-meta">Qty: ${r.qty}</div>
-          <div class="claim-meta">Pickup: ${r.pickup}</div>
-          <div class="claim-status">Status: ${status}</div>
-          <div class="claim-actions">
-            <button class="btn-action btn-cancel" data-id="${r.id}">Cancel Request</button>
-            <button class="btn-action btn-details" data-id="${r.id}">View Details</button>
+        <div class="claim-header">
+          <div>
+            <div class="claim-id">Request #${r.id || 'N/A'}</div>
+            <div class="claim-date">${r.date || 'Recent request'}</div>
           </div>
+          <span class="status-badge ${statusClass}">${status}</span>
+        </div>
+        
+        <div class="claim-body">
+          <div class="product-section">
+            <div class="claim-logo">
+              <img src="${logoMap[r.company] || 'placeholder-logo.jpg'}" alt="${r.company}" />
+            </div>
+            <div class="product-details">
+              <div class="claim-title">${r.item}</div>
+              <div class="claim-provider"><i class="fas fa-store"></i> ${r.company}</div>
+              <div class="claim-meta"><i class="fas fa-box"></i> Quantity: ${r.qty}</div>
+            </div>
+          </div>
+          
+          <div class="details-grid">
+            <div class="detail-item">
+              <h5><i class="fas fa-map-marker-alt"></i> Pickup Location</h5>
+              <p>${r.location || r.company + ' Store'}</p>
+            </div>
+            
+            <div class="detail-item">
+              <h5><i class="fas fa-calendar"></i> Pickup Date</h5>
+              <p>${r.pickup}</p>
+            </div>
+            
+            <div class="detail-item">
+              <h5><i class="fas fa-credit-card"></i> Payment Method</h5>
+              <p>${r.paymentMethod || 'Donation (Free)'}</p>
+            </div>
+            
+            <div class="detail-item">
+              <h5><i class="fas fa-info-circle"></i> Status</h5>
+              <p><span class="payment-status ${statusClass}">${status}</span></p>
+            </div>
+            
+            ${r.notes ? `
+            <div class="detail-item full-width">
+              <h5><i class="fas fa-sticky-note"></i> Notes</h5>
+              <p>${r.notes}</p>
+            </div>
+            ` : ''}
+          </div>
+        </div>
+        
+        <div class="claim-actions">
+          ${status !== 'Cancelled' && status !== 'Completed' ? `
+            <button class="btn-action btn-cancel" data-id="${r.id}">
+              <i class="fas fa-times"></i> Cancel Request
+            </button>
+          ` : ''}
+          ${status === 'Ready for Pickup' ? `
+            <button class="btn-action btn-complete" data-id="${r.id}">
+              <i class="fas fa-check-circle"></i> Mark as Complete
+            </button>
+          ` : ''}
         </div>
       </div>
     `;
@@ -61,16 +110,9 @@ document.addEventListener('DOMContentLoaded', () => {
     container.innerHTML = html;
 
     // Add event listeners to buttons
-    container.querySelectorAll('.btn-details').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const id = e.target.getAttribute('data-id');
-        window.location.href = `ngo-productDetails.html?id=${id}`;
-      });
-    });
-
     container.querySelectorAll('.btn-cancel').forEach(btn => {
       btn.addEventListener('click', (e) => {
-        const id = e.target.getAttribute('data-id');
+        const id = e.target.closest('button').getAttribute('data-id');
         if (confirm('Are you sure you want to cancel this request?')) {
           const updatedRequests = requests.map(r => 
             r.id === parseInt(id) ? { ...r, status: 'Cancelled' } : r
@@ -78,13 +120,34 @@ document.addEventListener('DOMContentLoaded', () => {
           localStorage.setItem('ngoRequests', JSON.stringify(updatedRequests));
           requests = updatedRequests;
           renderRequests(filterStatus);
+          alert('Request cancelled successfully');
+        }
+      });
+    });
+    
+    container.querySelectorAll('.btn-complete').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = e.target.closest('button').getAttribute('data-id');
+        if (confirm('Mark this request as complete?')) {
+          const updatedRequests = requests.map(r => 
+            r.id === parseInt(id) ? { 
+              ...r, 
+              status: 'Completed',
+              completedDate: new Date().toISOString(),
+              paymentStatus: 'Completed'
+            } : r
+          );
+          localStorage.setItem('ngoRequests', JSON.stringify(updatedRequests));
+          requests = updatedRequests;
+          renderRequests(filterStatus);
+          alert('Request marked as complete! Thank you for using WasteNot.');
         }
       });
     });
   }
 
   // Initial render
-  renderRequests('all');
+  renderRequests('Pending Provider Confirmation');
 
   // Filter chip click handlers
   filterChips.forEach(chip => {
@@ -100,7 +163,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const logoutBtn = document.getElementById('logoutBtn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
-      localStorage.clear();
+      // Clear only auth/session flags; keep cached profile + app data.
+      [
+        'authToken',
+        'userId',
+        'userRole',
+        'userName',
+        'userEmail',
+        'ngoName',
+        'consumerLoggedIn',
+        'partnerLoggedIn',
+        'ngoLoggedIn',
+        'adminLoggedIn'
+      ].forEach(k => localStorage.removeItem(k));
+      sessionStorage.clear();
       window.location.href = "../login/login-ngo.html";
     });
   }

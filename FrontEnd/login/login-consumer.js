@@ -69,6 +69,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     localStorage.setItem("userPhone", data.user.phone || "");
                     localStorage.setItem("userAddress", data.user.address || "");
                     localStorage.setItem("userRole", userRole);
+
+                    // Seed role profile cache so profile pages are prefilled (even offline)
+                    if (userRole === 'consumer') {
+                        const existing = (() => { try { return JSON.parse(localStorage.getItem('consumerSession')) || {}; } catch { return {}; } })();
+                        const session = {
+                            ...existing,
+                            id: data.user.id,
+                            fullName: existing.fullName || data.user.full_name || '',
+                            email: existing.email || data.user.email || '',
+                            phone: existing.phone || data.user.phone || '',
+                            address: existing.address || data.user.address || '',
+                            prefs: existing.prefs || ''
+                        };
+                        localStorage.setItem('consumerSession', JSON.stringify(session));
+                    }
                     
                     // Set role-specific login flag
                     if (userRole === 'consumer') {
@@ -92,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 redirectUrl = "../ngo/ngo-dashboard.html";
                                 break;
                             case 'partner':
-                                redirectUrl = "../provider/provider-dashboard.html";
+                                redirectUrl = "../provider/partner-dashboard.html";
                                 break;
                             case 'consumer':
                             default:

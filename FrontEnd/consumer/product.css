@@ -59,6 +59,38 @@ body {
     padding: 2.5rem 3rem;
 }
 
+/* BACK BUTTON */
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    margin-bottom: 1.5rem;
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 999px;
+    color: #374151;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.back-button:hover {
+    background: #f9fafb;
+    border-color: #15803d;
+    color: #15803d;
+    transform: translateX(-3px);
+}
+
+.back-button svg {
+    transition: transform 0.25s ease;
+}
+
+.back-button:hover svg {
+    transform: translateX(-3px);
+}
+
 /* PRODUCT CARD WRAPPER */
 .product-container {
     max-width: 1000px;

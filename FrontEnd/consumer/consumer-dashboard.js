@@ -5,11 +5,80 @@ if (!localStorage.getItem("consumerLoggedIn") || localStorage.getItem("consumerL
 
 // Claims will be loaded from backend API
 let claims = [];
+let allOrders = [];
+
+// ================================
+// UPDATE DASHBOARD STATISTICS
+// ================================
+function updateDashboardStats() {
+  // Update username and avatar
+  const userName = localStorage.getItem('userName') || localStorage.getItem('userId') || 'User';
+  const userNameElement = document.getElementById('userName');
+  const avatarElement = document.getElementById('userAvatar');
+  
+  if (userNameElement) {
+    userNameElement.textContent = userName;
+  }
+  
+  if (avatarElement) {
+    avatarElement.textContent = userName.charAt(0).toUpperCase();
+  }
+
+  // Calculate statistics from orders
+  const completedOrders = allOrders.filter(order => 
+    order.status === 'COMPLETED' || order.status === 'completed'
+  );
+  
+  const activeOrders = allOrders.filter(order => 
+    order.status === 'PENDING' || order.status === 'pending' || 
+    order.status === 'CONFIRMED' || order.status === 'confirmed' ||
+    order.status === 'READY' || order.status === 'ready'
+  );
+
+  // Calculate total savings (sum of all completed orders)
+  const totalSavings = completedOrders.reduce((sum, order) => {
+    return sum + (order.totalAmount || 0);
+  }, 0);
+
+  // Calculate total meals rescued (sum of all quantities)
+  const mealsRescued = allOrders.reduce((sum, order) => {
+    return sum + (order.quantity || 0);
+  }, 0);
+
+  // Update UI with animation
+  const totalSavingsEl = document.getElementById('totalSavings');
+  const mealsRescuedEl = document.getElementById('mealsRescued');
+  const activeClaimsEl = document.getElementById('activeClaims');
+  
+  if (totalSavingsEl) {
+    totalSavingsEl.textContent = `₱ ${totalSavings.toLocaleString()}`;
+    totalSavingsEl.style.animation = 'fadeIn 0.5s ease-in';
+  }
+  
+  if (mealsRescuedEl) {
+    mealsRescuedEl.textContent = mealsRescued;
+    mealsRescuedEl.style.animation = 'fadeIn 0.6s ease-in';
+  }
+  
+  if (activeClaimsEl) {
+    activeClaimsEl.textContent = activeOrders.length;
+    activeClaimsEl.style.animation = 'fadeIn 0.7s ease-in';
+  }
+}
 
 // ================================
 // LOAD CLAIMS FROM BACKEND
 // ================================
 async function loadClaims() {
+  // Show loading state
+  const totalSavingsEl = document.getElementById('totalSavings');
+  const mealsRescuedEl = document.getElementById('mealsRescued');
+  const activeClaimsEl = document.getElementById('activeClaims');
+  
+  if (totalSavingsEl) totalSavingsEl.innerHTML = '<span style="opacity: 0.5;">...</span>';
+  if (mealsRescuedEl) mealsRescuedEl.innerHTML = '<span style="opacity: 0.5;">...</span>';
+  if (activeClaimsEl) activeClaimsEl.innerHTML = '<span style="opacity: 0.5;">...</span>';
+  
   try {
     const userId = localStorage.getItem("userId");
     const authToken = localStorage.getItem("authToken");
@@ -29,23 +98,112 @@ async function loadClaims() {
       throw new Error(`Failed to load orders: ${response.status}`);
     }
 
-    const orders = await response.json();
+    const result = await response.json();
+    const orders = result.success ? result.data : result;
+    
+    // Load completed orders from localStorage first
+    const completedOrdersJSON = localStorage.getItem('completedOrders');
+    const completedOrders = completedOrdersJSON ? JSON.parse(completedOrdersJSON) : [];
+
+    const getOrderKey = (order) => {
+      if (!order) return null;
+      return order.orderId || order.orderNumber || order.id || null;
+    };
+
+    const normalizeBackendStatus = (status) => {
+      if (status == null) return '';
+      return String(status)
+        .trim()
+        .toUpperCase()
+        .replace(/\s+/g, '_');
+    };
+
+    // Create a Set of completed order keys for faster lookup (handles API vs localStorage key differences)
+    const completedOrderKeys = new Set(
+      completedOrders
+        .map((o) => getOrderKey(o))
+        .filter((k) => k !== null && k !== undefined)
+        .map((k) => String(k))
+    );
+
+    // Filter out any API orders that are already marked as completed in localStorage
+    const activeApiOrders = (orders || []).filter((order) => {
+      const key = getOrderKey(order);
+      if (key === null || key === undefined) return true;
+      return !completedOrderKeys.has(String(key));
+    });
+
+    // Combine active API orders with completed orders from localStorage
+    allOrders = [...activeApiOrders, ...completedOrders];
+
+    // Normalize field mappings + status for consistent downstream rendering
+    allOrders = allOrders.map((order) => {
+      const key = getOrderKey(order);
+      return {
+        id: key,
+        orderId: key,
+        productName: order.productName || order.name,
+        partnerName: order.partnerName || order.partner || order.providerName,
+        pickupDate: order.pickupDate,
+        pickupTime: order.pickupTime,
+        quantity: order.quantity,
+        totalAmount: order.totalAmount || order.totalPrice,
+        status: normalizeBackendStatus(order.status)
+      };
+    });
     
     // Transform backend data to match existing claims structure
-    claims = orders.map(order => ({
-      id: order.orderId,
-      provider: order.providerName || "Unknown Provider",
+    claims = allOrders.map(order => ({
+      id: order.orderId || order.id,
+      provider: order.partnerName || order.providerName || "Unknown Provider",
       item: order.productName,
-      pickup: formatPickupTime(order.pickupTime),
+      pickup: formatPickupTime(order.pickupDate || order.pickupTime),
       status: mapOrderStatus(order.status)
     }));
 
+    // Update dashboard statistics
+    updateDashboardStats();
+    
     renderClaims();
     loadTodaysPickups();
 
   } catch (error) {
     console.error("Error loading claims:", error);
-    // Keep empty claims array if API fails
+    // Fallback: show completed claims from localStorage even if API is down
+    const completedOrdersJSON = localStorage.getItem('completedOrders');
+    const completedOrders = completedOrdersJSON ? JSON.parse(completedOrdersJSON) : [];
+
+    const normalizeBackendStatus = (status) => {
+      if (status == null) return '';
+      return String(status)
+        .trim()
+        .toUpperCase()
+        .replace(/\s+/g, '_');
+    };
+
+    allOrders = (completedOrders || []).map((order) => ({
+      id: order.orderId || order.orderNumber || order.id || null,
+      orderId: order.orderId || order.orderNumber || order.id || null,
+      productName: order.productName || order.name,
+      partnerName: order.partnerName || order.partner || order.providerName,
+      pickupDate: order.pickupDate,
+      pickupTime: order.pickupTime,
+      quantity: order.quantity,
+      totalAmount: order.totalAmount || order.totalPrice,
+      status: normalizeBackendStatus(order.status)
+    }));
+
+    claims = allOrders.map((order) => ({
+      id: order.orderId || order.id,
+      provider: order.partnerName || "Unknown Provider",
+      item: order.productName,
+      pickup: formatPickupTime(order.pickupDate || order.pickupTime),
+      status: mapOrderStatus(order.status)
+    }));
+
+    updateDashboardStats();
+    renderClaims();
+    loadTodaysPickups();
   }
 }
 
@@ -77,14 +235,23 @@ function formatPickupTime(timestamp) {
 
 // Helper: Map backend status to frontend status
 function mapOrderStatus(backendStatus) {
+  const key = (backendStatus == null)
+    ? ''
+    : String(backendStatus).trim().toUpperCase().replace(/\s+/g, '_');
+
   const statusMap = {
-    'PENDING': 'pending',
-    'CONFIRMED': 'confirmed',
-    'READY_FOR_PICKUP': 'confirm',
-    'COMPLETED': 'completed',
-    'CANCELLED': 'cancelled'
+    PENDING: 'pending',
+    CONFIRMED: 'confirmed',
+    READY_FOR_PICKUP: 'confirm',
+    READY: 'confirm',
+    COMPLETED: 'completed',
+    CANCELLED: 'cancelled'
   };
-  return statusMap[backendStatus] || 'pending';
+
+  // If the backend already sent lowercase statuses, normalize them too
+  if (statusMap[key]) return statusMap[key];
+  if (key === 'COMPLETED_ORDER' || key === 'DONE' || key === 'PAID') return 'completed';
+  return 'pending';
 }
 
 
@@ -256,6 +423,19 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 document.querySelector(".logout-btn").addEventListener("click", () => {
-    localStorage.clear(); // removes login data
-    window.location.href = "../login/login-consumer.html"; // or partner/ngo
+    // Clear only auth/session flags; keep cached profile + app data.
+    [
+      'authToken',
+      'userId',
+      'userRole',
+      'userName',
+      'userEmail',
+      'ngoName',
+      'consumerLoggedIn',
+      'partnerLoggedIn',
+      'ngoLoggedIn',
+      'adminLoggedIn'
+    ].forEach(k => localStorage.removeItem(k));
+    sessionStorage.clear();
+    window.location.href = "../login/login-consumer.html";
 });

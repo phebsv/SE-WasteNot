@@ -47,7 +47,19 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // Logout Handler
     document.getElementById("logoutBtn")?.addEventListener("click", () => {
-        localStorage.clear();
-        window.location.href = "../login/login-consumer.html";
+        [
+            'authToken',
+            'userId',
+            'userRole',
+            'userName',
+            'userEmail',
+            'ngoName',
+            'consumerLoggedIn',
+            'partnerLoggedIn',
+            'ngoLoggedIn',
+            'adminLoggedIn'
+        ].forEach(k => localStorage.removeItem(k));
+        sessionStorage.clear();
+        window.location.href = "../login/login.html";
     });
 });

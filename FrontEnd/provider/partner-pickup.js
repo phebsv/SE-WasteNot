@@ -1,30 +1,74 @@
 // ===== AUTH GUARD =====
 if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "partner") {
-  window.location.href = "../login/login-consumer.html";
+  window.location.href = "../login/login-partner.html";
 }
 
 const PRODUCTS_API = 'http://localhost:8081/api/products';
 const ORDERS_API = 'http://localhost:8081/api/orders';
 
+function unwrapData(payload) {
+  if (!payload) return [];
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload.data)) return payload.data;
+  return [];
+}
+
+function normalizeStatus(rawStatus) {
+  const s = String(rawStatus || '').trim().toUpperCase().replace(/[-\s]+/g, '_');
+  if (!s) return 'PENDING';
+
+  if (s === 'READY') return 'READY_FOR_PICKUP';
+  if (s === 'PICKED_UP') return 'COMPLETED';
+  if (s === 'PICKEDUP') return 'COMPLETED';
+
+  const allowed = new Set(['PENDING', 'CONFIRMED', 'READY_FOR_PICKUP', 'COMPLETED', 'CANCELLED']);
+  return allowed.has(s) ? s : 'PENDING';
+}
+
+function statusLabel(status) {
+  switch (status) {
+    case 'PENDING': return 'Pending';
+    case 'CONFIRMED': return 'Confirmed';
+    case 'READY_FOR_PICKUP': return 'Ready for Pickup';
+    case 'COMPLETED': return 'Completed';
+    case 'CANCELLED': return 'Cancelled';
+    default: return 'Pending';
+  }
+}
+
 // Load partner's orders (claims/pickups)
 async function loadPickups() {
   try {
     const userId = localStorage.getItem('userId');
+    if (!userId) return [];
+
     const [productsRes, ordersRes] = await Promise.all([
       fetch(PRODUCTS_API),
-      fetch(ORDERS_API)
+      fetch(`${ORDERS_API}/partner/${userId}`)
     ]);
-    
-    const allProducts = productsRes.ok ? await productsRes.json() : [];
-    const allOrders = ordersRes.ok ? await ordersRes.json() : [];
-    
-    const myProducts = allProducts.filter(p => p.partnerId == userId);
-    const claims = allOrders.filter(o => myProducts.some(p => p.id === o.productId));
-    
-    // Add product info to each claim
-    return claims.map(claim => {
-      const product = myProducts.find(p => p.id === claim.productId);
-      return { ...claim, product };
+
+    const productsJson = productsRes.ok ? await productsRes.json() : null;
+    const ordersJson = ordersRes.ok ? await ordersRes.json() : null;
+
+    const allProducts = unwrapData(productsJson);
+    const partnerOrders = unwrapData(ordersJson);
+
+    const productById = new Map(allProducts.map(p => [p.id, p]));
+
+    return partnerOrders.map(order => {
+      const product = productById.get(order.productId) || {
+        id: order.productId,
+        name: order.productName,
+        imageUrl: '',
+        unit: 'pcs'
+      };
+      const normalized = normalizeStatus(order.status);
+      return {
+        ...order,
+        status: normalized,
+        rawStatus: order.status,
+        product
+      };
     });
   } catch (error) {
     console.error('Error loading pickups:', error);
@@ -35,10 +79,10 @@ async function loadPickups() {
 // Update order status
 async function updateOrderStatus(orderId, status) {
   try {
-    const response = await fetch(`${ORDERS_API}/${orderId}`, {
+    const response = await fetch(`${ORDERS_API}/${orderId}/status`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status })
+      body: JSON.stringify({ status: normalizeStatus(status) })
     });
     return response.ok;
   } catch (error) {
@@ -72,8 +116,22 @@ document.addEventListener("DOMContentLoaded", async () => {
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
-      localStorage.clear();
-      window.location.href = "../login/login-consumer.html";
+      // Clear only auth/session flags; keep cached profile + app data.
+      [
+        'authToken',
+        'userId',
+        'userRole',
+        'userName',
+        'userEmail',
+        'ngoName',
+        'consumerLoggedIn',
+        'partnerLoggedIn',
+        'providerLoggedIn',
+        'ngoLoggedIn',
+        'adminLoggedIn'
+      ].forEach(k => localStorage.removeItem(k));
+      sessionStorage.clear();
+      window.location.href = "../login/login-partner.html";
     });
   }
 
@@ -83,14 +141,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   const container = document.getElementById("claimsContainer");
   const tabButtons = document.querySelectorAll(".claim-tab");
 
-  let activeFilter = "all";
+  let activeFilter = "PENDING";
 
   function renderClaims() {
     container.innerHTML = "";
 
     const filtered = claims.filter((c) => {
-      if (activeFilter === "all") return true;
-      return c.status === activeFilter;
+      return normalizeStatus(c.status) === normalizeStatus(activeFilter);
     });
 
     if (filtered.length === 0) {
@@ -103,40 +160,24 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (!product) return;
 
       const card = document.createElement("article");
-      card.className = `claim-card status-${claim.status}`;
+      card.className = `claim-card`;
+
+      const orderDateRaw = claim.orderDate || claim.createdAt || claim.dateCreated;
+      const orderDateText = orderDateRaw ? new Date(orderDateRaw).toLocaleDateString() : '—';
+      const customerLabel = claim.consumerName || `#${claim.consumerId || claim.userId || '—'}`;
+      const statusText = statusLabel(normalizeStatus(claim.status));
 
       card.innerHTML = `
-        <div class="claim-image-wrapper">
-            <img src="${product.imageUrl || 'https://via.placeholder.com/150'}" alt="${product.name}" class="claim-image" />
-        </div>
+      <img src="${product.imageUrl || 'https://via.placeholder.com/150'}" alt="${product.name || claim.productName || 'Item'}" class="claim-image" />
 
-        <div class="claim-header">
-            <h2 class="claim-title">${product.name}</h2>
-            <span class="claim-id">#O-${claim.id}</span>
-        </div>
+      <div class="claim-main">
+        <div class="claim-title">${product.name || claim.productName || 'Item'}</div>
+        <div class="claim-meta">Order #${claim.orderNumber || claim.id || '—'} • Customer: ${customerLabel} • Qty: ${claim.quantity || 0} ${product.unit || 'pcs'} • Date: ${orderDateText} • Status: ${statusText}</div>
 
-        <div class="claim-details">
-            <p>
-                <span class="detail-label">Customer ID:</span>
-                <span class="detail-value">#${claim.userId}</span>
-            </p>
-            <p>
-                <span class="detail-label">Quantity:</span>
-                <span class="detail-value">${claim.quantity} ${product.unit || 'pcs'}</span>
-            </p>
-            <p>
-                <span class="detail-label">Order Date:</span>
-                <span class="detail-value">${new Date(claim.orderDate).toLocaleDateString()}</span>
-            </p>
-            <p>
-                <span class="detail-label">Status:</span>
-                <span class="status-badge status-${claim.status}">${claim.status}</span>
-            </p>
-        </div>
-        
         <div class="claim-actions">
-            ${renderActions(claim)}
+        ${renderActions(claim)}
         </div>
+      </div>
       `;
 
       // --- ACTION BUTTONS LISTENER ---
@@ -155,22 +196,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     switch (action) {
       case "approve":
-        newStatus = "confirmed";
+        newStatus = "CONFIRMED";
         message = "Order approved!";
         break;
 
       case "ready":
-        newStatus = "ready";
+        newStatus = "READY_FOR_PICKUP";
         message = "Order marked as ready for pickup.";
         break;
 
       case "complete":
-        newStatus = "completed";
+        newStatus = "COMPLETED";
         message = "Order completed successfully!";
         break;
 
       case "cancel":
-        newStatus = "cancelled";
+        newStatus = "CANCELLED";
         message = "Order cancelled.";
         type = "error";
         break;
@@ -183,7 +224,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Update status in backend
     const success = await updateOrderStatus(claim.id, newStatus);
     if (success) {
-      claim.status = newStatus;
+      claim.status = normalizeStatus(newStatus);
       showToast(message, type);
       claims = await loadPickups();
       renderClaims();
@@ -205,28 +246,28 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function renderActions(claim) {
-    const status = claim.status;
+    const status = normalizeStatus(claim.status);
     
     switch (status) {
-      case "pending":
+      case "PENDING":
         return `
-          <button class="btn-primary" data-action="approve">Accept</button>
-          <button class="btn-secondary" data-action="cancel">Reject</button>
+          <button class="claim-btn claim-approve" data-action="approve">Accept</button>
+          <button class="claim-btn claim-cancel" data-action="cancel">Reject</button>
         `;
-      case "confirmed":
+      case "CONFIRMED":
         return `
-          <button class="btn-primary" data-action="ready">Mark Ready</button>
-          <button class="btn-secondary" data-action="cancel">Cancel</button>
+          <button class="claim-btn claim-ready" data-action="ready">Mark Ready</button>
+          <button class="claim-btn claim-cancel" data-action="cancel">Cancel</button>
         `;
-      case "ready":
+      case "READY_FOR_PICKUP":
         return `
-          <button class="btn-primary" data-action="complete">Complete Order</button>
-          <button class="btn-secondary" data-action="view">View Details</button>
+          <button class="claim-btn claim-complete" data-action="complete">Complete</button>
+          <button class="claim-btn claim-view" data-action="view">View Details</button>
         `;
-      case "completed":
-      case "cancelled":
+      case "COMPLETED":
+      case "CANCELLED":
         return `
-          <button class="btn-secondary" data-action="view">View Details</button>
+          <button class="claim-btn claim-view" data-action="view">View Details</button>
         `;
       default:
         return "";
@@ -242,6 +283,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       renderClaims();
     });
   });
+
+  // Make sure one tab is active on initial load
+  const defaultTab = Array.from(tabButtons).find(b => normalizeStatus(b.dataset.status) === normalizeStatus(activeFilter));
+  if (defaultTab) {
+    tabButtons.forEach((b) => b.classList.remove("active"));
+    defaultTab.classList.add("active");
+  }
 
   // Initial render
   renderClaims();

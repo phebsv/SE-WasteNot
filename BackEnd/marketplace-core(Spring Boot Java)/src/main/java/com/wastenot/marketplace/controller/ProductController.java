@@ -24,6 +24,8 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllProducts() {
         List<Product> products = productRepository.findByStatusOrderByCreatedAtDesc(ProductStatus.ACTIVE);
+        // Calculate dynamic discounts based on expiry date
+        products.forEach(Product::calculateDynamicDiscount);
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
         response.put("data", products);
@@ -34,6 +36,8 @@ public class ProductController {
     public ResponseEntity<Map<String, Object>> getProductById(@PathVariable Long id) {
         return productRepository.findById(id)
                 .map(product -> {
+                    // Calculate dynamic discount
+                    product.calculateDynamicDiscount();
                     // Increment view count
                     product.setViewsCount(product.getViewsCount() + 1);
                     productRepository.save(product);
@@ -54,6 +58,7 @@ public class ProductController {
     @GetMapping("/category/{category}")
     public ResponseEntity<Map<String, Object>> getProductsByCategory(@PathVariable String category) {
         List<Product> products = productRepository.findByCategoryAndStatus(category, ProductStatus.ACTIVE);
+        products.forEach(Product::calculateDynamicDiscount);
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
         response.put("data", products);
@@ -63,6 +68,7 @@ public class ProductController {
     @GetMapping("/partner/{partnerId}")
     public ResponseEntity<Map<String, Object>> getProductsByPartner(@PathVariable Long partnerId) {
         List<Product> products = productRepository.findByPartnerIdAndStatus(partnerId, ProductStatus.ACTIVE);
+        products.forEach(Product::calculateDynamicDiscount);
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
         response.put("data", products);
@@ -72,6 +78,7 @@ public class ProductController {
     @GetMapping("/featured")
     public ResponseEntity<Map<String, Object>> getFeaturedProducts() {
         List<Product> products = productRepository.findFeaturedProducts();
+        products.forEach(Product::calculateDynamicDiscount);
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
         response.put("data", products);
@@ -81,6 +88,7 @@ public class ProductController {
     @GetMapping("/search")
     public ResponseEntity<Map<String, Object>> searchProducts(@RequestParam String keyword) {
         List<Product> products = productRepository.searchProducts(keyword);
+        products.forEach(Product::calculateDynamicDiscount);
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
         response.put("data", products);

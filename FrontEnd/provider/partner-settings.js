@@ -1,9 +1,41 @@
 // ===== AUTH GUARD =====
 if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "partner") {
-    window.location.href = "../login/login-consumer.html";
+    window.location.href = "../login/login-partner.html";
 }
 
 const PROFILE_API = 'http://localhost/wastenot-api/api/profile.php';
+const SESSION_KEY = 'partnerSession';
+
+function safeJsonParse(raw, fallback) {
+    try {
+        return JSON.parse(raw) ?? fallback;
+    } catch {
+        return fallback;
+    }
+}
+
+function getSessionSeed() {
+    const userId = localStorage.getItem('userId') || '';
+    const userName = localStorage.getItem('userName') || '';
+    const userEmail = localStorage.getItem('userEmail') || '';
+
+    const stored = safeJsonParse(localStorage.getItem(SESSION_KEY), {});
+    return {
+        id: stored.id || userId || null,
+        business_name: stored.business_name || stored.businessName || stored.store_name || stored.storeName || '',
+        full_name: stored.full_name || userName || '',
+        email: stored.email || userEmail || '',
+        phone: stored.phone || '',
+        location: stored.location || '',
+        bio: stored.bio || ''
+    };
+}
+
+function setSession(session) {
+    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    if (session?.full_name) localStorage.setItem('userName', session.full_name);
+    if (session?.email) localStorage.setItem('userEmail', session.email);
+}
 
 // Load profile from backend
 async function loadProfile() {
@@ -14,7 +46,21 @@ async function loadProfile() {
         });
         
         if (response.ok) {
-            return await response.json();
+            const result = await response.json();
+            // profile.php typically returns: { success: true, user: {...} }
+            const user = result?.user || result?.data || null;
+            if (!user) return {};
+
+            return {
+                ...user,
+                // normalize common field name variants
+                business_name: user.business_name || user.businessName || user.store_name || user.storeName || '',
+                full_name: user.full_name || user.fullName || '',
+                email: user.email || '',
+                // keep frontend field names consistent
+                location: user.location || user.address || '',
+                bio: user.bio || user.about || ''
+            };
         }
         return {};
     } catch (error) {
@@ -67,13 +113,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     const logoutBtn = document.getElementById("logoutBtn");
     if (logoutBtn) {
         logoutBtn.addEventListener("click", () => {
-            localStorage.clear();
-            window.location.href = "../login/login-consumer.html";
+            // Clear only auth/session flags; keep cached profile + app data.
+            [
+                'authToken',
+                'userId',
+                'userRole',
+                'userName',
+                'userEmail',
+                'ngoName',
+                'consumerLoggedIn',
+                'partnerLoggedIn',
+                'providerLoggedIn',
+                'ngoLoggedIn',
+                'adminLoggedIn'
+            ].forEach(k => localStorage.removeItem(k));
+            sessionStorage.clear();
+            window.location.href = "../login/login-partner.html";
         });
     }
     
-    // Load profile data from backend
-    let partnerData = await loadProfile();
+    // Load profile data (prefill from local cache immediately)
+    let partnerData = getSessionSeed();
     // ------------------------------------------
 
     const profileForm = document.getElementById("profileForm");
@@ -99,15 +159,42 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     loadProfileData();
 
+    // Refresh from backend and persist to session (best effort)
+    const backendProfile = await loadProfile();
+    if (backendProfile && Object.keys(backendProfile).length > 0) {
+        partnerData = {
+            ...partnerData,
+            ...backendProfile,
+            // keep consistent fields
+            business_name: backendProfile.business_name || partnerData.business_name,
+            full_name: backendProfile.full_name || partnerData.full_name,
+            email: backendProfile.email || partnerData.email
+        };
+        setSession(partnerData);
+        loadProfileData();
+    } else {
+        // Ensure we at least persist the seeded session
+        setSession(partnerData);
+    }
+
     // --- 2. Handle Profile Update ---
     profileForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
+        const storeNameInput = document.getElementById("storeName").value.trim();
+        const contactNameInput = document.getElementById("contactName").value.trim();
+
+        // Your current auth DB schema stores the partner's display/store name in `full_name`.
+        // So we treat Store Name as the primary source of `full_name`.
+        const fullNameToSave = storeNameInput || contactNameInput;
+
         // 1. Collect form data
         const profileUpdate = {
-            business_name: document.getElementById("storeName").value.trim(),
-            full_name: document.getElementById("contactName").value.trim(),
+            business_name: storeNameInput,
+            full_name: fullNameToSave,
             phone: document.getElementById("phone").value.trim(),
+            // API expects "address"; frontend also uses "location" internally
+            address: document.getElementById("address").value.trim(),
             location: document.getElementById("address").value.trim(),
             bio: document.getElementById("about").value.trim()
         };
@@ -120,12 +207,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             Object.assign(partnerData, profileUpdate);
             
             // Update localStorage
-            localStorage.setItem('userName', profileUpdate.full_name);
+            if (profileUpdate.full_name) localStorage.setItem('userName', profileUpdate.full_name);
+            setSession({ ...partnerData });
             
             // Update avatars
-            avatarInitial.textContent = profileUpdate.full_name.charAt(0).toUpperCase();
+            if (profileUpdate.full_name) {
+                avatarInitial.textContent = profileUpdate.full_name.charAt(0).toUpperCase();
+            }
             document.querySelector('.profile-avatar-large')?.textContent = 
-                (profileUpdate.business_name || profileUpdate.full_name).charAt(0).toUpperCase();
+                (profileUpdate.business_name || profileUpdate.full_name || 'P').charAt(0).toUpperCase();
             
             showToast("Profile updated successfully!");
         } else {
@@ -136,7 +226,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     // --- 3. Handle Reset Button ---
     resetProfileBtn.addEventListener("click", () => {
         profileForm.reset();
-        loadProfileData(); // Reloads data from localStorage, effectively resetting the form
+        partnerData = getSessionSeed();
+        loadProfileData();
         showToast("Profile changes discarded.", "error");
     });
     

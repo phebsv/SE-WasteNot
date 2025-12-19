@@ -202,6 +202,215 @@ body {
 }
 
 /* ===========================
+   MODALS
+=========================== */
+.hidden {
+  display: none !important;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 999;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 640px;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid var(--border-soft);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-soft);
+  background: #fff;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.modal-close {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  border: 1px solid var(--border-soft);
+  background: #fff;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+.modal-form {
+  padding: 16px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.form-row label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.form-row input,
+.form-row select {
+  width: 100%;
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  padding: 12px 12px;
+  font-size: 0.95rem;
+}
+
+.form-row.two-col {
+  flex-direction: row;
+  gap: 12px;
+}
+
+.form-row.two-col > div {
+  flex: 1;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.modal-btn {
+  padding: 0.7rem 1.1rem;
+  border-radius: 12px;
+  font-weight: 800;
+  border: 1px solid var(--border-soft);
+  background: #fff;
+  cursor: pointer;
+}
+
+.modal-btn.primary {
+  background: var(--green-main);
+  border-color: var(--green-main);
+  color: #fff;
+}
+
+.modal-btn.primary:hover {
+  background: var(--green-dark);
+}
+
+/* ===========================
+   LISTING ACTION BUTTONS
+=========================== */
+.listing-btn {
+  padding: 0.55rem 0.9rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-soft);
+  background: #fff;
+  color: var(--text-main);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.listing-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.10);
+}
+
+.listing-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.listing-btn-primary {
+  background: var(--green-main);
+  border-color: var(--green-main);
+  color: #fff;
+}
+
+.listing-btn-primary:hover {
+  background: var(--green-dark);
+}
+
+.listing-btn-outline {
+  background: #fff;
+}
+
+.listing-icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  border: 1px solid var(--border-soft);
+  background: #fff;
+  cursor: pointer;
+  font-size: 1.05rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.listing-icon-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.10);
+}
+
+.listing-icon-btn.delete {
+  border-color: rgba(220, 38, 38, 0.25);
+  color: var(--danger);
+}
+
+/* ===========================
+   STATUS BADGES (Inventory)
+=========================== */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 0.78rem;
+  border: 1px solid var(--border-soft);
+  background: #fff;
+}
+
+.status-badge.status-active {
+  border-color: rgba(22, 163, 74, 0.25);
+  background: rgba(22, 163, 74, 0.10);
+  color: var(--positive);
+}
+
+.status-badge.status-inactive {
+  border-color: rgba(220, 38, 38, 0.25);
+  background: rgba(220, 38, 38, 0.08);
+  color: var(--danger);
+}
+
+/* ===========================
    DASHBOARD GRID
 =========================== */
 .dashboard-grid {
