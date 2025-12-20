@@ -1,6 +1,20 @@
-// ===== AUTH GUARD =====
+// ===== AUTH GUARD (Keep this at the top of the file) =====
 if (localStorage.getItem("partnerLoggedIn") !== "true") {
   window.location.href = "login-partner.html";
+}
+
+// Global functions for utility
+function showToast(message, type = "success") {
+  const toast = document.getElementById("toast");
+  if (!toast) return;
+
+  toast.textContent = message;
+  // Use status classes for toast styling (e.g., toast.success, toast.error)
+  toast.className = `toast show ${type}`;
+
+  setTimeout(() => {
+    toast.className = "toast";
+  }, 2500);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -25,9 +39,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ===== DATA =====
-  const listings = window.partnerListings || [];
-  const claims = window.partnerClaims || [];
+  // ===== DATA & ELEMENTS =====
+  // Retrieve data directly from localStorage if available, otherwise fall back to window global
+  const listings = JSON.parse(localStorage.getItem("partnerListings")) || window.partnerListings || [];
+  const claims = JSON.parse(localStorage.getItem("partnerClaims")) || window.partnerClaims || [];
 
   const container = document.getElementById("claimsContainer");
   const tabButtons = document.querySelectorAll(".claim-tab");
@@ -56,28 +71,47 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!listing) return;
 
       const card = document.createElement("article");
-      card.className = "claim-card";
+      // Add the status class to the card for background highlighting
+      card.className = `claim-card status-${claim.status}`;
 
+      // --- NEW HTML STRUCTURE (Matches the UI and detailed design) ---
       card.innerHTML = `
-        <img src="${listing.image}" class="claim-image" alt="${listing.title}">
+        <div class="claim-image-wrapper">
+            <img src="${listing.image || 'path/to/placeholder.jpg'}" alt="${listing.title}" class="claim-image" />
+        </div>
+
+        <div class="claim-header">
+            <h2 class="claim-title">${listing.title}</h2>
+            <span class="claim-id">#C-${claim.id}</span>
+        </div>
+
+        <div class="claim-details">
+            <p>
+                <span class="detail-label">Requested By:</span>
+                <span class="detail-value">${claim.customerName}</span>
+            </p>
+            <p>
+                <span class="detail-label">Quantity:</span>
+                <span class="detail-value">${claim.qty} ${listing.unit || 'units'}</span>
+            </p>
+            <p>
+                <span class="detail-label">Pickup Date:</span>
+                <span class="detail-value">${formatPickup(claim.pickupSchedule)}</span>
+            </p>
+            <p>
+                <span class="detail-label">Status:</span>
+                <span class="status-badge status-${claim.status}">${formatStatus(claim.status)}</span>
+            </p>
+        </div>
         
-        <div class="claim-main">
-          <div class="claim-title">${listing.title}</div>
-
-          <div class="claim-meta">
-            Claimed by: <strong>${claim.customerName}</strong><br>
-            Qty: ${claim.qty} • Pickup: ${formatPickup(claim.pickupSchedule)}<br>
-            Status: <strong>${formatStatus(claim.status)}</strong>
-          </div>
-
-          <div class="claim-actions">
+        <div class="claim-actions">
             ${renderActions(claim.status)}
-          </div>
         </div>
       `;
+      // -----------------------------------------------------------------
 
-      // --- ACTION BUTTONS ---
-      card.querySelectorAll("button").forEach((btn) => {
+      // --- ACTION BUTTONS LISTENER ---
+      card.querySelectorAll(".claim-actions button").forEach((btn) => {
         btn.addEventListener("click", () => handleAction(btn.dataset.action, claim));
       });
 
@@ -86,54 +120,59 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function handleAction(action, claim) {
+    let message = "";
+    let type = "success";
+
     switch (action) {
       case "approve":
-        // partner approves the request; move to "confirmed"
         claim.status = "confirmed";
+        message = "Claim approved! Customer notified.";
         break;
 
       case "ready":
-        // partner prepares the items; mark as ready for pickup
         claim.status = "ready";
+        message = "Items marked as ready for pickup.";
         break;
 
       case "complete":
-        // pickup completed: mark as picked-up and reduce stock
         claim.status = "picked-up";
-        const listing = partnerListings.find(l => l.id === claim.listingId);
+        message = "Pickup successfully completed and logged.";
+        
+        // Update Inventory/Listing stock
+        const listing = listings.find(l => l.id === claim.listingId);
         if (listing) {
-          listing.qtyLeft = Math.max(0, (listing.qtyLeft || 0) - (claim.qty || 0));
+            listing.qtyLeft = Math.max(0, (listing.qtyLeft || 0) - (claim.qty || 0));
         }
         break;
 
       case "cancel":
-        // partner cancels the request
         claim.status = "cancelled";
+        message = "Claim cancelled. Listing availability restored.";
+        type = "error";
         break;
 
       case "view":
-        alert(`Viewing Details for Claim #${claim.id}`);
-        // no status or inventory change
-        break;
+        alert(`Viewing Details for Claim ID: #C-${claim.id}\nCustomer: ${claim.customerName}\nItem: ${getListing(claim).title}`);
+        return; // Exit without persisting status/inventory change
     }
 
-    if (action !== "view") {
-      // persist updates
-      localStorage.setItem("partnerClaims", JSON.stringify(partnerClaims));
-      localStorage.setItem("partnerListings", JSON.stringify(partnerListings));
-    }
-
-    renderClaims();
+    // Persist updates to localStorage
+    localStorage.setItem("partnerClaims", JSON.stringify(claims));
+    localStorage.setItem("partnerListings", JSON.stringify(listings));
+    
+    showToast(message, type);
+    renderClaims(); // Re-render the list to show status change/filtering
   }
 
   function formatPickup(dt) {
     const d = new Date(dt);
     return d.toLocaleString("en-US", {
-      month: "long",
+      month: "numeric",
       day: "numeric",
+      year: "numeric",
       hour: "numeric",
       minute: "2-digit",
-    });
+    }).replace(/,/, ' @'); // Format: 11/25/2025 @ 3:00 PM
   }
 
   function formatStatus(s) {
@@ -151,25 +190,23 @@ document.addEventListener("DOMContentLoaded", () => {
     switch (status) {
       case "pending":
         return `
-          <button class="claim-btn claim-approve" data-action="approve">Approve</button>
-          <button class="claim-btn claim-cancel" data-action="cancel">Cancel</button>
-          <button class="claim-btn claim-view" data-action="view">View Details</button>
+          <button class="btn-primary" data-action="approve">Accept</button>
+          <button class="btn-secondary" data-action="cancel">Reject</button>
         `;
       case "confirmed":
         return `
-          <button class="claim-btn claim-ready" data-action="ready">Mark Ready</button>
-          <button class="claim-btn claim-cancel" data-action="cancel">Cancel</button>
-          <button class="claim-btn claim-view" data-action="view">View Details</button>
+          <button class="btn-primary" data-action="ready">Mark Ready</button>
+          <button class="btn-secondary" data-action="cancel">Cancel</button>
         `;
       case "ready":
         return `
-          <button class="claim-btn claim-complete" data-action="complete">Complete Pickup</button>
-          <button class="claim-btn claim-view" data-action="view">View Details</button>
+          <button class="btn-primary" data-action="complete">Complete Pickup</button>
+          <button class="btn-secondary" data-action="view">View Details</button>
         `;
       case "picked-up":
       case "cancelled":
         return `
-          <button class="claim-btn claim-view" data-action="view">View Details</button>
+          <button class="btn-secondary" data-action="view">View Details</button>
         `;
       default:
         return "";
@@ -189,33 +226,3 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initial render
   renderClaims();
 });
-
-function showToast(message, type = "success") {
-  const toast = document.getElementById("toast");
-  toast.textContent = message;
-  toast.className = `toast show ${type}`;
-
-  setTimeout(() => {
-    toast.className = "toast";
-  }, 2500);
-}
-
-function confirmClaim(claimId) {
-  let claims = JSON.parse(localStorage.getItem("partnerClaims")) || [];
-  let listings = JSON.parse(localStorage.getItem("partnerListings")) || [];
-
-  let claim = claims.find(c => c.claimId === claimId);
-  let listing = listings.find(l => l.id === claim.listingId);
-
-  listing.qtyLeft -= claim.quantity;
-
-  if (listing.qtyLeft < 1) listing.active = false;
-
-  claim.status = "completed";
-
-  localStorage.setItem("partnerListings", JSON.stringify(listings));
-  localStorage.setItem("partnerClaims", JSON.stringify(claims));
-
-  showToast("Pickup Confirmed!");
-  loadClaims();
-}

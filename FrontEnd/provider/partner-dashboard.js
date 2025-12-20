@@ -1,6 +1,7 @@
-// if (localStorage.getItem("partnerLoggedIn") !== "true") {
-//   window.location.href = "login-partner.html";
-// }
+// ==== AUTH GUARD: only logged-in partners can view ====
+if (localStorage.getItem("partnerLoggedIn") !== "true") {
+  window.location.href = "login-partner.html";
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   // ---- Session / profile ----
@@ -144,4 +145,4 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
-});
+})

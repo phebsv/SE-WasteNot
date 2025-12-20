@@ -59,25 +59,25 @@
     <section class="impact-kpis">
       <div class="kpi-card">
         <p>Total Waste Reduced</p>
-        <h2 id="wasteKg">18.4 kg</h2>
-        <span class="positive">+12% vs last month</span>
+        <h2 id="wasteKg">—</h2>
+        <span class="positive" id="wasteChange"></span>
       </div>
 
       <div class="kpi-card">
         <p>Total Donations</p>
-        <h2 id="donationCount">32</h2>
-        <span class="positive">+24% vs last month</span>
+        <h2 id="donationCount">—</h2>
+        <span class="positive" id="donationChange"></span>
       </div>
 
       <div class="kpi-card">
-        <p>Total Items Sold</p>
-        <h2 id="revenue">₱2,100</h2>
-        <span class="negative">-5% vs last month</span>
+        <p>Total Revenue</p>
+        <h2 id="revenue">—</h2>
+        <span class="negative" id="revenueChange"></span>
       </div>
 
       <div class="kpi-card">
         <p>Environmental Impact</p>
-        <h2 id="co2Saved">23 kg</h2>
+        <h2 id="co2Saved">—</h2>
         <span>CO₂ saved</span>
       </div>
     </section>
@@ -88,12 +88,12 @@
       <div class="impact-grid">
         <div class="impact-card">
           <canvas id="wasteBar"></canvas>
-          <p class="impact-caption">Week 2 had the highest waste diversion: 10 kg</p>
+          <p class="impact-caption" id="wasteCaption"></p>
         </div>
 
         <div class="impact-card">
           <canvas id="categoryPie"></canvas>
-          <p class="impact-caption">Most diverted category: Bread / Pastry (48.4%)</p>
+          <p class="impact-caption" id="categoryCaption"></p>
         </div>
       </div>
     </section>
@@ -104,12 +104,12 @@
       <div class="impact-grid">
         <div class="impact-card">
           <canvas id="salesLine"></canvas>
-          <p class="impact-caption">Sales peaked in Week 2, contributing 47% of revenue</p>
+          <p class="impact-caption" id="salesCaption"></p>
         </div>
 
         <div class="impact-card">
           <canvas id="donationBar"></canvas>
-          <p class="impact-caption">Donations increased by 24% compared to last month</p>
+          <p class="impact-caption" id="donationCaption"></p>
         </div>
       </div>
     </section>
@@ -118,7 +118,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="partner-data.js"></script>
 <script src="partner-impact.js"></script>
+<script src="../notifications.js"></script>
 </body>
 </html>

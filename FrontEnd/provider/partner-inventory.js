@@ -1,4 +1,3 @@
-
 function daysUntilExpiry(date) {
   const today = new Date();
   const exp = new Date(date);

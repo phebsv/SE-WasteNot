@@ -42,12 +42,11 @@
       </header>
 
       <nav class="claims-tabs">
-        <button class="claim-tab active" data-status="all">All</button>
-        <button class="claim-tab" data-status="pending">Pending</button>
-        <button class="claim-tab" data-status="confirmed">Confirmed</button>
-        <button class="claim-tab" data-status="ready">Ready for Pickup</button>
-        <button class="claim-tab" data-status="picked-up">Completed</button>
-        <button class="claim-tab" data-status="cancelled">Cancelled</button>
+        <button class="claim-tab" data-status="PENDING">Pending</button>
+        <button class="claim-tab" data-status="CONFIRMED">Confirmed</button>
+        <button class="claim-tab" data-status="READY_FOR_PICKUP">Ready for Pickup</button>
+        <button class="claim-tab" data-status="COMPLETED">Completed</button>
+        <button class="claim-tab" data-status="CANCELLED">Cancelled</button>
       </nav>
 
       <section id="claimsContainer" class="claims-container">
@@ -59,6 +58,7 @@
   </div>
 
   <script src="partner-data.js"></script>
-  <script src="partner-pickups.js"></script>
+  <script src="partner-pickup.js"></script>
+  <script src="../notifications.js"></script>
 </body>
 </html>

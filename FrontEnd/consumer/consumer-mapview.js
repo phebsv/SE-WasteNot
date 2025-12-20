@@ -1,6 +1,6 @@
 // ===== AUTH GUARD: only logged-in consumers can view =====
 if (localStorage.getItem("consumerLoggedIn") !== "true") {
-  window.location.href = "login-consumer.html";
+  window.location.href = "../login/login-consumer.html";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -169,4 +169,23 @@ document.addEventListener("DOMContentLoaded", () => {
       pin.style.display = show ? "" : "none";
     });
   }
+
+  // Logout
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    // Clear only auth/session flags; keep cached profile + app data.
+    [
+      'authToken',
+      'userId',
+      'userRole',
+      'userName',
+      'userEmail',
+      'ngoName',
+      'consumerLoggedIn',
+      'partnerLoggedIn',
+      'ngoLoggedIn',
+      'adminLoggedIn'
+    ].forEach(k => localStorage.removeItem(k));
+    sessionStorage.clear();
+    window.location.href = '../login/login-consumer.html';
+  });
 });

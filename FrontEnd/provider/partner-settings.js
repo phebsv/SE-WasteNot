@@ -1,46 +1,6 @@
-// ===== AUTH GUARD =====
-if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "partner") {
-    window.location.href = "../login/login-consumer.html";
-}
-
-// const PROFILE_API = 'http://localhost/wastenot-api/api/profile.php';
-
-// Load profile from backend
-async function loadProfile() {
-    try {
-        const token = localStorage.getItem('authToken');
-        const response = await fetch(PROFILE_API, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        
-        if (response.ok) {
-            return await response.json();
-        }
-        return {};
-    } catch (error) {
-        console.error('Error loading profile:', error);
-        return {};
-    }
-}
-
-// Save profile to backend
-async function saveProfile(profileData) {
-    try {
-        const token = localStorage.getItem('authToken');
-        const response = await fetch(PROFILE_API, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(profileData)
-        });
-        
-        return response.ok;
-    } catch (error) {
-        console.error('Error saving profile:', error);
-        return false;
-    }
+// ===== AUTH GUARD (Check if user is logged in) =====
+if (localStorage.getItem("partnerLoggedIn") !== "true") {
+    window.location.href = "login-partner.html";
 }
 
 // Global function for utility (showToast)
@@ -56,24 +16,26 @@ function showToast(message, type = "success") {
     }, 2500);
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
     // --- Initial Setup (Avatar and Logout) ---
+    let partnerData = {};
+    try {
+        partnerData = JSON.parse(localStorage.getItem("partnerSession")) || {};
+    } catch {}
+
     const avatarInitial = document.getElementById("avatarInitial");
-    const userName = localStorage.getItem('userName');
-    if (avatarInitial && userName) {
-        avatarInitial.textContent = userName.charAt(0).toUpperCase();
+    if (avatarInitial && partnerData.name) {
+        avatarInitial.textContent = partnerData.name.charAt(0).toUpperCase();
     }
 
     const logoutBtn = document.getElementById("logoutBtn");
     if (logoutBtn) {
         logoutBtn.addEventListener("click", () => {
-            localStorage.clear();
-            window.location.href = "../login/login-consumer.html";
+            localStorage.removeItem("partnerLoggedIn");
+            localStorage.removeItem("partnerSession");
+            window.location.href = "login-partner.html";
         });
     }
-    
-    // Load profile data from backend
-    let partnerData = await loadProfile();
     // ------------------------------------------
 
     const profileForm = document.getElementById("profileForm");
@@ -82,55 +44,50 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // --- 1. Load Data into Forms ---
     function loadProfileData() {
-        document.getElementById("storeName").value = partnerData.business_name || partnerData.full_name || '';
-        document.getElementById("contactName").value = partnerData.full_name || '';
+        if (!partnerData.id) return;
+
+        document.getElementById("storeName").value = partnerData.storeName || '';
+        document.getElementById("contactName").value = partnerData.name || '';
         document.getElementById("email").value = partnerData.email || '';
         document.getElementById("phone").value = partnerData.phone || '';
-        document.getElementById("address").value = partnerData.location || '';
-        document.getElementById("about").value = partnerData.bio || '';
+        document.getElementById("address").value = partnerData.address || '';
+        document.getElementById("about").value = partnerData.about || ''; // New 'about' field
         
         // Update the large avatar placeholder
         const largeAvatar = document.querySelector('.profile-avatar-large');
         if (largeAvatar) {
-            const name = partnerData.business_name || partnerData.full_name || 'P';
-            largeAvatar.textContent = name.charAt(0).toUpperCase();
+            largeAvatar.textContent = (partnerData.storeName || partnerData.name).charAt(0).toUpperCase();
         }
     }
     
     loadProfileData();
 
     // --- 2. Handle Profile Update ---
-    profileForm.addEventListener("submit", async (e) => {
+    profileForm.addEventListener("submit", (e) => {
         e.preventDefault();
 
         // 1. Collect form data
-        const profileUpdate = {
-            business_name: document.getElementById("storeName").value.trim(),
-            full_name: document.getElementById("contactName").value.trim(),
-            phone: document.getElementById("phone").value.trim(),
-            location: document.getElementById("address").value.trim(),
-            bio: document.getElementById("about").value.trim()
-        };
+        const newStoreName = document.getElementById("storeName").value.trim();
+        const newContactName = document.getElementById("contactName").value.trim();
+        const newPhone = document.getElementById("phone").value.trim();
+        const newAddress = document.getElementById("address").value.trim();
+        const newAbout = document.getElementById("about").value.trim();
 
-        // 2. Save to backend
-        const success = await saveProfile(profileUpdate);
+        // 2. Update session data object
+        partnerData.storeName = newStoreName;
+        partnerData.name = newContactName;
+        partnerData.phone = newPhone;
+        partnerData.address = newAddress;
+        partnerData.about = newAbout;
         
-        if (success) {
-            // Update local data
-            Object.assign(partnerData, profileUpdate);
-            
-            // Update localStorage
-            localStorage.setItem('userName', profileUpdate.full_name);
-            
-            // Update avatars
-            avatarInitial.textContent = profileUpdate.full_name.charAt(0).toUpperCase();
-            document.querySelector('.profile-avatar-large')?.textContent = 
-                (profileUpdate.business_name || profileUpdate.full_name).charAt(0).toUpperCase();
-            
-            showToast("Profile updated successfully!");
-        } else {
-            showToast("Failed to update profile", "error");
-        }
+        // Update both avatars
+        avatarInitial.textContent = partnerData.name.charAt(0).toUpperCase();
+        document.querySelector('.profile-avatar-large').textContent = partnerData.storeName.charAt(0).toUpperCase();
+
+        // 3. Persist to localStorage
+        localStorage.setItem("partnerSession", JSON.stringify(partnerData));
+        
+        showToast("Profile updated successfully!");
     });
     
     // --- 3. Handle Reset Button ---

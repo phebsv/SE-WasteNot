@@ -17,14 +17,17 @@
 .summary-card:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(15,23,42,0.08)}
 
 /* Button styles aligned with site theme (matching consumer/ngo buttons) */
-.btn{padding:0.6rem 0.9rem;border-radius:8px;border:none;cursor:pointer;font-weight:600;font-size:0.95rem}
-.btn.small{padding:0.4rem 0.6rem;font-size:0.85rem;border-radius:6px}
-.btn.tiny{padding:0.28rem 0.5rem;font-size:0.78rem;border-radius:6px}
-.btn.primary{background:var(--green-main);color:#fff}
-.btn.primary:hover{background:var(--green-dark)}
-.btn.ghost{background:transparent;border:1px solid var(--border-soft);color:var(--text-main)}
-.btn.danger{background:var(--danger);color:#fff}
-.btn.danger.ghost{background:transparent;border:1px solid rgba(220,38,38,0.12);color:var(--danger)}
-.btn.ghost:hover{background:#f6f9f6}
+.btn{padding:0.7rem 1.2rem;border-radius:10px;border:none;cursor:pointer;font-weight:600;font-size:0.95rem;transition:all 0.25s cubic-bezier(0.4,0,0.2,1);box-shadow:0 2px 8px rgba(0,0,0,0.1);text-transform:none;letter-spacing:0.01em}
+.btn.small{padding:0.5rem 0.8rem;font-size:0.85rem;border-radius:8px}
+.btn.tiny{padding:0.35rem 0.6rem;font-size:0.78rem;border-radius:6px}
+.btn.primary{background:linear-gradient(135deg,var(--green-main) 0%,var(--green-dark) 100%);color:#fff;box-shadow:0 4px 12px rgba(21,128,61,0.25)}
+.btn.primary:hover{background:linear-gradient(135deg,var(--green-dark) 0%,#14532d 100%);transform:translateY(-2px);box-shadow:0 6px 20px rgba(21,128,61,0.35)}
+.btn.primary:active{transform:translateY(0);box-shadow:0 2px 8px rgba(21,128,61,0.2)}
+.btn.ghost{background:white;border:2px solid var(--border-soft);color:var(--text-main);box-shadow:0 2px 6px rgba(0,0,0,0.08)}
+.btn.ghost:hover{background:#f9fafb;border-color:#d1d5db;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.12)}
+.btn.danger{background:linear-gradient(135deg,var(--danger) 0%,#b91c1c 100%);color:#fff;box-shadow:0 4px 12px rgba(220,38,38,0.25)}
+.btn.danger:hover{background:linear-gradient(135deg,#b91c1c 0%,#991b1b 100%);transform:translateY(-2px);box-shadow:0 6px 20px rgba(220,38,38,0.35)}
+.btn.danger.ghost{background:white;border:2px solid rgba(220,38,38,0.3);color:var(--danger);box-shadow:0 2px 6px rgba(220,38,38,0.1)}
+.btn.danger.ghost:hover{background:#fef2f2;border-color:var(--danger);transform:translateY(-1px)}
 
 .status-badge.small{padding:0.25rem 0.6rem;font-size:0.8rem}

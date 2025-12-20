@@ -1,0 +1,66 @@
+/* Minimal toast styles for provider pages.
+   Supports both the legacy single #toast element and the newer #toastContainer system.
+*/
+
+#toastContainer {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+#toastContainer .toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 280px;
+  max-width: 420px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  color: #fff;
+  background: #334155;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
+  transform: translateY(-6px);
+  opacity: 0.98;
+}
+
+#toastContainer .toast.toast-success { background: #15803d; }
+#toastContainer .toast.toast-error { background: #dc2626; }
+#toastContainer .toast.toast-info { background: #334155; }
+
+#toastContainer .toast .toast-ok {
+  border: 0;
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Legacy single-toast support (used by many existing provider pages) */
+#toast.toast {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 9999;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #334155;
+  color: #fff;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+#toast.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#toast.toast.success { background: #15803d; }
+#toast.toast.error { background: #dc2626; }

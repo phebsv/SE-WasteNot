@@ -64,6 +64,24 @@ document.addEventListener('DOMContentLoaded', () => {
     existing.push(newRequest);
     localStorage.setItem('ngoRequests', JSON.stringify(existing));
 
+    // Role-based notifications (NGO personal bucket)
+    try {
+      const ngoId = localStorage.getItem('userId');
+      const ngoName = localStorage.getItem('userName') || localStorage.getItem('ngoName') || 'NGO';
+      if (window.WasteNotNotifications?.notifyTargets && ngoId) {
+        window.WasteNotNotifications.notifyTargets(
+          [{ role: 'ngo', userId: ngoId }],
+          {
+            title: 'Request submitted',
+            body: `${ngoName} submitted a request for "${newRequest.item || newRequest.company || 'donation'}".`,
+            link: '/ngo/ngo-claims.html'
+          }
+        );
+      }
+    } catch (_) {
+      // ignore
+    }
+
     // SHOW TOAST (mirrors consumer claim flow)
     const toast = document.getElementById('toast');
     toast.classList.remove('hidden');

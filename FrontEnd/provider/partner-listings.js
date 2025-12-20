@@ -1,7 +1,7 @@
-// // Guard
-// if (localStorage.getItem("partnerLoggedIn") !== "true") {
-//   window.location.href = "login-partner.html";
-// }
+// Guard
+if (localStorage.getItem("partnerLoggedIn") !== "true") {
+  window.location.href = "login-partner.html";
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   let session = {};

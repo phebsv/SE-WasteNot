@@ -62,8 +62,13 @@
         <a href="consumer-dashboard.html" class="nav-item active">Dashboard</a>
         <a href="consumer-marketplace.html" class="nav-item">Marketplace</a>
         <a href="consumer-mapview.html" class="nav-item">Map View</a>
+<<<<<<< HEAD
         <a href="consumer-orders.html" class="nav-item">My Order / Claims</a>
         <a href="consumer-profile.html" class="nav-item">Profile / Settings</a>
+=======
+        <a href="consumer-orders.html" class="nav-item">Claims</a>
+        <a href="consumer-profile.html" class="nav-item">Account</a>
+>>>>>>> 4212d2d55cc41263311f77c641f92b81d542f9f9
       </nav>
 
       <button class="logout-btn">Logout</button>
@@ -74,7 +79,11 @@
       <!-- Top bar -->
       <header class="topbar">
         <div>
+<<<<<<< HEAD
           <h1 class="topbar-title">Welcome, <span class="accent" id="displayUserName">User!</span></h1>
+=======
+          <h1 class="topbar-title">Welcome, <span class="accent" id="userName">User!</span></h1>
+>>>>>>> 4212d2d55cc41263311f77c641f92b81d542f9f9
           <p class="topbar-subtitle">
             Here’s a quick overview of your savings and recent claims.
           </p>
@@ -84,7 +93,7 @@
             <button class="icon-btn" aria-label="Notifications">
               🔔
             </button>
-            <div class="avatar" title="User">
+            <div class="avatar" title="User" id="userAvatar">
               M
             </div>
         </div>
@@ -94,19 +103,19 @@
       <section class="summary-row">
         <article class="summary-card">
           <p class="summary-label">Total Savings</p>
-          <p class="summary-value">₱ 1,820</p>
+          <p class="summary-value" id="totalSavings">₱ 0</p>
           <p class="summary-caption">from surplus purchases</p>
         </article>
 
         <article class="summary-card">
           <p class="summary-label">Meals Rescued</p>
-          <p class="summary-value">32</p>
+          <p class="summary-value" id="mealsRescued">0</p>
           <p class="summary-caption">total items claimed</p>
         </article>
 
         <article class="summary-card">
           <p class="summary-label">Active Claims</p>
-          <p class="summary-value">3</p>
+          <p class="summary-value" id="activeClaims">0</p>
           <p class="summary-caption">awaiting pickup</p>
         </article>
       </section>

@@ -32,7 +32,7 @@
         <main class="main">
             <header class="topbar">
                 <div>
-                    <h1 class="topbar-title">Welcome, <span class="accent" id="ngo-name-display">Hope Foundation!</span></h1>
+                    <h1 class="topbar-title">Welcome, <span class="accent" id="ngo-name-display">NGO</span></h1>
                     <p class="topbar-subtitle">
                         Here's a quick overview of your claims and pickup schedule.</p>
                 </div>
@@ -52,55 +52,24 @@
                 <div class="summary-column">
                     <article class="summary-card-ngo">
                         <p class="summary-label">Active Requests:</p>
-                        <p class="summary-value">3</p>
+                        <p class="summary-value" id="ngoActiveRequests">0</p>
                     </article>
 
                     <article class="summary-card-ngo">
                         <p class="summary-label">Received Donations:</p>
-                        <p class="summary-value">5</p>
+                        <p class="summary-value" id="ngoReceivedDonations">0</p>
                     </article>
 
                     <article class="summary-card-ngo accent-pending">
                         <p class="summary-label">Pending Requests:</p>
-                        <p class="summary-value">3</p>
+                        <p class="summary-value" id="ngoPendingRequests">0</p>
                     </article>
                 </div>
 
                 <article class="panel panel-pickups">
                     <h2 class="panel-title">Today's Pickups:</h2>
                     <div class="pickup-list-wrapper">
-                        <div class="pickup-list">
-                            <div class="pickup-item">
-                                <span class="pickup-detail">Jollibee</span>
-                                <span class="pickup-store">SM Seaside Cebu</span>
-                                <span class="pickup-time">20 Meals</span>
-                                <span class="pickup-time-slot">8:00 AM</span>
-                            </div>
-                            <div class="pickup-item">
-                                <span class="pickup-detail">Marketplace</span>
-                                <span class="pickup-store">Robinsons Galleria</span>
-                                <span class="pickup-time">15 Canned Goods</span>
-                                <span class="pickup-time-slot">3:00 PM</span>
-                            </div>
-                            <div class="pickup-item">
-                                <span class="pickup-detail">McDonald's</span>
-                                <span class="pickup-store">Main Branch</span>
-                                <span class="pickup-time">50 Chicken Pieces</span>
-                                <span class="pickup-time-slot">4:30 PM</span>
-                            </div>
-                             <div class="pickup-item">
-                                <span class="pickup-detail">KFC</span>
-                                <span class="pickup-store">City Center</span>
-                                <span class="pickup-time">10 Buckets</span>
-                                <span class="pickup-time-slot">6:00 PM</span>
-                            </div>
-                            <div class="pickup-item">
-                                <span class="pickup-detail">Noodle Haus</span>
-                                <span class="pickup-store">IT Park</span>
-                                <span class="pickup-time">5 Trays</span>
-                                <span class="pickup-time-slot">7:00 PM</span>
-                            </div>
-                        </div>
+                        <div class="pickup-list" id="ngoTodaysPickups"></div>
                     </div>
                 </article>
 
@@ -121,44 +90,7 @@
                 <th>Status</th>
             </tr>
         </thead>
-        <tbody>
-            <tr>
-                <td>Jollibee</td>
-                <td>Green Salad Bowl</td>
-                <td>Today • 5:30 PM</td>
-                <td><span class="status-pill status-confirm">Pickup</span></td>
-            </tr>
-            <tr>
-                <td>Marketplace</td>
-                <td>Canned Goods</td>
-                <td>Today • 3:00 PM</td>
-                <td><span class="status-pill status-confirm">Pickup</span></td>
-            </tr>
-            <tr>
-                <td>Noodle Haus</td>
-                <td>Pancit Canton Tray</td>
-                <td>Today • 7:00 PM</td>
-                <td><span class="status-pill status-pending">Pending</span></td>
-            </tr>
-            <tr>
-                <td>McDonald's</td>
-                <td>Vegetable Fried Rice</td>
-                <td>Yesterday • 4:30 PM</td>
-                <td><span class="status-pill status-complete">Completed</span></td>
-            </tr>
-             <tr>
-                <td>Starbucks</td>
-                <td>Pastry Box</td>
-                <td>Mon • 6:20 PM</td>
-                <td><span class="status-pill status-pending">Pending</span></td>
-            </tr>
-             <tr>
-                <td>KFC</td>
-                <td>Chicken Bucket</td>
-                <td>Sun • 8:00 AM</td>
-                <td><span class="status-pill status-complete">Completed</span></td>
-            </tr>
-        </tbody>
+        <tbody id="ngoRecentClaimsBody"></tbody>
     </table>
 </div>
             </section>
