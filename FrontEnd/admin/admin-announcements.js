@@ -1,7 +1,7 @@
 // ===== AUTH GUARD =====
-if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "admin") {
-    window.location.href = "../login/login-consumer.html";
-}
+// if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "admin") {
+//     window.location.href = "../login/login-consumer.html";
+// }
 
 // Mock Data Store
 let announcements = JSON.parse(localStorage.getItem('adminAnnouncements')) || [

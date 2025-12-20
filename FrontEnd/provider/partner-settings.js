@@ -3,7 +3,7 @@ if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "
     window.location.href = "../login/login-consumer.html";
 }
 
-const PROFILE_API = 'http://localhost/wastenot-api/api/profile.php';
+// const PROFILE_API = 'http://localhost/wastenot-api/api/profile.php';
 
 // Load profile from backend
 async function loadProfile() {

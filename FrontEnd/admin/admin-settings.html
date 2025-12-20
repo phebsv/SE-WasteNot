@@ -7,8 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="../ngo/ngo-base.css" />
     <link rel="stylesheet" href="admin.css" />
-    <link rel="stylesheet" href="admin-manage-users.css" /> 
-    <link rel="stylesheet" href="admin-settings.css" />
+    <link rel="stylesheet" href="admin-settings.css" /> 
 </head>
 <body>
     <div class="layout">
@@ -16,9 +15,7 @@
             <div class="sidebar-logo"><div class="logo-mark">WasteNot</div></div>
             <nav class="sidebar-nav">
                 <a href="admin-dashboard.html" class="nav-item">Dashboard</a>
-                <a href="admin-manage-providers.html" class="nav-item">Manage Providers</a>
-                <a href="admin-manage-ngos.html" class="nav-item">Manage NGOs</a>
-                <a href="admin-manage-donations.html" class="nav-item">Manage Donations</a>
+                <a href="admin-manage-donations.html" class="nav-item">Manage Items</a>
                 <a href="admin-manage-users.html" class="nav-item">Manage Users</a>
                 <a href="admin-approvals.html" class="nav-item">Approvals</a>
                 <a href="admin-logs.html" class="nav-item">Activity Logs</a>
@@ -33,7 +30,7 @@
             <div class="topbar">
                 <div>
                     <h1 class="topbar-title">System Settings</h1>
-                    <p class="topbar-subtitle">Configure system parameters, user roles, and service limits.</p>
+                    <p class="topbar-subtitle">System configuration and security preferences</p>
                 </div>
                 <div class="topbar-actions">
                     <button class="icon-btn" aria-label="Notifications">🔔</button>
@@ -41,124 +38,69 @@
                 </div>
             </div>
 
-            <section class="panel">
+            <div class="settings-container">
+
+                <section class="settings-section">
+                    <h2>System Configuration</h2>
+                    <form id="systemForm" class="security-form"> 
+                        
+                        <div class="form-group">
+                            <label for="siteName">Site Name</label>
+                            <input type="text" id="siteName" name="siteName" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="defaultPickupRadius">Default Pickup Radius (km)</label>
+                            <input type="number" id="defaultPickupRadius" name="defaultPickupRadius" min="1" max="100" value="10">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="maintenance">Maintenance Mode</label>
+                            <select id="maintenance" name="maintenance">
+                                <option value="off">Off (Site operational)</option>
+                                <option value="on">On (Temporary downtime)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button type="submit" class="btn-primary">Save System Settings</button>
+                            <button type="button" id="resetSystem" class="btn-secondary">Reset</button>
+                        </div>
+                    </form>
+                </section>
                 
-                <nav class="user-tabs">
-                    <button class="tab-btn active" data-tab="general">General</button>
-                    <button class="tab-btn" data-tab="system">System Parameters</button>
-                    <button class="tab-btn" data-tab="user_limits">User & Security</button>
-                    <button class="tab-btn" data-tab="branding">Branding & Content</button>
-                </nav>
+                <section class="settings-section">
+                    <h2>Admin Account Security</h2>
+                    <form id="passwordForm" class="security-form">
+                        
+                        <div class="form-group">
+                            <label for="adminEmail">Admin Email</label>
+                            <input type="email" id="adminEmail" name="adminEmail" value="admin@wastenot.com" readonly disabled>
+                        </div>
 
-                <div class="tab-content-wrapper">
-                    
-                    <div id="general" class="tab-content active">
-                        <form id="generalSettingsForm">
-                            <div class="setting-group">
-                                <h3>Platform Status</h3>
-                                <div class="form-row">
-                                    <label for="maintenanceMode" class="label-inline">Enable Maintenance Mode</label>
-                                    <input type="checkbox" id="maintenanceMode" class="toggle-switch">
-                                </div>
-                                <p class="help-text">Toggles platform visibility for all non-admin users. Use for updates or repairs.</p>
-                            </div>
-
-                            <div class="setting-group">
-                                <h3>Default Language</h3>
-                                <div class="form-row">
-                                    <label for="defaultLanguage" class="label-block">Primary Site Language</label>
-                                    <select id="defaultLanguage" class="input input-small">
-                                        <option value="en">English (Default)</option>
-                                        <option value="fil">Filipino</option>
-                                        </select>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn-primary">Save General Settings</button>
-                        </form>
-                    </div>
-
-                    <div id="system" class="tab-content">
-                        <form id="systemSettingsForm">
-                            <div class="setting-group">
-                                <h3>Listing Expiry Logic</h3>
-                                <div class="form-row">
-                                    <label for="maxListingDuration" class="label-block">Max Listing Duration (Hours)</label>
-                                    <input type="number" id="maxListingDuration" class="input input-small" value="72" min="1">
-                                </div>
-                                <div class="form-row">
-                                    <label for="defaultPriceReduction" class="label-block">Default Price Reduction Threshold (%)</label>
-                                    <input type="number" id="defaultPriceReduction" class="input input-small" value="50" min="0" max="100">
-                                </div>
-                                <p class="help-text">The percentage discount applied when a marketplace item is 6 hours from its expiry.</p>
-                            </div>
-
-                            <div class="setting-group">
-                                <h3>API & Integrations</h3>
-                                <div class="form-row">
-                                    <label for="googleMapsKey" class="label-block">Google Maps API Key</label>
-                                    <input type="text" id="googleMapsKey" class="input" placeholder="Enter new Google Maps API Key">
-                                </div>
-                                <div class="form-row">
-                                    <label for="emailService" class="label-block">Email Service Provider</label>
-                                    <input type="text" id="emailService" class="input" value="SendGrid (Active)" readonly>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn-primary">Save System Parameters</button>
-                        </form>
-                    </div>
-
-                    <div id="user_limits" class="tab-content">
-                        <form id="userSecurityForm">
-                            <div class="setting-group">
-                                <h3>Registration and Approval</h3>
-                                <div class="form-row">
-                                    <label for="requireAdminApproval" class="label-inline">Require Admin Approval for new Providers/NGOs</label>
-                                    <input type="checkbox" id="requireAdminApproval" class="toggle-switch" checked>
-                                </div>
-                                <div class="form-row">
-                                    <label for="maxLoginAttempts" class="label-block">Max Failed Login Attempts Before Lockout</label>
-                                    <input type="number" id="maxLoginAttempts" class="input input-small" value="5" min="3">
-                                </div>
-                            </div>
-
-                            <div class="setting-group">
-                                <h3>Account Suspension</h3>
-                                <div class="form-row">
-                                    <label for="suspensionPolicy" class="label-block">Default Suspension Policy Reason</label>
-                                    <textarea id="suspensionPolicy" class="input" rows="3" placeholder="Enter standard message for user suspensions..."></textarea>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn-primary">Save User & Security Settings</button>
-                        </form>
-                    </div>
-                    
-                    <div id="branding" class="tab-content">
-                        <form id="brandingForm">
-                            <div class="setting-group">
-                                <h3>Homepage & Footer</h3>
-                                <div class="form-row">
-                                    <label for="footerText" class="label-block">Footer Copyright Text</label>
-                                    <input type="text" id="footerText" class="input" value="&copy; 2025 WasteNot. All rights reserved.">
-                                </div>
-                                <div class="form-row">
-                                    <label for="primaryColor" class="label-block">Primary Brand Color</label>
-                                    <input type="color" id="primaryColor" class="color-picker" value="#38B000">
-                                </div>
-                            </div>
-                            
-                            <div class="setting-group">
-                                <h3>About Us Content</h3>
-                                <div class="form-row">
-                                    <label for="aboutUsMission" class="label-block">Mission Statement (Homepage)</label>
-                                    <textarea id="aboutUsMission" class="input" rows="4" placeholder="Update the mission statement on the homepage..."></textarea>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn-primary">Save Branding & Content</button>
-                        </form>
-                    </div>
-
-                </div>
-            </section>
+                        <div class="form-group">
+                            <label for="currentPassword">Current Password</label>
+                            <input type="password" id="currentPassword" name="currentPassword" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input type="password" id="newPassword" name="newPassword" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm New Password</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        </div>
+                        
+                        <div>
+                            <button type="submit" class="btn-primary">Change Admin Password</button>
+                        </div>  
+                    </form>
+                </section>
+                
+            </div>
+            <div id="toast" class="toast"></div>
         </main>
     </div>
 

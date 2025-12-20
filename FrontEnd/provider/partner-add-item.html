@@ -99,138 +99,24 @@
 
 <script src="toast.js"></script>
 <script>
-    // ========= AUTH GUARD =========
-    if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "partner") {
-      window.location.href = "../login/login-partner.html";
-    }
-
-    // ========= BACKEND API =========
-    const PRODUCTS_API = "http://localhost:8081/api/products";
-
-    // ========= FORM HANDLING =========
     document.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         const itemId = urlParams.get('id');
         const formPageTitle = document.getElementById('formPageTitle');
-        const form = document.getElementById('inventoryForm');
-        const partnerId = localStorage.getItem('userId');
-        const partnerName = localStorage.getItem('userName');
 
-        // Setup logout
-        const logoutBtn = document.querySelector('.logout-btn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', () => {
-                localStorage.clear();
-                window.location.href = '../login/login-partner.html';
-            });
-        }
-
-        // If editing, load existing item
         if (itemId) {
             formPageTitle.textContent = 'Edit Inventory Item';
-            loadItemForEdit(itemId);
+            // In a real app, you'd fetch item data based on itemId and populate the form
+            // Example: populateForm(itemId);
         }
 
-        // Form submission
-        form.addEventListener('submit', async function(event) {
-            event.preventDefault();
-            
-            const formData = {
-                name: document.getElementById('itemName').value,
-                partnerId: parseInt(partnerId),
-                partnerName: partnerName,
-                category: 'other', // Default category
-                description: document.getElementById('itemDescription').value,
-                price: 0, // Will be set in listing
-                oldPrice: null,
-                discountPercent: 0,
-                quantity: parseInt(document.getElementById('itemQuantity').value),
-                expiryDate: document.getElementById('expiryDate').value + 'T23:59:59',
-                expiryDisplay: formatExpiryDisplay(document.getElementById('expiryDate').value),
-                pickupWindow: 'Contact provider for pickup details',
-                imageUrl: 'https://via.placeholder.com/200',
-                status: 'ACTIVE'
-            };
-
-            try {
-                let response;
-                if (itemId) {
-                    // UPDATE existing product
-                    response = await fetch(`${PRODUCTS_API}/${itemId}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-                        },
-                        body: JSON.stringify(formData)
-                    });
-                } else {
-                    // CREATE new product
-                    response = await fetch(PRODUCTS_API, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-                        },
-                        body: JSON.stringify(formData)
-                    });
-                }
-
-                const data = await response.json();
-                
-                if (data.success) {
-                    showToast(itemId ? 'Item updated successfully!' : 'Item added successfully!');
-                    setTimeout(() => {
-                        window.location.href = 'partner-inventory.html';
-                    }, 1500);
-                } else {
-                    showToast('Error: ' + (data.message || 'Failed to save item'), 'error');
-                }
-            } catch (error) {
-                console.error('Error saving item:', error);
-                showToast('Error saving item. Please try again.', 'error');
-            }
+        document.getElementById('inventoryForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+            // Here you would handle saving the item data (e.g., via AJAX to a backend)
+            // After saving, show toast and redirect
+            document.getElementById('toast').classList.add('show');
+            setTimeout(() => {
+                window.location.href = 'partner-inventory.html';
+            }, 1500); // Redirect after toast is shown
         });
     });
-
-    // ========= HELPER FUNCTIONS =========
-    function formatExpiryDisplay(dateString) {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-    }
-
-    async function loadItemForEdit(itemId) {
-        try {
-            const response = await fetch(`${PRODUCTS_API}/${itemId}`);
-            const data = await response.json();
-            
-            if (data.success && data.data) {
-                const product = data.data;
-                document.getElementById('itemName').value = product.name;
-                document.getElementById('itemQuantity').value = product.quantity;
-                document.getElementById('itemUnit').value = 'units';
-                document.getElementById('itemDescription').value = product.description || '';
-                
-                if (product.expiryDate) {
-                    const date = new Date(product.expiryDate);
-                    document.getElementById('expiryDate').value = date.toISOString().split('T')[0];
-                }
-            }
-        } catch (error) {
-            console.error('Error loading item:', error);
-            showToast('Error loading item data', 'error');
-        }
-    }
-
-    function showToast(message, type = 'success') {
-        const toast = document.getElementById('toast');
-        toast.textContent = message;
-        toast.style.background = type === 'error' ? '#ff6b6b' : '#51cf66';
-        toast.classList.add('show');
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, 3000);
-    }
-</script>
-</body>
-</html>

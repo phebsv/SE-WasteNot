@@ -12,53 +12,64 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ========= API CONFIGURATION =========
-  const API_URL = 'http://localhost:8081/api/orders';
-  let orders = [];
+  // ========= ORDER DATA (aligned with consumer-marketplace.js) =========
+  // status: "pending" | "ready" | "completed" | "cancelled"
+  // productId must match the products[] id in consumer-marketplace.js
 
-  // ========= LOAD ORDERS FROM BACKEND =========
-  async function loadOrders() {
-    try {
-      const userId = localStorage.getItem('userId');
-      if (!userId) {
-        console.error('User ID not found');
-        return;
-      }
-
-      const response = await fetch(`${API_URL}/consumer/${userId}`);
-      if (!response.ok) throw new Error('Failed to fetch orders');
-      
-      const data = await response.json();
-      
-      // Transform backend data to match frontend format
-      orders = data.map(order => ({
-        orderId: `ORD-${String(order.id).padStart(3, '0')}`,
-        productId: order.productId,
-        image: order.product?.imageUrl || 'default-product.png',
-        name: order.product?.name || 'Unknown Product',
-        partner: order.product?.providerName || 'WasteNot Partner',
-        quantity: order.quantity,
-        priceEach: order.product?.price || 0,
-        totalPrice: order.totalPrice,
-        pickupWindow: order.product?.pickupTime || 'Flexible',
-        pickupDate: formatPickupDate(order.pickupDate),
-        status: order.status.toLowerCase()
-      }));
-      
-      renderOrders(currentFilter);
-    } catch (error) {
-      console.error('Error loading orders:', error);
-      // Show sample orders as fallback
-      orders = [];
-      renderOrders(currentFilter);
+  let orders = [
+    {
+      orderId: "ORD-001",
+      productId: 1,
+      image: "croissant.png",
+      name: "BreadTalk Croissant",
+      partner: "BreadTalk",
+      quantity: 2,
+      priceEach: 60,
+      totalPrice: 120,
+      pickupWindow: "4:00 PM – 7:30 PM",
+      pickupDate: "October 7, 2025",
+      status: "ready" // Ready for Pickup
+    },
+    {
+      orderId: "ORD-002",
+      productId: 8,
+      image: "jolly-spaghetti.jpg",
+      name: "Jollibee Jolly Spaghetti",
+      partner: "Jollibee",
+      quantity: 1,
+      priceEach: 40,
+      totalPrice: 40,
+      pickupWindow: "4:30 PM – 6:45 PM",
+      pickupDate: "October 8, 2025",
+      status: "pending" // Pending Provider Confirmation
+    },
+    {
+      orderId: "ORD-003",
+      productId: 3,
+      image: "gardenia.jpg",
+      name: "Gardenia Classic Bread",
+      partner: "Gardenia",
+      quantity: 1,
+      priceEach: 95,
+      totalPrice: 95,
+      pickupWindow: "Anytime within store hours",
+      pickupDate: "October 4, 2025",
+      status: "completed" // Completed
+    },
+    {
+      orderId: "ORD-004",
+      productId: 7,
+      image: "chickenjoy.jpg",
+      name: "Jollibee Chickenjoy Meal",
+      partner: "Jollibee",
+      quantity: 2,
+      priceEach: 75,
+      totalPrice: 150,
+      pickupWindow: "4:00 PM – 6:30 PM",
+      pickupDate: "October 7, 2025",
+      status: "cancelled" // Cancelled example
     }
-  }
-
-  function formatPickupDate(dateString) {
-    if (!dateString) return 'TBD';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  }
+  ];
 
   const ordersContainer = document.getElementById("ordersContainer");
   const tabs = document.querySelectorAll(".tab");
@@ -166,6 +177,6 @@ document.addEventListener("DOMContentLoaded", () => {
     renderOrders(currentFilter, searchInput.value);
   });
 
-  // Initial render - load from backend
-  loadOrders();
+  // Initial render
+  renderOrders();
 });

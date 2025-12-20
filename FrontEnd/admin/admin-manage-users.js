@@ -1,171 +1,41 @@
-// ===== AUTH GUARD =====
-if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "admin") {
-    window.location.href = "../login/login-consumer.html";
-}
+// // ===== AUTH GUARD (Check if admin is logged in) =====
+// if (localStorage.getItem("adminLoggedIn") !== "true") {
+//     window.location.href = "login-admin.html";
+// }
 
-const API_URL = 'http://localhost/wastenot-api/api/users.php';
-const REGISTER_API = 'http://localhost/wastenot-api/api/register.php';
+// Mock Data
+const mockProviders = [
+    { id: 'P101', name: 'Fresh Foods Inc.', contact: 'Sarah Chen', email: 'sarah@fresh.com', status: 'Active', location: 'City Center' },
+    { id: 'P102', name: 'Bakery Delights', contact: 'Tom Wilson', email: 'tom@bakery.com', status: 'Pending', location: 'North District' },
+    { id: 'P103', name: 'Meat & Produce Co.', contact: 'Rajesh Nair', email: 'raj@meatco.com', status: 'Suspended', location: 'Industrial Park' },
+];
 
-// Data storage
-let allUsers = {
-    providers: [],
-    ngos: [],
-    customers: []
+const mockNgos = [
+    { id: 'N201', name: 'Community Kitchen', contact: 'Maria Lopez', email: 'maria@ck.org', status: 'Active', area: 'Southside' },
+    { id: 'N202', name: 'Hope Relief Foundation', contact: 'David Lee', email: 'david@hope.org', status: 'Pending', area: 'West End' },
+    { id: 'N203', name: 'Green Hands Org.', contact: 'Emily Clark', email: 'emily@gh.org', status: 'Active', area: 'Citywide' },
+];
+
+const mockCustomers = [
+    { id: 'C301', name: 'John Doe', email: 'john@example.com', date: '2025-01-15', status: 'Active' },
+    { id: 'C302', name: 'Alice Smith', email: 'alice@test.com', date: '2025-03-22', status: 'Active' },
+    { id: 'C303', name: 'Bob Johnson', email: 'bob@mail.com', date: '2025-05-01', status: 'Suspended' },
+];
+
+// Map tab names to data arrays
+const dataMap = {
+    providers: { data: mockProviders, tbodyId: 'providersTbody', render: renderProviders },
+    ngos: { data: mockNgos, tbodyId: 'ngosTbody', render: renderNgos },
+    customers: { data: mockCustomers, tbodyId: 'customersTbody', render: renderCustomers },
 };
 
 let activeTab = 'providers'; // Default active tab
 
-// ===== LOAD USERS FROM BACKEND =====
-async function loadUsers(role) {
-    try {
-        const token = localStorage.getItem('authToken');
-        console.log(`Loading ${role} users...`);
-        console.log(`Token: ${token ? 'Present' : 'Missing'}`);
-        
-        const response = await fetch(`${API_URL}?role=${role}`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        
-        console.log(`Response status for ${role}:`, response.status);
-        
-        if (response.ok) {
-            const data = await response.json();
-            console.log(`${role} data:`, data);
-            return data.users || [];
-        } else {
-            console.error(`Failed to load ${role}:`, response.status);
-            return [];
-        }
-    } catch (error) {
-        console.error(`Error loading ${role} users:`, error);
-        return [];
-    }
-}
-
-// ===== UPDATE USER STATUS =====
-async function updateUserStatus(userId, newStatus) {
-    try {
-        const token = localStorage.getItem('authToken');
-        const response = await fetch(API_URL, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ id: userId, status: newStatus })
-        });
-        
-        if (response.ok) {
-            return true;
-        }
-        return false;
-    } catch (error) {
-        console.error('Error updating user:', error);
-        return false;
-    }
-}
-
-// ===== LOAD ALL USERS =====
-async function loadAllUsers() {
-    console.log('Loading all users...');
-    allUsers.providers = await loadUsers('partner');
-    allUsers.ngos = await loadUsers('ngo');
-    allUsers.customers = await loadUsers('consumer');
-    console.log('All users loaded:', allUsers);
-}
-
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
     
     const tabs = document.querySelectorAll('.tab-btn');
     const searchInput = document.getElementById('userSearch');
     const statusFilter = document.getElementById('statusFilter');
-    
-    // Load all users from backend
-    await loadAllUsers();
-    
-    // Render initial tab
-    filterAndRender();
-    
-    // Setup logout
-    document.getElementById('logoutBtn')?.addEventListener('click', () => {
-        localStorage.clear();
-        window.location.href = "../login/login-consumer.html";
-    });
-
-    // === CREATE USER MODAL HANDLING ===
-    const createUserBtn = document.getElementById('createUserBtn');
-    const createUserModal = document.getElementById('createUserModal');
-    const closeCreateModal = document.getElementById('closeCreateModal');
-    const cancelCreateBtn = document.getElementById('cancelCreateBtn');
-    const createUserForm = document.getElementById('createUserForm');
-
-    console.log('Create User Button:', createUserBtn);
-    console.log('Create User Modal:', createUserModal);
-
-    function openCreateModal() {
-        console.log('Opening modal...');
-        createUserModal.classList.remove('hidden');
-        createUserForm.reset();
-    }
-
-    function closeCreateModalHandler() {
-        console.log('Closing modal...');
-        createUserModal.classList.add('hidden');
-    }
-
-    if (createUserBtn) {
-        createUserBtn.addEventListener('click', openCreateModal);
-        console.log('Event listener added to create button');
-    } else {
-        console.error('Create User Button not found!');
-    }
-    closeCreateModal?.addEventListener('click', closeCreateModalHandler);
-    cancelCreateBtn?.addEventListener('click', closeCreateModalHandler);
-
-    createUserModal?.addEventListener('click', (e) => {
-        if (e.target === createUserModal) closeCreateModalHandler();
-    });
-
-    createUserForm?.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const userData = {
-            email: document.getElementById('newUserEmail').value.trim(),
-            password: document.getElementById('newUserPassword').value,
-            full_name: document.getElementById('newUserName').value.trim(),
-            role: document.getElementById('newUserRole').value,
-            phone: document.getElementById('newUserPhone').value.trim() || null,
-            location: document.getElementById('newUserLocation').value.trim() || null
-        };
-
-        if (!userData.role) {
-            showToast('Please select a user role', 'danger');
-            return;
-        }
-
-        try {
-            const response = await fetch(REGISTER_API, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(userData)
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                showToast(`${userData.role.toUpperCase()} account created successfully!`, 'success');
-                closeCreateModalHandler();
-                // Reload users and refresh display
-                await loadAllUsers();
-                filterAndRender();
-            } else {
-                showToast(data.message || 'Failed to create account', 'danger');
-            }
-        } catch (error) {
-            console.error('Error creating user:', error);
-            showToast('Error creating account. Please try again.', 'danger');
-        }
-    });
 
     // --- Tab Switching Logic ---
     tabs.forEach(button => {
@@ -190,19 +60,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // --- Rendering Functions ---
-    function createActions(id, status) {
-        const buttons = [`<button class="btn-secondary btn-sm" onclick="viewDetails(${id})">View</button>`];
-        
-        if (status === 'active') {
-            buttons.push(`<button class="btn-sm btn-danger" onclick="changeStatus(${id}, 'suspended')">Suspend</button>`);
-        } else if (status === 'suspended') {
-            buttons.push(`<button class="btn-sm btn-success" onclick="changeStatus(${id}, 'active')">Activate</button>`);
-        } else if (status === 'pending') {
-            buttons.push(`<button class="btn-sm btn-success" onclick="changeStatus(${id}, 'active')">Approve</button>`);
-            buttons.push(`<button class="btn-sm btn-danger" onclick="changeStatus(${id}, 'suspended')">Reject</button>`);
-        }
-        
-        return buttons.join(' ');
+    function createActions(id) {
+        return `
+            <button class="btn-secondary btn-sm" onclick="viewDetails('${activeTab}', '${id}')">View</button>
+            <button class="btn-sm btn-danger" onclick="suspendUser('${activeTab}', '${id}')">Suspend</button>
+        `;
     }
 
     function renderProviders(data) {
@@ -210,14 +72,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         tbody.innerHTML = '';
         data.forEach(p => {
             const row = tbody.insertRow();
-            const statusLower = (p.status || 'pending').toLowerCase();
             row.innerHTML = `
                 <td>${p.id}</td>
-                <td>${p.full_name}</td>
-                <td>${p.phone || 'N/A'}</td>
+                <td>${p.name}</td>
+                <td>${p.contact}</td>
                 <td>${p.email}</td>
-                <td><span class="status-badge status-${statusLower}">${statusLower}</span></td>
-                <td>${createActions(p.id, statusLower)}</td>
+                <td><span class="status-badge status-${p.status}">${p.status}</span></td>
+                <td>${createActions(p.id)}</td>
             `;
         });
     }
@@ -227,14 +88,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         tbody.innerHTML = '';
         data.forEach(n => {
             const row = tbody.insertRow();
-            const statusLower = (n.status || 'pending').toLowerCase();
             row.innerHTML = `
                 <td>${n.id}</td>
-                <td>${n.full_name}</td>
-                <td>${n.phone || 'N/A'}</td>
-                <td>${n.address || 'N/A'}</td>
-                <td><span class="status-badge status-${statusLower}">${statusLower}</span></td>
-                <td>${createActions(n.id, statusLower)}</td>
+                <td>${n.name}</td>
+                <td>${n.contact}</td>
+                <td>${n.area}</td>
+                <td><span class="status-badge status-${n.status}">${n.status}</span></td>
+                <td>${createActions(n.id)}</td>
             `;
         });
     }
@@ -244,15 +104,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         tbody.innerHTML = '';
         data.forEach(c => {
             const row = tbody.insertRow();
-            const date = c.created_at ? new Date(c.created_at).toLocaleDateString() : 'N/A';
-            const statusLower = (c.status || 'pending').toLowerCase();
             row.innerHTML = `
                 <td>${c.id}</td>
-                <td>${c.full_name}</td>
+                <td>${c.name}</td>
                 <td>${c.email}</td>
-                <td>${date}</td>
-                <td><span class="status-badge status-${statusLower}">${statusLower}</span></td>
-                <td>${createActions(c.id, statusLower)}</td>
+                <td>${c.date}</td>
+                <td><span class="status-badge status-${c.status}">${c.status}</span></td>
+                <td>${createActions(c.id)}</td>
             `;
         });
     }
@@ -261,33 +119,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     function filterAndRender() {
         const searchText = searchInput.value.toLowerCase();
         const statusText = statusFilter.value;
-        
-        // Get current data based on active tab
-        let currentData = [];
-        let renderer = null;
-        
-        if (activeTab === 'providers') {
-            currentData = allUsers.providers;
-            renderer = renderProviders;
-        } else if (activeTab === 'ngos') {
-            currentData = allUsers.ngos;
-            renderer = renderNgos;
-        } else if (activeTab === 'customers') {
-            currentData = allUsers.customers;
-            renderer = renderCustomers;
-        }
+        const currentData = dataMap[activeTab].data;
+        const renderer = dataMap[activeTab].render;
 
         const filteredData = currentData.filter(user => {
             // Filter 1: Status
             const matchesStatus = !statusText || user.status === statusText;
 
             // Filter 2: Search (Name, Contact, Email, etc.)
-            const searchableFields = [
-                user.full_name || '',
-                user.email || '',
-                user.phone || '',
-                user.location || ''
-            ].join(' ').toLowerCase();
+            const searchableFields = Object.values(user).join(' ').toLowerCase();
             const matchesSearch = searchableFields.includes(searchText);
 
             return matchesStatus && matchesSearch;
@@ -296,37 +136,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         renderer(filteredData);
     }
     
-    // --- Global Actions ---
-    window.viewDetails = async (id) => {
-        try {
-            const token = localStorage.getItem('authToken');
-            const response = await fetch(`${API_URL}?id=${id}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                alert(`User Details:\n\nName: ${data.user.full_name}\nEmail: ${data.user.email}\nPhone: ${data.user.phone || 'N/A'}\nRole: ${data.user.role}\nStatus: ${data.user.status}\nLocation: ${data.user.location || 'N/A'}`);
-            }
-        } catch (error) {
-            console.error('Error viewing user:', error);
-            showToast('Failed to load user details', 'danger');
-        }
+    // --- Global Actions (Mock) ---
+    window.viewDetails = (type, id) => {
+        alert(`Viewing details for ${type.slice(0, -1)} ID: ${id}`);
     };
 
-    window.changeStatus = async (id, newStatus) => {
-        const actionText = newStatus === 'active' ? 'approve' : newStatus === 'suspended' ? 'suspend' : 'update';
-        
-        if (confirm(`Are you sure you want to ${actionText} this user?`)) {
-            const success = await updateUserStatus(id, newStatus);
-            if (success) {
-                showToast(`User ${actionText}ed successfully`, 'success');
-                // Reload data and refresh display
-                await loadAllUsers();
-                filterAndRender();
-            } else {
-                showToast(`Failed to ${actionText} user`, 'danger');
-            }
+    window.suspendUser = (type, id) => {
+        if(confirm(`Are you sure you want to suspend ${type.slice(0, -1)} ID: ${id}?`)) {
+            // MOCK: Update data in the array and re-render
+            const userArray = dataMap[type].data;
+            const user = userArray.find(u => u.id === id);
+            if (user) user.status = 'Suspended';
+            filterAndRender();
+            showToast(`User ${id} has been suspended.`, "danger");
         }
     };
     
@@ -345,4 +167,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     // Initial render for the default 'providers' tab
     filterAndRender();
+
+    // Logout Handler
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+        localStorage.removeItem("adminLoggedIn");
+        window.location.href = "login-admin.html";
+    });
 });

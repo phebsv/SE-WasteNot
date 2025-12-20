@@ -12,6 +12,44 @@
 </head>
 
 <body>
+  <script>
+    async function checkAuth() {
+        try {
+            const response = await fetch('http://localhost/wastenot-api/api/check-session.php', {
+                credentials: 'include' // This is crucial for sending cookies/sessions
+            });
+            
+            const data = await response.json();
+            
+            if (!data.logged_in) {
+                window.location.href = "../auth/login.html";
+                return;
+            }
+            
+            // Check role matches
+            const expectedRole = 'consumer'; 
+            if (data.user.role !== expectedRole) {
+                window.location.href = "../auth/login.html";
+                return;
+            }
+            
+            // Update UI with user info
+            // Note: We match the ID 'displayUserName' used in the HTML below
+            const nameElement = document.getElementById('displayUserName');
+            if (nameElement) {
+                nameElement.textContent = data.user.full_name;
+            }
+            
+        } catch (error) {
+            console.error('Auth check failed:', error);
+            window.location.href = "../auth/login.html";
+        }
+    }
+
+    // Run on page load
+    checkAuth();
+  </script>
+
   <div class="layout">
 
     <!-- ===== SIDEBAR ===== -->
@@ -20,12 +58,12 @@
         <span class="logo-mark">WasteNot</span>
       </div>
 
-      <nav class="sidebar-nav">
-        <a href="#" class="nav-item active">Dashboard</a>
+     <nav class="sidebar-nav">
+        <a href="consumer-dashboard.html" class="nav-item active">Dashboard</a>
         <a href="consumer-marketplace.html" class="nav-item">Marketplace</a>
         <a href="consumer-mapview.html" class="nav-item">Map View</a>
-        <a href="claim.html" class="nav-item">Claims</a>
-        <a href="consumer-profile.html" class="nav-item">Account</a>
+        <a href="consumer-orders.html" class="nav-item">My Order / Claims</a>
+        <a href="consumer-profile.html" class="nav-item">Profile / Settings</a>
       </nav>
 
       <button class="logout-btn">Logout</button>
@@ -36,7 +74,7 @@
       <!-- Top bar -->
       <header class="topbar">
         <div>
-          <h1 class="topbar-title">Welcome, <span class="accent">User!</span></h1>
+          <h1 class="topbar-title">Welcome, <span class="accent" id="displayUserName">User!</span></h1>
           <p class="topbar-subtitle">
             Here’s a quick overview of your savings and recent claims.
           </p>
@@ -124,3 +162,4 @@
   <script src="../notifications.js"></script>
 </body>
 </html>
+

@@ -19,12 +19,12 @@
             </div>
 
             <nav class="sidebar-nav">
-                <a href="consumer-dashboard.html" class="nav-item">Dashboard</a>
-                <a href="consumer-marketplace.html" class="nav-item active">Marketplace</a>
-                <a href="consumer-mapview.html" class="nav-item">Map View</a>
-                <a href="claim.html" class="nav-item">Claims</a>
-                <a href="consumer-profile.html" class="nav-item">Account</a>
-            </nav>
+        <a href="consumer-dashboard.html" class="nav-item">Dashboard</a>
+        <a href="consumer-marketplace.html" class="nav-item active">Marketplace</a>
+        <a href="consumer-mapview.html" class="nav-item">Map View</a>
+        <a href="consumer-orders.html" class="nav-item">My Order / Claims</a>
+        <a href="consumer-profile.html" class="nav-item">Profile / Settings</a>
+      </nav>
 
             <button class="logout-btn" id="logoutBtn">Logout</button>
         </aside>
@@ -56,27 +56,48 @@
                         type="text"
                         id="searchInput"
                         class="market-search"
-                        placeholder="Search products, partners..."
+                        placeholder="Got something you're looking for?"
                     />
+                </div>
+
+                <div class="filter-row">
+                    <button class="filter-chip active" data-filter="all">All</button>
+                    <button class="filter-chip" data-filter="high-discount">High Discount</button>
+                    <button class="filter-chip" data-filter="under-50">Under ₱50</button>
+                    <button class="filter-chip" data-filter="breads">Breads & Pastries</button>
+                    <button class="filter-chip" data-filter="drinks">Drinks & Refreshments</button>
                 </div>
             </section>
 
-            <!-- Filters Sidebar -->
-            <section class="filters-section">
-                <div class="filter-panel">
-                    <div class="filter-group">
-                        <h3 class="filter-title">Category</h3>
-                        <div id="categoryFilters" class="filter-options">
-                            <!-- Categories will be populated by JS -->
-                        </div>
-                    </div>
+            <!-- Partners -->
+            <section class="partners-section">
+                <div class="section-header">
+                    <h2 class="section-title">Our Partners</h2>
+                    <span class="section-caption">Tap a partner to filter products</span>
+                </div>
 
-                    <div class="filter-group">
-                        <h3 class="filter-title">Partner</h3>
-                        <div id="partnerFilters" class="filter-options">
-                            <!-- Partners will be populated by JS -->
-                        </div>
-                    </div>
+                <div class="partner-logos" id="partnerList">
+                    <!-- NOTE: Update src paths to match your images folder -->
+                    <button class="partner-chip" data-partner="Goldilocks">
+                        <img src="goldilocks-logo.png" alt="Goldilocks" />
+                        <span>Goldilocks</span>
+                    </button>
+                    <button class="partner-chip" data-partner="BreadTalk">
+                        <img src="breadtalk-logo.jpg" alt="BreadTalk" />
+                        <span>BreadTalk</span>
+                    </button>
+                    <button class="partner-chip" data-partner="Stop N Shop">
+                        <img src="Stop-and-Shop-logo.png" alt="Stop N Shop" />
+                        <span>Stop N Shop</span>
+                    </button>
+                    <button class="partner-chip" data-partner="Jollibee">
+                        <img src="jollibee-logo.jpg" alt="Jollibee" />
+                        <span>Jollibee</span>
+                    </button>
+                    <button class="partner-chip" data-partner="SM Supermarket">
+                        <img src="sm-logo.jpg" alt="SM" />
+                        <span>SM</span>
+                    </button>
                 </div>
             </section>
 

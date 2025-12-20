@@ -5,8 +5,6 @@
   <title>WasteNot – Consumer Map View</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Leaflet CSS (OpenStreetMap) -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="consumer-mapview.css">
 </head>
 
@@ -16,16 +14,14 @@
 
     <!-- ========== SIDEBAR ========== -->
     <aside class="sidebar">
-      <div class="sidebar-logo">
-        <span class="logo-mark">WasteNot</span>
-      </div>
+      <div class="sidebar-logo">WasteNot</div>
 
       <nav class="sidebar-nav">
         <a href="consumer-dashboard.html" class="nav-item">Dashboard</a>
         <a href="consumer-marketplace.html" class="nav-item">Marketplace</a>
         <a href="consumer-mapview.html" class="nav-item active">Map View</a>
-        <a href="claim.html" class="nav-item">Claims</a>
-        <a href="consumer-profile.html" class="nav-item">Account</a>
+        <a href="consumer-orders.html" class="nav-item">My Order / Claims</a>
+        <a href="consumer-profile.html" class="nav-item">Profile / Settings</a>
       </nav>
 
       <button id="logoutBtn" class="logout">Logout</button>
@@ -35,55 +31,51 @@
     <main class="main">
 
       <!-- TOP BAR -->
-          <div class="topbar">
-            <div>
-                <h1 class="topbar-title">Map View</h1>
-                <p class="topbar-subtitle">See our partners near you</p>
-            </div>
-            <div class="topbar-actions">
-              <button class="icon-btn" aria-label="Notifications">🔔</button>
-              <div class="avatar" title="You">P</div>
-            </div>
+      <header class="topbar">
+        <div class="search-box">
+          <input type="text" id="searchInput" placeholder="Got something you're looking for?" />
+          <span class="search-icon">🔍</span>
         </div>
 
+        <div class="topbar-right">
+          <button class="icon-btn">🔔</button>
+          <div class="avatar">C</div>
+        </div>
+      </header>
+
+      <div class="back-row">
+        <button class="back-btn" onclick="history.back()">← Back</button>
+      </div>
+
+      <h2 class="section-title">Our partners near you</h2>
 
       <!-- MAP CARD -->
       <div class="map-card">
-        <div id="map" class="leaflet-map"></div>
-        
-        <!-- Provider info sidebar -->
-        <div id="providerInfo" class="provider-info hidden">
-          <button id="closeProviderBtn" class="close-btn">×</button>
-          <h3 id="providerName"></h3>
-          <p id="providerDistance" class="distance"></p>
-          <p id="providerAddress" class="address"></p>
-          <div class="provider-details">
-            <span id="providerRating" class="rating"></span>
-            <span id="providerHours" class="hours"></span>
-          </div>
-          <button id="viewDetailsBtn" class="provider-btn">📍 View Directions</button>
-          <button id="contactBtn" class="provider-btn secondary">📞 Contact Provider</button>
+        <img src="map-static.jpg" class="map-image" alt="Map showing providers">
+
+        <!-- Provider pins (fake interactive) -->
+        <div class="pin" data-id="1" style="top: 38%; left: 52%;"></div>
+        <div class="pin" data-id="2" style="top: 45%; left: 60%;"></div>
+        <div class="pin" data-id="3" style="top: 58%; left: 40%;"></div>
+        <div class="pin" data-id="4" style="top: 62%; left: 70%;"></div>
+
+        <!-- Pop-up box -->
+        <div id="popup" class="popup hidden">
+          <h3 id="popupName"></h3>
+          <p id="popupDistance"></p>
+          <button id="viewDetailsBtn" class="popup-btn">View Details</button>
         </div>
       </div>
 
       <div class="bottom-row">
-        <div class="location-info">
-          <p id="currentLocation" class="location-text">📍 Getting your location...</p>
-          <p id="searchRadius" class="radius-text">Search radius: <span id="radiusValue">10</span> km</p>
-        </div>
-        <div class="controls">
-          <input type="range" id="radiusSlider" min="1" max="50" value="10" class="radius-slider">
-          <button id="recenterBtn" class="btn-secondary">🎯 My Location</button>
-        </div>
+        <p class="hint">Click pinned for details</p>
+        <button id="filterBtn" class="filter-btn">Filter the distance ⚙️</button>
       </div>
 
     </main>
 
   </div>
 
-  <!-- Leaflet JavaScript (OpenStreetMap) -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="consumer-mapview.js"></script>
-  <script src="../notifications.js"></script>
 </body>
 </html>

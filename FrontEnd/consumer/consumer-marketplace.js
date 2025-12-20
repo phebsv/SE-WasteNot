@@ -1,248 +1,245 @@
-// ========= AUTH GUARD =========
-if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "consumer") {
-  window.location.href = "../login/login-consumer.html";
+// ========= SAMPLE DATA =========
+const products = [
+  {
+    id: 1,
+    name: "BreadTalk Croissant",
+    partner: "BreadTalk",
+    price: 60,
+    oldPrice: 120,
+    discountPercent: 50,
+    category: "breads",
+    image: "croissant.png",
+    description: "Buttery croissant, best consumed within 24 hours.",
+    expiry: "Today • 8 PM",
+    pickupWindow: "4:00 PM – 7:30 PM"
+  },
+  {
+    id: 2,
+    name: "Goldilocks Cake Slice",
+    partner: "Goldilocks",
+    price: 28,
+    oldPrice: 45,
+    discountPercent: 35,
+    category: "breads",
+    image: "goldilocks-slice.jpg",
+    description: "Moist cake slice, perfect with coffee. Near best-before date.",
+    expiry: "Tomorrow • 10 AM",
+    pickupWindow: "3:00 PM – 8:00 PM"
+  },
+  {
+    id: 3,
+    name: "Gardenia Classic Bread",
+    partner: "Gardenia",
+    price: 95,
+    oldPrice: 105,
+    discountPercent: 10,
+    category: "breads",
+    image: "gardenia.jpg",
+    description: "Classic loaf, still fresh. Best-before in 2 days.",
+    expiry: "In 2 days",
+    pickupWindow: "Anytime within store hours"
+  },
+  {
+    id: 4,
+    name: "Stop N Shop Fruit Cup",
+    partner: "Stop N Shop",
+    price: 85,
+    oldPrice: 120,
+    discountPercent: 30,
+    category: "drinks",
+    image: "fruit-cup.jpg",
+    description: "Mixed fruits in syrup. Slightly bruised but perfectly edible.",
+    expiry: "Tomorrow • 6 PM",
+    pickupWindow: "2:00 PM – 6:00 PM"
+  },
+  {
+    id: 5,
+    name: "Stop N Shop Mango Juice",
+    partner: "Stop N Shop",
+    price: 30,
+    oldPrice: 50,
+    discountPercent: 40,
+    category: "drinks",
+    image: "mango-juice.jpg",
+    description: "Chilled mango drink from near-expiry stock.",
+    expiry: "Today • 9 PM",
+    pickupWindow: "5:00 PM – 8:30 PM"
+  },
+  {
+    id: 6,
+    name: "Assorted Pastry Box",
+    partner: "SM Supermarket",
+    price: 95,
+    oldPrice: 150,
+    discountPercent: 37,
+    category: "breads",
+    image: "pastry-box.jpg",
+    description: "Assorted bread and pastries from today’s unsold items.",
+    expiry: "Today • 10 PM",
+    pickupWindow: "5:30 PM – 9:30 PM"
+  },
+  {
+  id: 7,
+  name: "Jollibee Chickenjoy Meal",
+  partner: "Jollibee",
+  price: 75,
+  oldPrice: 150,
+  discountPercent: 50,
+  category: "meals",
+  image: "chickenjoy.jpg", 
+  description: "1pc Chickenjoy with rice. Near end-of-day surplus but perfectly safe and delicious.",
+  expiry: "Today • 7 PM",
+  pickupWindow: "4:00 PM – 6:30 PM"
+},
+{
+  id: 8,
+  name: "Jollibee Jolly Spaghetti",
+  partner: "Jollibee",
+  price: 40,
+  oldPrice: 60,
+  discountPercent: 33,
+  category: "meals",
+  image: "jolly-spaghetti.jpg", 
+  description: "Sweet-style Jolly Spaghetti from end-of-day batch. Best consumed within the hour.",
+  expiry: "Today • 7 PM",
+  pickupWindow: "4:30 PM – 6:45 PM"
 }
+];
 
-// ========= BACKEND API CONFIGURATION =========
-const PRODUCTS_API = "http://localhost:8081/api/products";
-const ORDERS_API = "http://localhost:8081/api/orders";
+// ========= DOM ELEMENTS =========
+const productGrid = document.getElementById("productGrid");
+const searchInput = document.getElementById("searchInput");
+const filterChips = document.querySelectorAll(".filter-chip");
+const partnerChips = document.querySelectorAll(".partner-chip");
+const resultsText = document.getElementById("resultsText");
+const avatarInitial = document.getElementById("avatarInitial");
+const logoutBtn = document.getElementById("logoutBtn");
 
-// ========= GLOBAL STATE =========
-let allProducts = [];
-let filteredProducts = [];
-let selectedCategories = new Set();
-let selectedPartners = new Set();
-let searchQuery = "";
-
-// ========= FETCH PRODUCTS FROM BACKEND =========
-async function loadProducts() {
+// ========= SESSION =========
+(function checkConsumerSession() {
   try {
-    console.log('Fetching products from:', PRODUCTS_API);
-    const response = await fetch(PRODUCTS_API);
-    const data = await response.json();
-    
-    console.log('API Response:', data);
-    
-    if (data.success && data.data && Array.isArray(data.data)) {
-      allProducts = data.data.map(product => ({
-        id: product.id,
-        name: product.name,
-        partner: product.partnerName,
-        partnerId: product.partnerId,
-        price: product.price,
-        oldPrice: product.oldPrice,
-        discountPercent: product.discountPercent,
-        category: product.category || 'general',
-        imageUrl: product.imageUrl || 'https://via.placeholder.com/200',
-        description: product.description,
-        expiryDisplay: product.expiryDisplay || 'Check with provider',
-        pickupWindow: product.pickupWindow || 'Contact provider',
-        quantity: product.quantity || 0,
-        status: product.status || 'ACTIVE'
-      }));
-      
-      console.log('Loaded products:', allProducts);
-      populateFilters();
-      applyFilters();
-    } else {
-      console.error('Invalid response format:', data);
-      showError('Failed to load products from backend.');
+    const session = JSON.parse(localStorage.getItem("consumerSession"));
+    if (session && session.name && avatarInitial) {
+      avatarInitial.textContent = session.name.charAt(0).toUpperCase();
     }
-  } catch (error) {
-    console.error('Error fetching products:', error);
-    showError('Could not connect to server. Please ensure backend is running on port 8081.');
+  } catch (err) {
+    console.warn("Invalid session", err);
   }
-}
+})();
 
-// ========= POPULATE FILTER OPTIONS =========
-function populateFilters() {
-  const categories = [...new Set(allProducts.map(p => p.category))].sort();
-  const partners = [...new Set(allProducts.map(p => p.partner))].sort();
-  
-  console.log('Categories:', categories);
-  console.log('Partners:', partners);
-  
-  const categoryContainer = document.getElementById("categoryFilters");
-  const partnerContainer = document.getElementById("partnerFilters");
-  
-  if (categoryContainer) {
-    categoryContainer.innerHTML = categories.map(cat => `
-      <label class="filter-checkbox">
-        <input type="checkbox" class="category-filter" value="${cat}" data-category="${cat}">
-        <span>${cat.charAt(0).toUpperCase() + cat.slice(1)}</span>
-      </label>
-    `).join('');
-    
-    document.querySelectorAll('.category-filter').forEach(checkbox => {
-      checkbox.addEventListener('change', (e) => {
-        if (e.target.checked) {
-          selectedCategories.add(e.target.value);
-        } else {
-          selectedCategories.delete(e.target.value);
-        }
-        applyFilters();
-      });
-    });
-  }
-  
-  if (partnerContainer) {
-    partnerContainer.innerHTML = partners.map(partner => `
-      <label class="filter-checkbox">
-        <input type="checkbox" class="partner-filter" value="${partner}" data-partner="${partner}">
-        <span>${partner}</span>
-      </label>
-    `).join('');
-    
-    document.querySelectorAll('.partner-filter').forEach(checkbox => {
-      checkbox.addEventListener('change', (e) => {
-        if (e.target.checked) {
-          selectedPartners.add(e.target.value);
-        } else {
-          selectedPartners.delete(e.target.value);
-        }
-        applyFilters();
-      });
-    });
-  }
-}
-
-// ========= FILTER AND SEARCH LOGIC =========
-function applyFilters() {
-  filteredProducts = allProducts.filter(product => {
-    // Category filter
-    if (selectedCategories.size > 0 && !selectedCategories.has(product.category)) {
-      return false;
-    }
-    
-    // Partner filter
-    if (selectedPartners.size > 0 && !selectedPartners.has(product.partner)) {
-      return false;
-    }
-    
-    // Search filter
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      const matches = product.name.toLowerCase().includes(query) ||
-                     product.description.toLowerCase().includes(query) ||
-                     product.partner.toLowerCase().includes(query);
-      if (!matches) return false;
-    }
-    
-    // Status filter - only show active products
-    if (product.status !== 'ACTIVE') {
-      return false;
-    }
-    
-    return true;
-  });
-  
-  console.log('Filtered products:', filteredProducts);
-  renderProducts();
-}
+// ========= STATE =========
+let activePartner = "All";
+let activeFilter = "all";
+let searchTerm = "";
 
 // ========= RENDER PRODUCTS =========
 function renderProducts() {
-  const productGrid = document.getElementById("productGrid");
-  const resultsText = document.getElementById("resultsText");
-  
-  if (!productGrid) return;
-  
-  if (filteredProducts.length === 0) {
-    productGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">No products found. Try adjusting your filters.</div>';
-    if (resultsText) resultsText.textContent = `Showing 0 results`;
-    return;
+  productGrid.innerHTML = "";
+
+  const filtered = products.filter((p) => {
+    // partner filter
+    if (activePartner !== "All" && p.partner !== activePartner) return false;
+
+    // search filter
+    if (searchTerm.trim() !== "") {
+      const term = searchTerm.toLowerCase();
+      const matches =
+        p.name.toLowerCase().includes(term) ||
+        p.partner.toLowerCase().includes(term) ||
+        (p.category && p.category.toLowerCase().includes(term));
+      if (!matches) return false;
+    }
+
+    // filter chips
+    switch (activeFilter) {
+      case "high-discount":
+        if (p.discountPercent < 30) return false;
+        break;
+      case "under-50":
+        if (p.price >= 50) return false;
+        break;
+      case "breads":
+        if (p.category !== "breads") return false;
+        break;
+      case "drinks":
+        if (p.category !== "drinks") return false;
+        break;
+      case "all":
+      default:
+        break;
+    }
+
+    return true;
+  });
+
+  // Update text
+  if (filtered.length === 0) {
+    resultsText.textContent = "No results. Try adjusting filters.";
+  } else {
+    resultsText.textContent =
+      activePartner === "All" && activeFilter === "all" && !searchTerm
+        ? "Showing all deals"
+        : `Showing ${filtered.length} item${filtered.length > 1 ? "s" : ""}`;
   }
-  
-  productGrid.innerHTML = filteredProducts.map(product => `
-    <article class="product-card" data-product-id="${product.id}">
-      <div class="product-image">
-        <img src="${product.imageUrl}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/200'">
-        ${product.discountPercent ? `<span class="discount-badge">${product.discountPercent}% OFF</span>` : ''}
+
+  // Create cards
+  filtered.forEach((product) => {
+    const card = document.createElement("article");
+    card.className = "product-card";
+
+    card.innerHTML = `
+      <div class="discount-badge">${product.discountPercent}% Off</div>
+      <img src="${product.image}" alt="${product.name}">
+      <div class="product-name">${product.name}</div>
+      <div class="product-meta">${product.partner} • ${product.expiry}</div>
+      <div class="product-price-row">
+        <span class="product-price">₱${product.price}</span>
+        ${product.oldPrice ? `<span class="product-old-price">₱${product.oldPrice}</span>` : ""}
       </div>
-      <div class="product-content">
-        <div class="product-partner">${product.partner}</div>
-        <h3 class="product-name">${product.name}</h3>
-        <p class="product-description">${product.description || 'No description available'}</p>
-        <div class="product-meta">
-          <div class="meta-item">
-            <span class="meta-label">Category:</span>
-            <span>${product.category}</span>
-          </div>
-          <div class="meta-item">
-            <span class="meta-label">Pickup:</span>
-            <span>${product.pickupWindow}</span>
-          </div>
-          <div class="meta-item">
-            <span class="meta-label">Expiry:</span>
-            <span>${product.expiryDisplay}</span>
-          </div>
-          <div class="meta-item">
-            <span class="meta-label">Available:</span>
-            <span>${product.quantity} units</span>
-          </div>
-        </div>
-        <div class="product-footer">
-          <div class="product-pricing">
-            ${product.oldPrice ? `<span class="old-price">₱${product.oldPrice}</span>` : ''}
-            <span class="current-price">₱${product.price}</span>
-          </div>
-          <button class="product-action-btn" onclick="claimProduct(${product.id}, '${product.name}')">
-            ${product.discountPercent ? 'Buy Now' : 'Claim'}
-          </button>
-        </div>
-      </div>
-    </article>
-  `).join('');
-  
-  if (resultsText) {
-    resultsText.textContent = `Showing ${filteredProducts.length} of ${allProducts.length} products`;
-  }
-}
+      <div class="product-arrow">›</div>
+    `;
 
-// ========= CLAIM/BUY PRODUCT =========
-function claimProduct(productId, productName) {
-  alert(`Feature coming soon: You would claim "${productName}" (Product ID: ${productId})`);
-  // TODO: Implement order creation endpoint
-}
-
-// ========= SEARCH HANDLER =========
-function handleSearch(event) {
-  searchQuery = event.target.value;
-  applyFilters();
-}
-
-// ========= ERROR DISPLAY =========
-function showError(message) {
-  const errorDiv = document.createElement('div');
-  errorDiv.style.cssText = 'padding: 20px; background: #fee; color: #c00; border-radius: 8px; margin: 20px; text-align: center;';
-  errorDiv.textContent = message;
-  document.body.insertBefore(errorDiv, document.body.firstChild);
-}
-
-// ========= INITIALIZE PAGE =========
-document.addEventListener('DOMContentLoaded', () => {
-  // Setup logout
-  const logoutBtn = document.getElementById('logoutBtn');
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', () => {
-      localStorage.clear();
-      window.location.href = '../login/login-consumer.html';
+    // ⬇ Navigate to product page
+    card.addEventListener("click", () => {
+      window.location.href = `product.html?id=${product.id}`;
     });
-  }
-  
-  // Setup avatar
-  const avatarInitial = document.getElementById('avatarInitial');
-  const userName = localStorage.getItem('userName');
-  if (avatarInitial && userName) {
-    avatarInitial.textContent = userName.charAt(0).toUpperCase();
-  }
-  
-  // Setup search handler
-  const searchInput = document.getElementById('searchInput');
-  if (searchInput) {
-    searchInput.addEventListener('input', handleSearch);
-  }
-  
-  // Load products
-  loadProducts();
-});
+
+    productGrid.appendChild(card);
+  });
+}
+
+// ========= HANDLERS =========
+function onSearchInput(e) {
+  searchTerm = e.target.value;
+  renderProducts();
+}
+
+function onFilterChipClick(e) {
+  filterChips.forEach((chip) => chip.classList.remove("active"));
+  e.currentTarget.classList.add("active");
+  activeFilter = e.currentTarget.dataset.filter;
+  renderProducts();
+}
+
+function onPartnerChipClick(e) {
+  partnerChips.forEach((chip) => chip.classList.remove("active"));
+  e.currentTarget.classList.add("active");
+  activePartner = e.currentTarget.dataset.partner;
+  renderProducts();
+}
+
+// ========= LOGOUT =========
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", () => {
+    localStorage.removeItem("consumerSession");
+    alert("Logged out!");
+  });
+}
+
+// ========= EVENT LISTENERS =========
+searchInput.addEventListener("input", onSearchInput);
+filterChips.forEach((chip) => chip.addEventListener("click", onFilterChipClick));
+partnerChips.forEach((chip) => chip.addEventListener("click", onPartnerChipClick));
+
+// ========= INITIAL RENDER =========
+renderProducts();

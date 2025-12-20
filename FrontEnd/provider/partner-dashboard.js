@@ -1,53 +1,37 @@
-// ==== AUTH GUARD ====
-if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "partner") {
-  window.location.href = "../login/login-consumer.html";
-}
+// if (localStorage.getItem("partnerLoggedIn") !== "true") {
+//   window.location.href = "login-partner.html";
+// }
 
-const PRODUCTS_API = 'http://localhost:8081/api/products';
-const ORDERS_API = 'http://localhost:8081/api/orders';
-
-// Load partner's products and orders
-async function loadPartnerData() {
-  try {
-    const userId = localStorage.getItem('userId');
-    const [productsRes, ordersRes] = await Promise.all([
-      fetch(PRODUCTS_API),
-      fetch(ORDERS_API)
-    ]);
-    
-    const allProducts = productsRes.ok ? await productsRes.json() : [];
-    const allOrders = ordersRes.ok ? await ordersRes.json() : [];
-    
-    // Filter products by this partner
-    const listings = allProducts.filter(p => p.partnerId == userId);
-    const claims = allOrders.filter(o => listings.some(l => l.id === o.productId));
-    
-    return { listings, claims };
-  } catch (error) {
-    console.error('Error loading partner data:', error);
-    return { listings: [], claims: [] };
-  }
-}
-
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
   // ---- Session / profile ----
+  let session = {};
+  try {
+    session = JSON.parse(localStorage.getItem("partnerSession")) || {};
+  } catch (e) {
+    console.warn("Invalid partnerSession format", e);
+  }
+
   const partnerNameEl = document.getElementById("partnerName");
   const avatarInitial = document.getElementById("avatarInitial");
   const logoutBtn = document.getElementById("logoutBtn");
 
-  const partnerName = localStorage.getItem('userName') || "Partner";
+  const partnerName = session.name || "Partner";
   if (partnerNameEl) partnerNameEl.textContent = partnerName;
   if (avatarInitial) avatarInitial.textContent = partnerName.charAt(0).toUpperCase();
 
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
-      localStorage.clear();
-      window.location.href = "../login/login-consumer.html";
+      localStorage.removeItem("partnerLoggedIn");
+      localStorage.removeItem("partnerSession");
+      window.location.href = "login-partner.html";
     });
   }
 
-  // ========= STATS FROM BACKEND =========
-  const { listings, claims } = await loadPartnerData();
+  // ========= STATS FROM providerListings / providerClaims =========
+  // (provider-data.js must be loaded before this file)
+
+  const listings = Array.isArray(providerListings) ? providerListings : [];
+  const claims = Array.isArray(providerClaims) ? providerClaims : [];
 
   const totalListings = listings.length;
   const activeListings = listings.filter(l => l.status === "active").length;
@@ -118,7 +102,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       },
       options: {
         responsive: true,
-        maintainAspectRatio: true,
+        maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
           x: { grid: { display: false } },
@@ -147,7 +131,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       },
       options: {
         responsive: true,
-        maintainAspectRatio: true,
+        maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
           x: { grid: { display: false } },

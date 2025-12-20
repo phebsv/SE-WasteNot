@@ -3,11 +3,12 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Activity Logs</title>
+    <title>Pending Approvals</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="../ngo/ngo-base.css" />
     <link rel="stylesheet" href="admin.css" />
-    <link rel="stylesheet" href="admin-logs.css" />
+    <link rel="stylesheet" href="admin-manage-users.css" /> 
+    <link rel="stylesheet" href="admin-approvals.css" />
 </head>
 <body>
     <div class="layout">
@@ -15,9 +16,7 @@
             <div class="sidebar-logo"><div class="logo-mark">WasteNot</div></div>
             <nav class="sidebar-nav">
                 <a href="admin-dashboard.html" class="nav-item">Dashboard</a>
-                <a href="admin-manage-providers.html" class="nav-item">Manage Providers</a>
-                <a href="admin-manage-ngos.html" class="nav-item">Manage NGOs</a>
-                <a href="admin-manage-donations.html" class="nav-item">Manage Donations</a>
+                <a href="admin-manage-donations.html" class="nav-item">Manage Items</a>
                 <a href="admin-manage-users.html" class="nav-item">Manage Users</a>
                 <a href="admin-approvals.html" class="nav-item">Approvals</a>
                 <a href="admin-logs.html" class="nav-item active">Activity Logs</a>
@@ -31,8 +30,8 @@
         <main class="main">
             <div class="topbar">
                 <div>
-                    <h1 class="topbar-title">Activity Logs</h1>
-                    <p class="topbar-subtitle">Audit trail of important system events, user actions, and security incidents.</p>
+                    <h1 class="topbar-title">Pending Approvals</h1>
+                    <p class="topbar-subtitle">Review and decide on new Provider and NGO applications.</p>
                 </div>
                 <div class="topbar-actions">
                     <button class="icon-btn" aria-label="Notifications">🔔</button>
@@ -40,59 +39,38 @@
                 </div>
             </div>
 
-            <section class="panel log-panel">
+            <section class="panel">
                 
-                <div class="log-filters">
-                    <input type="text" id="logSearch" placeholder="Search by user or action..." class="filter-input">
-                    
-                    <select id="logTypeFilter" class="filter-select">
-                        <option value="">All Types</option>
-                        <option value="SUCCESS">Success</option>
-                        <option value="INFO">Info</option>
-                        <option value="WARNING">Warning</option>
-                        <option value="DANGER">Danger</option>
-                    </select>
-                    
-                    <select id="logActorFilter" class="filter-select">
-                        <option value="">All Actors</option>
-                        <option value="Admin">Admin</option>
-                        <option value="Provider">Provider</option>
-                        <option value="NGO">NGO</option>
-                        <option value="Customer">Customer</option>
-                        <option value="System">System</option>
-                    </select>
+                <nav class="user-tabs">
+                    <button class="tab-btn active" data-tab="provider">Provider Approvals <span class="badge" id="providerCount">0</span></button>
+                    <button class="tab-btn" data-tab="ngo">NGO Approvals <span class="badge" id="ngoCount">0</span></button>
+                </nav>
 
-                    <input type="date" id="logDateFilter" class="filter-input filter-date">
-                    
-                    <button id="resetFilters" class="btn-secondary">Reset Filters</button>
-                </div>
+                <div class="panel-header user-search-header">
+                    <input id="approvalSearch" placeholder="Search by organization name or email..." class="filter-input" />
+                    </div>
 
-                <div class="log-table-wrapper">
-                    <table class="admin-table log-table">
-                        <thead>
-                            <tr>
-                                <th>Timestamp</th>
-                                <th>Type</th>
-                                <th>User/Actor</th>
-                                <th>Action</th>
-                                <th>Details</th>
-                            </tr>
-                        </thead>
-                        <tbody id="logsContainer">
-                            </tbody>
-                    </table>
-                </div>
-                
-                <div class="pagination-controls">
-                    <button id="prevPage" class="btn-secondary" disabled>Previous</button>
-                    <span id="pageInfo">Page 1 of 1</span>
-                    <button id="nextPage" class="btn-secondary" disabled>Next</button>
+                <div class="tab-content-wrapper">
+                    
+                    <div id="provider" class="tab-content active">
+                        <table class="admin-table">
+                            <thead><tr><th>ID</th><th>Organization Name</th><th>Contact Person</th><th>Submitted Date</th><th>Documents</th><th>Actions</th></tr></thead>
+                            <tbody id="providerTbody"></tbody>
+                        </table>
+                    </div>
+
+                    <div id="ngo" class="tab-content">
+                        <table class="admin-table">
+                            <thead><tr><th>ID</th><th>NGO Name</th><th>Contact Person</th><th>Area</th><th>Documents</th><th>Actions</th></tr></thead>
+                            <tbody id="ngoTbody"></tbody>
+                        </table>
+                    </div>
                 </div>
                 
             </section>
         </main>
     </div>
 
-    <script src="admin-logs.js"></script>
+    <script src="admin-approvals.js"></script>
 </body>
 </html>

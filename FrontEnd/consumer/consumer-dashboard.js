@@ -1,7 +1,7 @@
-// === AUTH CHECK ===
-if (!localStorage.getItem("consumerLoggedIn") || localStorage.getItem("consumerLoggedIn") !== "true") {
-    window.location.href = "../login/login-consumer.html";
-}
+// // === AUTH CHECK ===
+// if (!localStorage.getItem("consumerLoggedIn") || localStorage.getItem("consumerLoggedIn") !== "true") {
+//     window.location.href = "../login/login-consumer.html";
+// }
 
 // Claims will be loaded from backend API
 let claims = [];

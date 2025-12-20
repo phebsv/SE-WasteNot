@@ -1,89 +1,42 @@
 // ===== AUTH GUARD =====
-if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "partner") {
-  window.location.href = "../login/login-consumer.html";
+if (localStorage.getItem("partnerLoggedIn") !== "true") {
+  window.location.href = "login-partner.html";
 }
 
-const PRODUCTS_API = 'http://localhost:8081/api/products';
-const ORDERS_API = 'http://localhost:8081/api/orders';
-
-// Load partner's orders (claims/pickups)
-async function loadPickups() {
+document.addEventListener("DOMContentLoaded", () => {
+  let session = {};
   try {
-    const userId = localStorage.getItem('userId');
-    const [productsRes, ordersRes] = await Promise.all([
-      fetch(PRODUCTS_API),
-      fetch(ORDERS_API)
-    ]);
-    
-    const allProducts = productsRes.ok ? await productsRes.json() : [];
-    const allOrders = ordersRes.ok ? await ordersRes.json() : [];
-    
-    const myProducts = allProducts.filter(p => p.partnerId == userId);
-    const claims = allOrders.filter(o => myProducts.some(p => p.id === o.productId));
-    
-    // Add product info to each claim
-    return claims.map(claim => {
-      const product = myProducts.find(p => p.id === claim.productId);
-      return { ...claim, product };
-    });
-  } catch (error) {
-    console.error('Error loading pickups:', error);
-    return [];
-  }
-}
+    session = JSON.parse(localStorage.getItem("partnerSession")) || {};
+  } catch {}
 
-// Update order status
-async function updateOrderStatus(orderId, status) {
-  try {
-    const response = await fetch(`${ORDERS_API}/${orderId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status })
-    });
-    return response.ok;
-  } catch (error) {
-    console.error('Error updating order:', error);
-    return false;
-  }
-}
-
-// Global functions for utility
-function showToast(message, type = "success") {
-  const toast = document.getElementById("toast");
-  if (!toast) return;
-
-  toast.textContent = message;
-  toast.className = `toast show ${type}`;
-
-  setTimeout(() => {
-    toast.className = "toast";
-  }, 2500);
-}
-
-document.addEventListener("DOMContentLoaded", async () => {
   // Avatar
   const avatarInitial = document.getElementById("avatarInitial");
-  const userName = localStorage.getItem('userName');
-  if (avatarInitial && userName) {
-    avatarInitial.textContent = userName.charAt(0).toUpperCase();
+  if (avatarInitial && session.name) {
+    avatarInitial.textContent = session.name.charAt(0).toUpperCase();
   }
 
   // Logout
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
-      localStorage.clear();
-      window.location.href = "../login/login-consumer.html";
+      localStorage.removeItem("partnerLoggedIn");
+      localStorage.removeItem("partnerSession");
+      window.location.href = "login-partner.html";
     });
   }
 
-  // ===== DATA & ELEMENTS =====
-  let claims = await loadPickups();
+  // ===== DATA =====
+  const listings = window.partnerListings || [];
+  const claims = window.partnerClaims || [];
 
   const container = document.getElementById("claimsContainer");
   const tabButtons = document.querySelectorAll(".claim-tab");
 
   let activeFilter = "all";
+
+  function getListing(claim) {
+    return listings.find((l) => l.id === claim.listingId);
+  }
 
   function renderClaims() {
     container.innerHTML = "";
@@ -94,53 +47,37 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     if (filtered.length === 0) {
-      container.innerHTML = "<p>No orders/pickups found for this category.</p>";
+      container.innerHTML = "<p>No claims found for this category.</p>";
       return;
     }
 
     filtered.forEach((claim) => {
-      const product = claim.product;
-      if (!product) return;
+      const listing = getListing(claim);
+      if (!listing) return;
 
       const card = document.createElement("article");
-      card.className = `claim-card status-${claim.status}`;
+      card.className = "claim-card";
 
       card.innerHTML = `
-        <div class="claim-image-wrapper">
-            <img src="${product.imageUrl || 'https://via.placeholder.com/150'}" alt="${product.name}" class="claim-image" />
-        </div>
-
-        <div class="claim-header">
-            <h2 class="claim-title">${product.name}</h2>
-            <span class="claim-id">#O-${claim.id}</span>
-        </div>
-
-        <div class="claim-details">
-            <p>
-                <span class="detail-label">Customer ID:</span>
-                <span class="detail-value">#${claim.userId}</span>
-            </p>
-            <p>
-                <span class="detail-label">Quantity:</span>
-                <span class="detail-value">${claim.quantity} ${product.unit || 'pcs'}</span>
-            </p>
-            <p>
-                <span class="detail-label">Order Date:</span>
-                <span class="detail-value">${new Date(claim.orderDate).toLocaleDateString()}</span>
-            </p>
-            <p>
-                <span class="detail-label">Status:</span>
-                <span class="status-badge status-${claim.status}">${claim.status}</span>
-            </p>
-        </div>
+        <img src="${listing.image}" class="claim-image" alt="${listing.title}">
         
-        <div class="claim-actions">
-            ${renderActions(claim)}
+        <div class="claim-main">
+          <div class="claim-title">${listing.title}</div>
+
+          <div class="claim-meta">
+            Claimed by: <strong>${claim.customerName}</strong><br>
+            Qty: ${claim.qty} • Pickup: ${formatPickup(claim.pickupSchedule)}<br>
+            Status: <strong>${formatStatus(claim.status)}</strong>
+          </div>
+
+          <div class="claim-actions">
+            ${renderActions(claim.status)}
+          </div>
         </div>
       `;
 
-      // --- ACTION BUTTONS LISTENER ---
-      card.querySelectorAll(".claim-actions button").forEach((btn) => {
+      // --- ACTION BUTTONS ---
+      card.querySelectorAll("button").forEach((btn) => {
         btn.addEventListener("click", () => handleAction(btn.dataset.action, claim));
       });
 
@@ -148,85 +85,91 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  async function handleAction(action, claim) {
-    let newStatus = claim.status;
-    let message = "";
-    let type = "success";
-
+  function handleAction(action, claim) {
     switch (action) {
       case "approve":
-        newStatus = "confirmed";
-        message = "Order approved!";
+        // partner approves the request; move to "confirmed"
+        claim.status = "confirmed";
         break;
 
       case "ready":
-        newStatus = "ready";
-        message = "Order marked as ready for pickup.";
+        // partner prepares the items; mark as ready for pickup
+        claim.status = "ready";
         break;
 
       case "complete":
-        newStatus = "completed";
-        message = "Order completed successfully!";
+        // pickup completed: mark as picked-up and reduce stock
+        claim.status = "picked-up";
+        const listing = partnerListings.find(l => l.id === claim.listingId);
+        if (listing) {
+          listing.qtyLeft = Math.max(0, (listing.qtyLeft || 0) - (claim.qty || 0));
+        }
         break;
 
       case "cancel":
-        newStatus = "cancelled";
-        message = "Order cancelled.";
-        type = "error";
+        // partner cancels the request
+        claim.status = "cancelled";
         break;
 
       case "view":
-        alert(`Order Details:\n\nOrder ID: ${claim.id}\nProduct: ${claim.product?.name}\nQuantity: ${claim.quantity}\nCustomer ID: ${claim.userId}\nStatus: ${claim.status}`);
-        return;
+        alert(`Viewing Details for Claim #${claim.id}`);
+        // no status or inventory change
+        break;
     }
 
-    // Update status in backend
-    const success = await updateOrderStatus(claim.id, newStatus);
-    if (success) {
-      claim.status = newStatus;
-      showToast(message, type);
-      claims = await loadPickups();
-      renderClaims();
-    } else {
-      showToast("Failed to update order status", "error");
+    if (action !== "view") {
+      // persist updates
+      localStorage.setItem("partnerClaims", JSON.stringify(partnerClaims));
+      localStorage.setItem("partnerListings", JSON.stringify(partnerListings));
     }
+
+    renderClaims();
   }
 
   function formatPickup(dt) {
-    if (!dt) return "N/A";
     const d = new Date(dt);
     return d.toLocaleString("en-US", {
-      month: "numeric",
+      month: "long",
       day: "numeric",
-      year: "numeric",
       hour: "numeric",
       minute: "2-digit",
-    }).replace(/,/, ' @'); // Format: 11/25/2025 @ 3:00 PM
+    });
   }
 
-  function renderActions(claim) {
-    const status = claim.status;
-    
+  function formatStatus(s) {
+    const map = {
+      pending: "Pending Approval",
+      confirmed: "Confirmed",
+      ready: "Ready for Pickup",
+      "picked-up": "Completed",
+      cancelled: "Cancelled",
+    };
+    return map[s] || s;
+  }
+
+  function renderActions(status) {
     switch (status) {
       case "pending":
         return `
-          <button class="btn-primary" data-action="approve">Accept</button>
-          <button class="btn-secondary" data-action="cancel">Reject</button>
+          <button class="claim-btn claim-approve" data-action="approve">Approve</button>
+          <button class="claim-btn claim-cancel" data-action="cancel">Cancel</button>
+          <button class="claim-btn claim-view" data-action="view">View Details</button>
         `;
       case "confirmed":
         return `
-          <button class="btn-primary" data-action="ready">Mark Ready</button>
-          <button class="btn-secondary" data-action="cancel">Cancel</button>
+          <button class="claim-btn claim-ready" data-action="ready">Mark Ready</button>
+          <button class="claim-btn claim-cancel" data-action="cancel">Cancel</button>
+          <button class="claim-btn claim-view" data-action="view">View Details</button>
         `;
       case "ready":
         return `
-          <button class="btn-primary" data-action="complete">Complete Order</button>
-          <button class="btn-secondary" data-action="view">View Details</button>
+          <button class="claim-btn claim-complete" data-action="complete">Complete Pickup</button>
+          <button class="claim-btn claim-view" data-action="view">View Details</button>
         `;
-      case "completed":
+      case "picked-up":
       case "cancelled":
         return `
-          <button class="btn-secondary" data-action="view">View Details</button>
+          <button class="claim-btn claim-view" data-action="view">View Details</button>
         `;
       default:
         return "";
@@ -246,3 +189,33 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Initial render
   renderClaims();
 });
+
+function showToast(message, type = "success") {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.className = `toast show ${type}`;
+
+  setTimeout(() => {
+    toast.className = "toast";
+  }, 2500);
+}
+
+function confirmClaim(claimId) {
+  let claims = JSON.parse(localStorage.getItem("partnerClaims")) || [];
+  let listings = JSON.parse(localStorage.getItem("partnerListings")) || [];
+
+  let claim = claims.find(c => c.claimId === claimId);
+  let listing = listings.find(l => l.id === claim.listingId);
+
+  listing.qtyLeft -= claim.quantity;
+
+  if (listing.qtyLeft < 1) listing.active = false;
+
+  claim.status = "completed";
+
+  localStorage.setItem("partnerListings", JSON.stringify(listings));
+  localStorage.setItem("partnerClaims", JSON.stringify(claims));
+
+  showToast("Pickup Confirmed!");
+  loadClaims();
+}

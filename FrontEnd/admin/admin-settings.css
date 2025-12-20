@@ -1,110 +1,89 @@
 /* ================================================= */
-/* ADMIN SETTINGS SPECIFIC STYLES (admin-settings.css) */
+/* ADMIN SETTINGS PAGE SPECIFIC STYLES (admin-settings.css) */
+/* Designed to reuse form group styles from partner/ngo */
 /* ================================================= */
 
-.panel {
-    padding: 25px;
+.settings-container {
+    max-width: 900px; /* Admin settings can be slightly narrower */
+    margin: 0 auto;
+    padding: 20px 0;
+}
+
+.settings-section {
     background: #ffffff;
+    padding: 30px;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 40px;
 }
 
-.setting-group {
-    border-bottom: 1px solid var(--border-soft);
-    padding: 15px 0;
-    margin-bottom: 20px;
-}
-
-.setting-group:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-}
-
-.setting-group h3 {
-    font-size: 1.1rem;
+.settings-section h2 {
+    font-size: 1.6rem;
     font-weight: 700;
+    color: var(--green-dark); /* Assuming color vars from ngo-base.css */
     margin-top: 0;
-    margin-bottom: 15px;
-    color: var(--green-dark);
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-soft);
 }
 
-.form-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
+/* --- Form Layout (Single Column) --- */
+.security-form {
+    display: grid;
+    grid-template-columns: 1fr;
     gap: 20px;
 }
 
-.label-block {
-    flex-basis: 35%; /* Labels take up 35% of the space */
-    font-weight: 500;
-    color: var(--text-main);
+/* --- Shared Form Elements --- */
+.form-group {
+    display: flex;
+    flex-direction: column;
 }
 
-.label-inline {
-    flex-grow: 1;
-    font-weight: 500;
+.form-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
     color: var(--text-main);
+    margin-bottom: 8px;
 }
 
-.input {
-    flex-basis: 65%; /* Inputs take up 65% of the space */
-    padding: 10px 12px;
+.security-form input[type="text"],
+.security-form input[type="email"],
+.security-form input[type="number"],
+.security-form input[type="password"],
+.security-form select {
+    padding: 12px;
     border: 1px solid var(--border-soft);
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 1rem;
-    box-sizing: border-box;
+    color: var(--text-main);
+    background-color: #fcfcfc;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.input-small {
-    max-width: 150px; /* Constrain size for number/select inputs */
+.security-form input:focus,
+.security-form select:focus {
+    outline: none;
+    border-color: var(--green-soft);
+    box-shadow: 0 0 0 3px rgba(127, 209, 107, 0.2);
 }
 
-.help-text {
-    margin-top: -10px;
-    margin-left: 35%; /* Align help text under the input field */
-    padding-left: 20px;
-    font-size: 0.85rem;
+.security-form input[readonly],
+.security-form input[disabled] {
+    background-color: #f0f0f0;
     color: var(--text-muted);
+    cursor: not-allowed;
 }
 
-/* Custom styles for smaller elements */
-.color-picker {
-    width: 50px;
-    height: 35px;
-    padding: 0;
-    border: none;
-    cursor: pointer;
+/* --- Action Buttons Container --- */
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
 }
 
-/* Toggle Switch Styling (Basic CSS toggle) */
-.toggle-switch {
-    position: relative;
-    width: 40px;
-    height: 20px;
-    -webkit-appearance: none;
-    appearance: none;
-    background-color: #ccc;
-    border-radius: 15px;
-    transition: background-color 0.3s;
-    cursor: pointer;
-}
-.toggle-switch:checked {
-    background-color: var(--green-main);
-}
-.toggle-switch::before {
-    content: '';
-    position: absolute;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    top: 2px;
-    left: 2px;
-    background-color: white;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s;
-}
-.toggle-switch:checked::before {
-    transform: translateX(20px);
+/* Button placement for security form */
+.security-form .btn-primary {
+    width: fit-content;
+    margin-top: 10px;
 }

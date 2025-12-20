@@ -1,7 +1,7 @@
 // ===== AUTH GUARD =====
-if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "admin") {
-    window.location.href = "../login/login-consumer.html";
-}
+// if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "admin") {
+//     window.location.href = "../login/login-consumer.html";
+// }
 
 const API_URL = 'http://localhost/wastenot-api/api/logs.php';
 

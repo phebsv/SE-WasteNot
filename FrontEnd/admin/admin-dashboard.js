@@ -1,7 +1,7 @@
-// ===== AUTH GUARD (Check if admin is logged in) =====
-if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "admin") {
-    window.location.href = "../login/login-consumer.html";
-}
+// // ===== AUTH GUARD (Check if admin is logged in) =====
+// if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "admin") {
+//     window.location.href = "../login/login-consumer.html";
+// }
 
 const API_AUTH = 'http://localhost/wastenot-api/api';
 const API_MARKETPLACE = 'http://localhost:8081/api';

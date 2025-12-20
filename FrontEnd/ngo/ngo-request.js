@@ -1,8 +1,3 @@
-// ===== AUTH GUARD =====
-if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "ngo") {
-    window.location.href = "../login/login-ngo.html";
-}
-
 // Parse URL params and populate the page
 function getParams() {
   const params = new URLSearchParams(window.location.search);
@@ -21,7 +16,6 @@ function safeDecode(v){ try{return decodeURIComponent(v);}catch(e){return v}}
 
 document.addEventListener('DOMContentLoaded', () => {
   const p = getParams();
-  let isEditMode = false;
 
   document.getElementById('reqItem').textContent = safeDecode(p.item) || safeDecode(p.company);
   document.getElementById('reqCategory').textContent = safeDecode(p.company);
@@ -36,85 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const logoFile = safeDecode(p.company).toLowerCase().replace(/[^a-z0-9]+/g,'-') + '-logo.jpg';
   logoEl.src = logoFile;
   logoEl.alt = p.company + ' logo';
-
-  // Initialize input fields with current values
-  function initializeInputs() {
-    document.getElementById('editTagged').value = safeDecode(p.tagged) || 'Urgent Donation';
-    document.getElementById('editExpiry').value = safeDecode(p.expiry) || '';
-    document.getElementById('editPickup').value = safeDecode(p.pickup) || '';
-    document.getElementById('editStore').value = safeDecode(p.location) || '';
-    document.getElementById('editQty').value = safeDecode(p.qty) || '';
-  }
-
-  // Edit mode toggle
-  document.getElementById('editToggleBtn').addEventListener('click', () => {
-    if (!isEditMode) {
-      isEditMode = true;
-      initializeInputs();
-      toggleEditMode(true);
-    }
-  });
-
-  document.getElementById('cancelEditBtn').addEventListener('click', () => {
-    isEditMode = false;
-    toggleEditMode(false);
-  });
-
-  function toggleEditMode(enable) {
-    const displayElements = document.querySelectorAll('#requestDetailsDisplay .value');
-    const inputElements = document.querySelectorAll('[id^="edit"]');
-    const editBtn = document.getElementById('editToggleBtn');
-    const saveBtn = document.getElementById('saveChangesBtn');
-    const cancelBtn = document.getElementById('cancelEditBtn');
-    const confirmBtn = document.getElementById('confirmRequest');
-
-    if (enable) {
-      displayElements.forEach(el => el.style.display = 'none');
-      inputElements.forEach(el => el.style.display = 'block');
-      editBtn.style.display = 'none';
-      saveBtn.style.display = 'block';
-      cancelBtn.style.display = 'block';
-      confirmBtn.style.display = 'none';
-    } else {
-      displayElements.forEach(el => el.style.display = 'block');
-      inputElements.forEach(el => el.style.display = 'none');
-      editBtn.style.display = 'block';
-      saveBtn.style.display = 'none';
-      cancelBtn.style.display = 'none';
-      confirmBtn.style.display = 'block';
-    }
-  }
-
-  // Save changes
-  document.getElementById('saveChangesBtn').addEventListener('click', () => {
-    const updates = {
-      tagged: document.getElementById('editTagged').value,
-      expiry: document.getElementById('editExpiry').value,
-      pickup: document.getElementById('editPickup').value,
-      location: document.getElementById('editStore').value,
-      qty: document.getElementById('editQty').value
-    };
-
-    // Update display values
-    document.getElementById('reqTagged').textContent = updates.tagged;
-    document.getElementById('reqExpiry').textContent = updates.expiry || '-';
-    document.getElementById('reqPickup').textContent = updates.pickup || '-';
-    document.getElementById('reqStore').textContent = updates.location || '-';
-    document.getElementById('reqQty').textContent = (updates.qty ? updates.qty : '-');
-
-    // Update params for later use
-    Object.assign(p, updates);
-
-    isEditMode = false;
-    toggleEditMode(false);
-
-    // Show success message
-    const msg = document.createElement('div');
-    msg.textContent = '✓ Changes saved!';
-    msg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 12px 18px; border-radius: 5px; z-index: 1000; font-weight: 600;';
-    document.body.appendChild(msg);
-    setTimeout(() => msg.remove(), 2500);
-  });
 
   // confirm / directions actions
   document.getElementById('viewDirections').addEventListener('click', () => {

@@ -1,11 +1,11 @@
 // This file assumes NGO login is handled separately and the dashboard is in the 'ngo' folder.
 
-// === AUTH CHECK ===
-// Redirects to NGO login if no session data is found
-if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "ngo") {
-    // Redirect path: Up one level (to FrontEnd/), then down into 'login'
-    window.location.href = "../login/login-ngo.html";
-}
+// // === AUTH CHECK ===
+// // Redirects to NGO login if no session data is found
+// if (!localStorage.getItem("ngoName")) {
+//     // Redirect path: Up one level (to FrontEnd/), then down into 'login'
+//     window.location.href = "../login/login-ngo.html";
+// }
 
 // Static data mirroring the screenshot
 const staticSummary = {

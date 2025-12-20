@@ -38,7 +38,7 @@
 
         <div class="topbar-actions">
           <button class="icon-btn">🔔</button>
-          <div class="avatar" id="avatarInitial">N</div>
+          <div class="avatar">P</div>
         </div>
       </div>
 
@@ -48,36 +48,67 @@
           <span class="search-icon">🔍</span>
           <input
             type="text"
-            id="searchInput"
+            id="search"
             class="market-search"
-            placeholder="Search products, partners..."
+            placeholder="Search for donations..."
           />
         </div>
-      </section>
 
-      <!-- Filters Sidebar -->
-      <section class="filters-section">
-        <div class="filter-panel">
-          <div class="filter-group">
-            <h3 class="filter-title">Category</h3>
-            <div id="categoryFilters" class="filter-options">
-              <!-- Categories will be populated by JS -->
-            </div>
-          </div>
-
-          <div class="filter-group">
-            <h3 class="filter-title">Partner</h3>
-            <div id="partnerFilters" class="filter-options">
-              <!-- Partners will be populated by JS -->
-            </div>
-          </div>
+        <div class="filter-row">
+          <button class="filter-chip active" data-filter="all">All</button>
+          <button class="filter-chip" data-filter="vegetable">Vegetables</button>
+          <button class="filter-chip" data-filter="drinks">Drinks</button>
+          <button class="filter-chip" data-filter="cooked">Cooked Meals</button>
+          <button class="filter-chip" data-filter="bread">Bread & Pastries</button>
+          <button class="filter-chip" data-filter="others">Others</button>
         </div>
       </section>
 
-      <!-- PRODUCT GRID -->
-      <div class="product-grid" id="productGrid">
-        <!-- Products will be populated by JavaScript -->
-      </div>
+      <!-- CARD GRID -->
+      <div class="card-grid" id="card-grid">
+        <!-- Jollibee Card -->
+        <div class="card" data-category="cooked">
+          <img src="jollibee-logo.jpg" alt="Jollibee" />
+          <h3 class="card-title">Jollibee</h3>
+          <p class="card-item">Packed Meals</p>
+          <p class="card-meta">Qty: 25 | Expiry: Oct 7, 2025</p>
+          <p class="card-location">Colon Street, Cebu</p>
+          <p class="card-pickup">Pickup: 9:00 AM</p>
+          <button class="request-btn" data-company="Jollibee" data-item="Packed Meals" data-qty="25" data-expiry="10/07/2025" data-pickup="9:00-10:00 AM" data-location="Jollibee Colon">Request Donation</button>
+        </div>
+
+        <!-- SM Grocery Card -->
+        <div class="card" data-category="others">
+          <img src="sm-logo.jpg" alt="SM" />
+          <h3 class="card-title">SM Grocery</h3>
+          <p class="card-item">Canned Goods</p>
+          <p class="card-meta">Qty: 50 | Expiry: Oct 10, 2025</p>
+          <p class="card-location">SM Seaside, Cebu</p>
+          <p class="card-pickup">Pickup: 2:00 PM</p>
+          <button class="request-btn" data-company="SM Grocery" data-item="Canned Goods" data-qty="50" data-expiry="10/10/2025" data-pickup="2:00-3:00 PM" data-location="SM Seaside">Request Donation</button>
+        </div>
+
+        <!-- McDonald's Card -->
+        <div class="card" data-category="drinks">
+          <img src="mcdonalds-logo.jpg" alt="McDonald's" />
+          <h3 class="card-title">McDonald's</h3>
+          <p class="card-item">Juice Packs</p>
+          <p class="card-meta">Qty: 15 | Expiry: Oct 8, 2025</p>
+          <p class="card-location">Ayala Center</p>
+          <p class="card-pickup">Pickup: 5:00 PM</p>
+          <button class="request-btn" data-company="McDonald's" data-item="Juice Packs" data-qty="15" data-expiry="10/08/2025" data-pickup="5:00-6:00 PM" data-location="McDonald's Ayala">Request Donation</button>
+        </div>
+
+        <!-- Noodle Haus Card -->
+        <div class="card" data-category="cooked">
+          <img src="noodle-haus-logo.jpg" alt="Noodle Haus" />
+          <h3 class="card-title">Noodle Haus</h3>
+          <p class="card-item">Pancit Canton Party Tray</p>
+          <p class="card-meta">Qty: 5 | Expiry: Oct 10, 2025</p>
+          <p class="card-location">Jakosalem St.</p>
+          <p class="card-pickup">Pickup: 5:00 PM</p>
+          <button class="request-btn" data-company="Noodle Haus" data-item="Pancit Canton Party Tray" data-qty="5" data-expiry="10/10/2025" data-pickup="5:00-6:00 PM" data-location="Jakosalem St">Request Donation</button>
+        </div>
       </div>
 
     </main>

@@ -1,52 +1,30 @@
-// ===== AUTH GUARD =====
-if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "admin") {
-    window.location.href = "../login/login-consumer.html";
-}
+// ===== AUTH GUARD (Check if admin is logged in) =====
+// if (localStorage.getItem("adminLoggedIn") !== "true") {
+//     window.location.href = "login-admin.html";
+// }
 
-const PRODUCTS_API = 'http://localhost:8081/api/products';
+// Mock Data
+const mockDonations = [
+    { id: 'D501', item: 'Organic Bread Loaves', provider: 'Bakery Delights', qty: '50 units', expiry: '2025-12-16', status: 'Active' },
+    { id: 'D502', item: 'Canned Vegetables (Mix)', provider: 'MegaStore', qty: '300 cans', expiry: '2026-06-01', status: 'Claimed' },
+    { id: 'D503', item: 'Fresh Produce Box', provider: 'Local Fresh Market', qty: '20 kg', expiry: '2025-12-14', status: 'Expired' },
+];
 
-let allProducts = [];
+const mockMarketplace = [
+    { id: 'M701', product: 'Frozen Chicken Breasts', partner: 'Meat & Produce Co.', price: '$5.00/kg', expiry: '2025-12-20', status: 'Active' },
+    { id: 'M702', product: 'Bulk Dairy Milk', partner: 'Dairy Farm Inc.', price: '$1.50/L', expiry: '2025-12-15', status: 'Sold' },
+    { id: 'M703', product: 'Assorted Energy Drinks', partner: 'Beverage King', price: '$0.25/can', expiry: '2025-12-30', status: 'Active' },
+];
+
+// Map tab names to data arrays
+const dataMap = {
+    donations: { data: mockDonations, tbodyId: 'donationsTbody', render: renderDonations },
+    marketplace: { data: mockMarketplace, tbodyId: 'marketplaceTbody', render: renderMarketplace },
+};
+
 let activeTab = 'donations'; // Default active tab
 
-// ===== LOAD PRODUCTS FROM BACKEND =====
-async function loadProducts() {
-    try {
-        const response = await fetch(PRODUCTS_API);
-        
-        if (response.ok) {
-            const data = await response.json();
-            
-            // Spring Boot API returns { success, data: [...] }
-            if (Array.isArray(data)) {
-                return data;
-            }
-            const products = Array.isArray(data?.data) ? data.data : [];
-            return products;
-        }
-        return [];
-    } catch (error) {
-        console.error('Error loading products:', error);
-        return [];
-    }
-}
-
-// ===== DELETE PRODUCT =====
-async function deleteProduct(productId) {
-    try {
-        const response = await fetch(`${PRODUCTS_API}/${productId}`, {
-            method: 'DELETE'
-        });
-        return response.ok;
-    } catch (error) {
-        console.error('Error deleting product:', error);
-        return false;
-    }
-}
-
-document.addEventListener("DOMContentLoaded", async () => {
-    
-    // Load products from backend
-    allProducts = await loadProducts();
+document.addEventListener("DOMContentLoaded", () => {
     
     const tabs = document.querySelectorAll('.tab-btn');
     const searchInput = document.getElementById('listingSearch');
@@ -86,21 +64,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     function renderDonations(data) {
         const tbody = document.getElementById('donationsTbody');
         tbody.innerHTML = '';
-        const donations = data.filter(p => p.type === 'donation');
-        if (donations.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px;">No donations found</td></tr>';
-            return;
-        }
-        donations.forEach(d => {
+        data.forEach(d => {
             const row = tbody.insertRow();
-            const status = d.available ? 'Active' : 'Claimed';
             row.innerHTML = `
                 <td>${d.id}</td>
-                <td>${d.name}</td>
-                <td>${d.partnerName || 'N/A'}</td>
-                <td>${d.quantity} ${d.unit || ''}</td>
-                <td>${new Date(d.expiryDate).toLocaleDateString()}</td>
-                <td><span class="status-badge status-${status}">${status}</span></td>
+                <td>${d.item}</td>
+                <td>${d.provider}</td>
+                <td>${d.qty}</td>
+                <td>${d.expiry}</td>
+                <td><span class="status-badge status-${d.status}">${d.status}</span></td>
                 <td>${createActions(d.id)}</td>
             `;
         });
@@ -109,27 +81,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     function renderMarketplace(data) {
         const tbody = document.getElementById('marketplaceTbody');
         tbody.innerHTML = '';
-        
-        // All products from Spring Boot are marketplace products (not donations)
-        const marketplace = data; // No filtering by type since Spring Boot API returns all marketplace products
-        
-        if (marketplace.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px;">No marketplace items found</td></tr>';
-            return;
-        }
-        
-        marketplace.forEach(m => {
+        data.forEach(m => {
             const row = tbody.insertRow();
-            const status = m.status === 'ACTIVE' ? 'Active' : 'Inactive';
-            const expiryDisplay = m.expiryDisplay || m.expiryDate || 'N/A';
-            
             row.innerHTML = `
                 <td>${m.id}</td>
-                <td>${m.name}</td>
-                <td>${m.partnerName || 'N/A'}</td>
-                <td>₱${m.price || 0}</td>
-                <td>${expiryDisplay}</td>
-                <td><span class="status-badge status-${status.toLowerCase()}">${status}</span></td>
+                <td>${m.product}</td>
+                <td>${m.partner}</td>
+                <td>${m.price}</td>
+                <td>${m.expiry}</td>
+                <td><span class="status-badge status-${m.status.replace(/\s/g, '')}">${m.status}</span></td>
                 <td>${createActions(m.id)}</td>
             `;
         });
@@ -139,52 +99,37 @@ document.addEventListener("DOMContentLoaded", async () => {
     function filterAndRender() {
         const searchText = searchInput.value.toLowerCase();
         const statusText = statusFilter.value;
-        const renderer = activeTab === 'donations' ? renderDonations : renderMarketplace;
+        const currentData = dataMap[activeTab].data;
+        const renderer = dataMap[activeTab].render;
 
-        let filteredData;
-        
-        if (activeTab === 'donations') {
-            // For donations tab, filter by type (if type field exists)
-            filteredData = allProducts.filter(listing => {
-                const typeMatch = listing.type === 'donation';
-                const listingStatus = listing.available ? 'Active' : 'Claimed';
-                const matchesStatus = !statusText || listingStatus === statusText;
-                const matchesSearch = (listing.name || '').toLowerCase().includes(searchText) || 
-                                      (listing.partnerName || '').toLowerCase().includes(searchText);
-                return typeMatch && matchesStatus && matchesSearch;
-            });
-        } else {
-            // For marketplace tab, use all products from Spring Boot API
-            filteredData = allProducts.filter(listing => {
-                const listingStatus = listing.status === 'ACTIVE' ? 'Active' : 'Inactive';
-                const matchesStatus = !statusText || listingStatus === statusText;
-                const matchesSearch = (listing.name || '').toLowerCase().includes(searchText) || 
-                                      (listing.partnerName || '').toLowerCase().includes(searchText);
-                return matchesStatus && matchesSearch;
-            });
-        }
+        const filteredData = currentData.filter(listing => {
+            // Filter 1: Status
+            const matchesStatus = !statusText || listing.status === statusText;
+
+            // Filter 2: Search (Item/Product name or Provider/Partner name)
+            const matchesSearch = listing.item?.toLowerCase().includes(searchText) || 
+                                  listing.product?.toLowerCase().includes(searchText) ||
+                                  listing.provider?.toLowerCase().includes(searchText) ||
+                                  listing.partner?.toLowerCase().includes(searchText);
+
+            return matchesStatus && matchesSearch;
+        });
 
         renderer(filteredData);
     }
     
-    // --- Global Actions ---
+    // --- Global Actions (Mock) ---
     window.editListing = (id) => {
-        const product = allProducts.find(p => p.id === id);
-        if (product) {
-            alert(`Edit Product:\n\nID: ${product.id}\nName: ${product.name}\nPrice: ₱${product.price}\nQuantity: ${product.quantity}\nExpiry: ${new Date(product.expiryDate).toLocaleDateString()}\n\nNote: Edit functionality can be implemented with a modal form`);
-        }
+        alert(`Navigating to edit listing ID: ${id}`);
     };
 
-    window.removeListing = async (id) => {
-        if(confirm(`Are you sure you want to permanently remove this listing?`)) {
-            const success = await deleteProduct(id);
-            if (success) {
-                showToast(`Listing removed successfully`, "success");
-                allProducts = await loadProducts();
-                filterAndRender();
-            } else {
-                showToast(`Failed to remove listing`, "danger");
-            }
+    window.removeListing = (id) => {
+        if(confirm(`Are you sure you want to permanently remove listing ID: ${id}?`)) {
+            // MOCK: Find and remove from array, then re-render
+            const index = dataMap[activeTab].data.findIndex(l => l.id === id);
+            if (index > -1) dataMap[activeTab].data.splice(index, 1);
+            filterAndRender();
+            showToast(`Listing ${id} has been removed.`, "danger");
         }
     };
     
@@ -201,12 +146,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     searchInput.addEventListener('input', filterAndRender);
     statusFilter.addEventListener('change', filterAndRender);
     
-    // Initial render
+    // Initial render for the default 'donations' tab
     filterAndRender();
-    
+
     // Logout Handler
-    document.getElementById("logoutBtn")?.addEventListener("click", () => {
-        localStorage.clear();
-        window.location.href = "../login/login-consumer.html";
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+        localStorage.removeItem("adminLoggedIn");
+        window.location.href = "login-admin.html";
     });
 });

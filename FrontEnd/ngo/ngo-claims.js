@@ -1,8 +1,3 @@
-// ===== AUTH GUARD =====
-if (!localStorage.getItem("authToken") || localStorage.getItem("userRole") !== "ngo") {
-    window.location.href = "../login/login-ngo.html";
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   const container = document.getElementById('claimsContainer');
   const filterChips = document.querySelectorAll('.filter-chip');
@@ -95,13 +90,4 @@ document.addEventListener('DOMContentLoaded', () => {
       renderRequests(status);
     });
   });
-
-  // Logout button
-  const logoutBtn = document.getElementById('logoutBtn');
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', () => {
-      localStorage.clear();
-      window.location.href = "../login/login-ngo.html";
-    });
-  }
 });
